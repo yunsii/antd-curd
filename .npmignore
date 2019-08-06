@@ -1,0 +1,11 @@
+/.git/
+/.vscode/
+/docs/
+/node_modules/
+/.storybook/
+/stories/
+.gitignore
+.npmignore
+tslint.json
+tsconfig.json
+*.log

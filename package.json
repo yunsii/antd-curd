@@ -1,0 +1,84 @@
+{
+  "name": "antd-curd",
+  "description": "基于 ant design 、 umi 、 dva 的增删改查页面组件",
+  "version": "0.1.5",
+  "main": "./dist/index.js",
+  "dependencies": {
+    "antd": "^3.20.7",
+    "antd-form-mate": "^0.1.5",
+    "babel-plugin-import": "^1.12.0",
+    "dva-base-models": "^1.0.6",
+    "moment": "^2.24.0",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-scripts": "3.0.1",
+    "ts-import-plugin": "^1.6.1"
+  },
+  "scripts": {
+    "start": "npm run storybook",
+    "build": "echo y | del dist /f && webpack",
+    "prepublish": "npm run lint && npm run build",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "tslint --project tsconfig.json",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/plugin-proposal-decorators": "^7.4.4",
+    "@storybook/addon-actions": "^5.1.10",
+    "@storybook/addon-info": "^5.1.10",
+    "@storybook/addon-links": "^5.1.10",
+    "@storybook/addons": "^5.1.10",
+    "@storybook/react": "^5.1.10",
+    "@types/jest": "^24.0.16",
+    "@types/storybook__react": "^4.0.2",
+    "awesome-typescript-loader": "^5.2.1",
+    "babel-loader": "^8.0.6",
+    "css-loader": "^3.1.0",
+    "jest": "^24.8.0",
+    "lerna": "^3.16.4",
+    "less": "^3.9.0",
+    "less-loader": "^5.0.0",
+    "react-docgen-typescript-loader": "^3.1.0",
+    "style-loader": "^0.23.1",
+    "ts-jest": "^24.0.2",
+    "ts-loader": "^6.0.4",
+    "typescript": "^3.5.3",
+    "webpack": "^4.39.1",
+    "webpack-cli": "^3.3.6",
+    "webpack-node-externals": "^1.7.2"
+  },
+  "keywords": [
+    "antd",
+    "curd"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/theprimone/antd-curd.git"
+  },
+  "bugs": {
+    "url": "https://github.com/theprimone/antd-curd/issues"
+  },
+  "homepage": "https://github.com/theprimone/antd-curd#readme",
+  "types": "./dist/index.d.ts",
+  "typings": "./dist/index.d.ts",
+  "author": "theprimone <yuns.xie@qq.com> (https://theprimone.top/)",
+  "license": "MIT"
+}
