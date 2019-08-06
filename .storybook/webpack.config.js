@@ -1,4 +1,3 @@
-const path = require('path');
 const tsImportPluginFactory = require('ts-import-plugin');
 
 module.exports = async ({ config, mode }) => {
@@ -6,13 +5,12 @@ module.exports = async ({ config, mode }) => {
     test: /\.tsx$/,
     loader: 'ts-loader',
     options: {
-      transpileOnly: true,
       getCustomTransformers: () => ({
-        before: [ tsImportPluginFactory({
+        before: [tsImportPluginFactory({
           libraryName: 'antd',
           libraryDirectory: 'es',
           style: true
-        }) ]
+        })]
       }),
     },
   });
@@ -38,21 +36,34 @@ module.exports = async ({ config, mode }) => {
   });
 
   config.module.rules.push({
-    test: /\.less$/,
-    use: [
-      {
-        loader: 'style-loader',
-      },
-      {
-        loader: 'css-loader',
-      },
-      {
-        loader: 'less-loader',
-        options: {
-          javascriptEnabled: true
+    test: /\.(css|less)$/,
+    include: /node_modules/,
+    use: [{
+      loader: 'style-loader' // creates style nodes from JS strings
+    }, {
+      loader: 'css-loader', // translates CSS into CommonJS
+    }, {
+      loader: 'less-loader', // compiles Less to CSS
+      options: { javascriptEnabled: true, sourceMap: true },
+    }],
+  })
+
+  config.module.rules.push({
+    test: /\.(css|less)$/,
+    exclude: /node_modules/,
+    use: [{
+      loader: 'style-loader' // creates style nodes from JS strings
+    }, {
+      loader: 'css-loader', // translates CSS into CommonJS
+      options: {
+        modules: {
+          localIdentName: '[path][name]__[local]--[hash:base64:5]',
         },
-      },
-    ],
+      }
+    }, {
+      loader: 'less-loader', // compiles Less to CSS
+      options: { javascriptEnabled: true, sourceMap: true },
+    }],
   });
 
   return config;

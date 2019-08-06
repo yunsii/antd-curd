@@ -2,7 +2,7 @@ import * as React from 'react';
 import { PaginationConfig, ColumnProps, TableProps } from 'antd/lib/table';
 import { FormProps } from 'antd/lib/form';
 import { ListProps } from 'antd/lib/list';
-import { ActionType } from '../ActionType';
+import { ActionType } from '../components/CurdTable/actions/ActionType';
 import { QueryPanelProps } from '@/components/QueryPanel';
 import { ItemConfig } from 'antd-form-mate';
 import { CustomDetailFormDrawerProps } from '../CustomDetailFormDrawerProps';

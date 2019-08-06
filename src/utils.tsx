@@ -13,7 +13,7 @@ export function addDivider(actions) {
   );
 }
 
-export function transferBoolArrayToString(boolArray = []) {
+export function transferBoolArrayToString(boolArray = [] as boolean[]) {
   let result = '';
   for (let i = 0; i < boolArray.length; i += 1) {
     result += boolArray[i] ? '1' : '0';
@@ -21,19 +21,20 @@ export function transferBoolArrayToString(boolArray = []) {
   return result;
 }
 
-export const callFunctionIfFunction = (func: Function) => (...args: any) => {
+export const callFunctionIfFunction = (func: any) => (...args: any) => {
   if (func) {
     func(...args);
   }
 };
 
 export function getChildName(child) {
+  console.log(child);
   const { type = {} } = child;
   const { WrappedComponent = {} } = type;
   return WrappedComponent.name;
 }
 
-export function injectChildren(children, properties) {
+export function injectCurdChildren(children, properties) {
   return React.Children.map(children, child => {
     if (child) {
       console.log('child', child);
@@ -43,6 +44,21 @@ export function injectChildren(children, properties) {
       }
       return React.cloneElement(child, {
         ...properties[getChildName(child)],
+      });
+    }
+    return child;
+  });
+}
+
+export function injectChildren(children, properties) {
+  return React.Children.map(children, child => {
+    if (child) {
+      const { type: childType } = child;
+      if (typeof childType === 'string') {
+        return child;
+      }
+      return React.cloneElement(child, {
+        ...properties,
       });
     }
     return child;

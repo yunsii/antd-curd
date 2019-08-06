@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { Row, Col, Form, Icon, Button } from 'antd';
 import FormMate from 'antd-form-mate';
 import { callFunctionIfFunction } from '../../utils';
-import './index.less';
+import styles from './index.less';
 
 const { FormProvider, createFormItems } = FormMate;
 const RowCount = [1, 2, 3, 4, 6, 8, 12, 24];
@@ -120,7 +120,7 @@ class QueryPanel extends PureComponent {
   }
 
   render() {
-    return <div className='_query-panel-search-form'>{this.renderForm()}</div>;
+    return <div className={styles.searchForm}>{this.renderForm()}</div>;
   }
 }
 

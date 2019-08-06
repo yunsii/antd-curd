@@ -5,7 +5,7 @@
   "main": "./dist/index.js",
   "dependencies": {
     "antd": "^3.20.7",
-    "antd-form-mate": "^0.1.5",
+    "antd-form-mate": "^0.1.6",
     "babel-plugin-import": "^1.12.0",
     "dva-base-models": "^1.0.6",
     "moment": "^2.24.0",
@@ -43,6 +43,7 @@
     "@babel/plugin-proposal-class-properties": "^7.5.5",
     "@babel/plugin-proposal-decorators": "^7.4.4",
     "@storybook/addon-actions": "^5.1.10",
+    "@storybook/addon-console": "^1.2.1",
     "@storybook/addon-info": "^5.1.10",
     "@storybook/addon-links": "^5.1.10",
     "@storybook/addons": "^5.1.10",

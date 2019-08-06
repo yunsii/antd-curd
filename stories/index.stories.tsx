@@ -2,11 +2,11 @@ import * as React from 'react';
 import { storiesOf } from '@storybook/react';
 // import { action } from '@storybook/addon-actions';
 // import * as moment from 'moment';
-import { Button, Card } from 'antd';
+import { Button, Card, Switch, Form } from 'antd';
 // import { WrappedFormUtils } from 'antd/lib/form/Form';
 import Curd from '../src';
 
-const { QueryPanel } = Curd;
+const { QueryPanel, StandardTable } = Curd;
 
 const queryArgsConfig = [
   {
@@ -41,19 +41,6 @@ class QueryPanelDemo extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <Curd>
-          <QueryPanel
-            queryArgsConfig={queryArgsConfig}
-            wrappedComponentRef={(self) => {
-              console.log(self);
-              this.queryPanel = self;
-            }}
-            onValuesChange={(changedValues, allValues) => {
-              const { props: queryPanelProps } = this.queryPanel as any;
-              console.log(queryPanelProps ? queryPanelProps.form.getFieldsValue() : {});
-            }}
-          />
-        </Curd>
         <Card>
           <Button
             onClick={() => {
@@ -68,11 +55,113 @@ class QueryPanelDemo extends React.Component {
             外部写入
           </Button>
         </Card>
+        <Card bordered={false}>
+          <QueryPanel
+            queryArgsConfig={queryArgsConfig}
+            wrappedComponentRef={(self) => {
+              console.log(self);
+              this.queryPanel = self;
+            }}
+            onValuesChange={(changedValues, allValues) => {
+              const { props: queryPanelProps } = this.queryPanel as any;
+              console.log(queryPanelProps ? queryPanelProps.form.getFieldsValue() : {});
+            }}
+          />
+        </Card>
       </React.Fragment>
 
     )
   }
 }
 
+class StandardTableDemo extends React.Component {
+  state = {
+    selectedRows: [],
+    checkable: true,
+  }
+
+  columns = [
+    {
+      title: '公式照',
+      dataIndex: 'avatar',
+    },
+    {
+      title: '姓名',
+      dataIndex: 'name',
+    },
+    {
+      title: '昵称',
+      dataIndex: 'nickname',
+    },
+    {
+      title: '生日',
+      dataIndex: 'birthday',
+    },
+    {
+      title: '特长',
+      dataIndex: 'speciality',
+    },
+    {
+      title: '爱好',
+      dataIndex: 'habit',
+    },
+  ];
+
+  data = {
+    list: [
+      {
+        id: 'szn',
+        avatar: 'xxx',
+        name: '孙珍妮',
+        nickname: '珍妮',
+        birthday: '05.05',
+        speciality: '唱歌、吉他',
+        habit: '吃东西、逛街',
+      },
+      {
+        id: 'cmj',
+        avatar: 'xxx',
+        name: '陈美君',
+        nickname: 'MIMI',
+        birthday: '01.15',
+        speciality: '钢琴、吉他',
+        habit: '旅游、宅',
+      },
+    ]
+  }
+
+  render() {
+    const { selectedRows, checkable } = this.state;
+    return (
+      <React.Fragment>
+        <Card>
+          <Form layout="inline">
+            <Form.Item label="多选" >
+              <Switch
+                checked={checkable}
+                onChange={() => {
+                  this.setState({
+                    checkable: !checkable,
+                  })
+                }}
+              />
+            </Form.Item>
+          </Form>
+        </Card>
+        <Card bordered={false}>
+          <StandardTable
+            columns={this.columns}
+            data={this.data}
+            selectedRows={selectedRows}
+            onSelectRow={(row) => this.setState({ selectedRows: row })}
+            checkable={checkable}
+          />
+        </Card>
+      </React.Fragment>
+    )
+  }
+}
+
 storiesOf('custom components', module)
-  .add('QueryPanel', () => <QueryPanelDemo />);
+  .add('QueryPanel', () => <QueryPanelDemo />)
+  .add('StandardTable', () => <StandardTableDemo />);

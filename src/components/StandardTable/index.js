@@ -87,6 +87,8 @@ class StandardTable extends PureComponent {
       rowSelection = null;
     }
 
+    console.log(styles);
+
     return (
       <div className={styles.standardTable}>
         {checkable ? (
@@ -116,7 +118,7 @@ class StandardTable extends PureComponent {
         ) : null}
         <Table
           rowClassName={classNames(styles.tableRow, rowClassName)}
-          rowKey={rowKey || 'key'}
+          rowKey={rowKey || 'id'}
           rowSelection={rowSelection}
           dataSource={list}
           pagination={paginationProps}

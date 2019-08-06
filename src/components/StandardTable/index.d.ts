@@ -3,11 +3,11 @@ import { PaginationConfig, SorterResult, TableCurrentDataSource } from 'antd/lib
 
 export interface StandardTableProps {
   columns: any;
-  onSelectRow: (row: any) => void;
+  onSelectRow?: (row: any) => void;
   data: any;
   rowKey?: string;
   checkable?: boolean;
-  selectedRows: any[];
+  selectedRows?: any[];
   onChange?: (
     pagination: PaginationConfig,
     filters: Record<keyof any, string[]>,
