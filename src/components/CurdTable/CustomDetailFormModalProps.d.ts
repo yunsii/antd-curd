@@ -1,4 +1,4 @@
-import { DetailFormModalProps } from './components/DetailFormModal/index';
+import { DetailFormModalProps } from './components/CurdTable/DetailFormModal/index';
 
 export interface CustomDetailFormModalProps extends DetailFormModalProps {
   modalConfig: {

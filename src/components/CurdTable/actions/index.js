@@ -33,20 +33,21 @@ export function sortAndFilterActionsAsc(actions, hideActions = []) {
     });
 }
 
-export function initialActions(record, instance, props) {
+export function initialActions(record, actionsMethod, actionsConfig) {
   const {
-    interceptors = {},
-    actionsConfig: {
-      detailActionTitle = '详情',
-      updateActionTitle = '编辑',
-      deleteActionTitle = '删除',
-      showActionsCount = 3,
-      extraActions = [],
-      hideActions = [],
-    },
-    dispatch,
-    namespace,
-  } = props;
+    fetchDetailOrNot,
+    handleVisible,
+    deleteModel,
+    interceptors,
+  } = actionsMethod;
+  const {
+    detailActionTitle = '详情',
+    updateActionTitle = '编辑',
+    deleteActionTitle = '删除',
+    showActionsCount = 3,
+    extraActions = [],
+    hideActions = [],
+  } = actionsConfig;
   const { handleDetailClick, handleDeleteClick, handleUpdateClick } = interceptors;
   const actions = [
     {
@@ -57,13 +58,8 @@ export function initialActions(record, instance, props) {
           const isBreak = handleDetailClick(record);
           if (isBreak) return;
         }
-        if (instance.doFetchDetail()) {
-          dispatch({
-            type: `${namespace}/detail`,
-            id: record.id,
-          });
-        }
-        instance.handleVisible(DetailName, true, record);
+        fetchDetailOrNot();
+        handleVisible(DetailName, true, record);
       },
     },
     {
@@ -74,13 +70,8 @@ export function initialActions(record, instance, props) {
           const isBreak = handleUpdateClick(record);
           if (isBreak) return;
         }
-        if (instance.doFetchDetail()) {
-          dispatch({
-            type: `${namespace}/detail`,
-            id: record.id,
-          });
-        }
-        instance.handleVisible(UpdateName, true, record);
+        fetchDetailOrNot()
+        handleVisible(UpdateName, true, record);
       },
     },
     {
@@ -91,7 +82,7 @@ export function initialActions(record, instance, props) {
           handleDeleteClick(record);
           return;
         }
-        instance.deleteModel(record.id);
+        deleteModel(record.id);
       },
     },
     ...extraActions,
@@ -185,10 +176,10 @@ export const renderActions = record => (actions, moreActions, confirmKeys) => {
   ];
 };
 
-export function setActions(record, instance, props) {
+export function setActions(record, actionsMethod, actionsConfig) {
   const {
-    actionsConfig: { confirmKeys = [12] },
-  } = props;
-  const [actions, moreActions] = initialActions(record, instance, props);
+    confirmKeys = [12],
+  } = actionsConfig;
+  const [actions, moreActions] = initialActions(record, actionsMethod, actionsConfig);
   return renderActions(record)(actions, moreActions, confirmKeys);
 }

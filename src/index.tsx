@@ -3,16 +3,16 @@ import { Card, Button } from 'antd';
 import { FormProps } from 'antd/lib/form';
 import { ItemConfig } from 'antd-form-mate';
 import { addDivider, transferBoolArrayToString } from './utils';
-import StandardTable from './components/StandardTable';
+import CurdTable from './components/CurdTable';
 // import TableList from './components/TableList';
 import QueryPanel from './components/QueryPanel';
-import DetailFormDrawer from './components/DetailFormDrawer';
+import DetailFormDrawer from './components/DetailFormDrawer/index';
 import DetailFormModal from './components/DetailFormModal';
 import { callFunctionIfFunction, injectCurdChildren } from './utils';
 import { CreateName, DetailName, UpdateName, DetailVisible, UpdateVisible } from './constant';
-import { setActions } from './components/CurdTable/actions/actions';
-import { CustomDetailFormDrawerProps } from './CustomDetailFormDrawerProps';
-import { CustomDetailFormModalProps } from './CustomDetailFormModalProps';
+import { setActions } from './components/CurdTable/actions/index';
+import { CustomDetailFormDrawerProps } from './components/CurdTable/CustomDetailFormDrawerProps';
+import { CustomDetailFormModalProps } from './components/CurdTable/CustomDetailFormModalProps';
 import styles from './index.less';
 
 
@@ -41,37 +41,8 @@ const getValue = obj =>
 
 
 export interface CurdProps {
-  namespace: string;
-  /** popup title of create */
-  createTitle?: string;
-  /** popup title of detail */
-  detailTitle?: string;
-  /** popup title of update */
-  updateTitle?: string;
-  fetchLoading: boolean;
-  createLoading: boolean;
-  detailLoading?: boolean;
-  updateLoading: boolean;
-  deleteLoading?: boolean;
-  createButtonName: string;
-  popupType: 'modal' | 'drawer' | null;
-  popupProps: CustomDetailFormDrawerProps | CustomDetailFormModalProps;
-  setFormItemsConfig: (
-    detail: {},
-    mode: 'create' | 'detail' | 'update',
-    form: FormProps['form']
-  ) => ItemConfig[];
-  afterPopupNotVisible?: () => void;
-  interceptors?: {
-    updateFieldsValue?: (fieldsValue: any, mode?: 'create' | 'update') => any;
-    updateSearchValue?: (fieldsValue: any) => any;
-    handleCreateClick?: () => boolean | undefined;
-    handleDetailClick?: (record: any) => boolean | undefined;
-    handleUpdateClick?: (record: any) => boolean | undefined;
-    handleDeleteClick?: (record: any) => void;
-  };
-  detail: {};
   dispatch: any;
+  children: any;
 }
 
 class Curd extends PureComponent<CurdProps> {
@@ -99,7 +70,7 @@ class Curd extends PureComponent<CurdProps> {
   };
 
   static QueryPanel = QueryPanel;
-  static StandardTable = StandardTable;
+  static CurdTable = CurdTable;
 
 
   state = {
@@ -120,201 +91,6 @@ class Curd extends PureComponent<CurdProps> {
   //   });
   // }
 
-  handleVisible = (action, visible, record ?: any) => {
-    const { afterPopupNotVisible, interceptors = {} } = this.props;
-    const { handleCreateClick } = interceptors;
-    if (handleCreateClick && action === CreateName) {
-      const isBreak = handleCreateClick();
-      if (isBreak) return;
-    }
-    const actionVisible = `${action}Visible`;
-    this.setState({
-      [actionVisible]: !!visible,
-    });
-    if (visible) {
-      this.setState({ record: record || {} });
-    } else {
-      callFunctionIfFunction(afterPopupNotVisible)();
-    }
-  };
-
-  setVisibleToFalse = () => {
-    const { afterPopupNotVisible } = this.props;
-    this.setState({
-      createVisible: false,
-      detailVisible: false,
-      updateVisible: false,
-    });
-    callFunctionIfFunction(afterPopupNotVisible)();
-  };
-
-  deleteModel = id => {
-    const { namespace, dispatch } = this.props;
-    dispatch({
-      type: `${namespace}/delete`,
-      id,
-      callback: response => {
-        if (!response) {
-          this.reSearch();
-        }
-      },
-    });
-  };
-
-  handleStandardTableChange = (pagination, filtersArg = {} as any, sorter = {} as any) => {
-    const { namespace, dispatch } = this.props;
-    const { formValues } = this.state;
-    const filters = Object.keys(filtersArg).reduce((obj, key) => {
-      const newObj = { ...obj };
-      newObj[key] = getValue(filtersArg[key]);
-      return newObj;
-    }, {});
-    const params = {
-      page: pagination.current,
-      limit: pagination.pageSize,
-      ...formValues,
-      ...filters,
-    };
-
-    if (sorter.field) {
-      params['sorter'] = `${sorter.field}_${sorter.order}`;
-    }
-    dispatch({
-      type: `${namespace}/fetch`,
-      payload: params,
-    });
-  };
-
-  // handleSelectRows = rows => {
-  //   this.setState({
-  //     selectedRows: rows,
-  //   });
-  // };
-
-  handleSearch = async values => {
-    const { namespace, dispatch, interceptors } = this.props;
-    this.setState({
-      formValues: values,
-    });
-    const newSearchValue = await updateSearchValueByInterceptors(values, interceptors);
-    dispatch({
-      type: `${namespace}/fetch`,
-      payload: { ...newSearchValue },
-    });
-  };
-
-  reSearch = async () => {
-    const { namespace, dispatch, interceptors } = this.props;
-    const { formValues } = this.state;
-    const newSearchValue = await updateSearchValueByInterceptors(formValues, interceptors);
-    dispatch({
-      type: `${namespace}/fetch`,
-      payload: { ...newSearchValue },
-    });
-  }
-
-  handleCreateOk = async fieldsValue => {
-    console.log('handleCreateOk', fieldsValue);
-    const { namespace, dispatch, interceptors } = this.props;
-    const newFieldsValue = await updateFieldsValueByInterceptors(
-      fieldsValue,
-      interceptors,
-      CreateName
-    );
-    if (!newFieldsValue) return;
-    dispatch({
-      type: `${namespace}/create`,
-      payload: newFieldsValue,
-      callback: response => {
-        if (!response) {
-          this.handleVisible(CreateName, false);
-          this.reSearch();
-        }
-      },
-    });
-  };
-
-  handleUpdateOk = async fieldsValue => {
-    console.log('handleUpdateOk', fieldsValue);
-    const {
-      record: { id },
-    } = this.state;
-    const { namespace, dispatch, interceptors } = this.props;
-    const newFieldsValue = await updateFieldsValueByInterceptors(
-      fieldsValue,
-      interceptors,
-      UpdateName
-    );
-    if (!newFieldsValue) return;
-    dispatch({
-      type: `${namespace}/update`,
-      id,
-      payload: newFieldsValue,
-      callback: response => {
-        if (!response) {
-          this.handleVisible(UpdateName, false);
-        }
-      },
-    });
-  };
-
-  // enhanceColumns = () => {
-  //   const {
-  //     containerProps: { columns },
-  //     actionsConfig,
-  //   } = this.props;
-  //   if (!columns) return [];
-  //   if (!actionsConfig) return columns;
-  //   return [
-  //     ...columns,
-  //     {
-  //       title: '操作',
-  //       render: (value, record) => addDivider(setActions(record, this, this.props)),
-  //     },
-  //   ];
-  // };
-
-  getVisibleState = () => {
-    const { createVisible, detailVisible, updateVisible } = this.state;
-    return transferBoolArrayToString([createVisible, detailVisible, updateVisible]);
-  };
-
-  getContainerTitle = () => {
-    const { createTitle, detailTitle, updateTitle } = this.props;
-    if (this.getVisibleState() === DetailVisible) {
-      return detailTitle;
-    }
-    if (this.getVisibleState() === UpdateVisible) {
-      return updateTitle;
-    }
-    return createTitle;
-  };
-
-  handleOk = fieldsValue => {
-    if (this.getVisibleState() === DetailVisible) {
-      this.handleVisible(DetailName, false);
-      return null;
-    }
-    if (this.getVisibleState() === UpdateVisible) {
-      return this.handleUpdateOk(fieldsValue);
-    }
-    return this.handleCreateOk(fieldsValue);
-  };
-
-  doFetchDetail = () => {
-    return DetailName in this.props && 'detailLoading' in this.props;
-  };
-
-  setContainerModeAndRecord = () => {
-    const { record } = this.state;
-    if (this.getVisibleState() === DetailVisible) {
-      return [DetailName, record];
-    }
-    if (this.getVisibleState() === UpdateVisible) {
-      return [UpdateName, record];
-    }
-    return [CreateName, {}];
-  };
 
   // renderQueryPanel = () => {
   //   const { queryArgsConfig, queryPanelProps } = this.props;
@@ -385,60 +161,6 @@ class Curd extends PureComponent<CurdProps> {
   //   return container ? injectChildren(container, composeCommenContainerProps) : result;
   // };
 
-  renderPopup = () => {
-    let result;
-    const {
-      detail,
-      createLoading,
-      detailLoading,
-      updateLoading,
-      setFormItemsConfig,
-      popupType,
-      popupProps,
-    } = this.props;
-    const { drawerConfig, modalConfig, ...restPopupProps } = popupProps as any;
-    const loading = createLoading || detailLoading || updateLoading;
-    const [mode, record] = this.setContainerModeAndRecord();
-    const showDetail = [DetailName, UpdateName].includes(mode);
-
-    const composePopupProps = {
-      ...modalConfig,
-      ...drawerConfig,
-      title: this.getContainerTitle(),
-      visible: this.getVisibleState().includes('1'),
-      onCancel: this.setVisibleToFalse,
-      onClose: this.setVisibleToFalse,
-    };
-
-    if (popupType === 'drawer') {
-      result = (
-        <DetailFormDrawer
-          drawerConfig={composePopupProps}
-          {...restPopupProps}
-          loading={loading}
-          onOk={this.handleOk}
-          setItemsConfig={setFormItemsConfig}
-          detail={this.doFetchDetail() && showDetail ? detail : record}
-          mode={mode}
-        />
-      );
-    } else if (popupType === 'modal') {
-      result = (
-        <DetailFormModal
-          modalConfig={{
-            ...composePopupProps,
-            onOk: this.handleOk,
-          }}
-          {...restPopupProps}
-          loading={loading}
-          setItemsConfig={setFormItemsConfig}
-          detail={this.doFetchDetail() && showDetail ? detail : record}
-          mode={mode}
-        />
-      );
-    }
-    return result;
-  };
 
   renderChildren = () => {
     const { children } = this.props;
@@ -446,7 +168,7 @@ class Curd extends PureComponent<CurdProps> {
   }
 
   render() {
-    const { children } = this.props;
+    // const { children } = this.props;
     return (
       <Card bordered={false}>
         {/* {this.renderQueryPanel()}
@@ -454,7 +176,6 @@ class Curd extends PureComponent<CurdProps> {
         {this.renderContainer()}
         {this.renderChildren()} */}
         {this.renderChildren()}
-        {this.renderPopup()}
       </Card>
     );
   }

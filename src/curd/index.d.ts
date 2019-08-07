@@ -5,8 +5,8 @@ import { ListProps } from 'antd/lib/list';
 import { ActionType } from '../components/CurdTable/actions/ActionType';
 import { QueryPanelProps } from '@/components/QueryPanel';
 import { ItemConfig } from 'antd-form-mate';
-import { CustomDetailFormDrawerProps } from '../CustomDetailFormDrawerProps';
-import { CustomDetailFormModalProps } from '../CustomDetailFormModalProps';
+import { CustomDetailFormDrawerProps } from '../components/CurdTable/CustomDetailFormDrawerProps';
+import { CustomDetailFormModalProps } from '../components/CurdTable/CustomDetailFormModalProps';
 
 export declare type CurdProps = {
   namespace: string;

@@ -87,8 +87,6 @@ class StandardTable extends PureComponent {
       rowSelection = null;
     }
 
-    console.log(styles);
-
     return (
       <div className={styles.standardTable}>
         {checkable ? (

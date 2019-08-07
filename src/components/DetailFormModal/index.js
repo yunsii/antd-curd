@@ -45,18 +45,22 @@ function DetailFormModal(props) {
       );
 
   return (
-    <FormMateContext.Consumer>
-      {({ FormProvider, createFormItems }) => (
-        <Modal destroyOnClose {...restModalConfig} onOk={onOk}>
-          <Spin spinning={loading}>
-            <div className={itemsWrapperClassName} style={itemsWrapperStyle}>
-              <FormProvider value={form}>{setColsItems(createFormItems)}</FormProvider>
-            </div>
-            {mode ? injectChildren(children, { mode }) : children}
-          </Spin>
-        </Modal>
-      )}
-    </FormMateContext.Consumer>
+    <Modal destroyOnClose {...restModalConfig} onOk={onOk}>
+      <FormMateContext.Consumer>
+        {({ FormProvider, createFormItems }) => {
+          if (FormProvider && createFormItems) {
+            return (
+              <Spin spinning={loading}>
+                <div className={itemsWrapperClassName} style={itemsWrapperStyle}>
+                  <FormProvider value={form}>{setColsItems(createFormItems)}</FormProvider>
+                </div>
+                {mode ? injectChildren(children, { mode }) : children}
+              </Spin>
+            )
+          }
+        }}
+      </FormMateContext.Consumer>
+    </Modal>
   );
 }
 
