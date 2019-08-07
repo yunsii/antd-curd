@@ -37,7 +37,6 @@ export function getChildName(child) {
 export function injectCurdChildren(children, properties) {
   return React.Children.map(children, child => {
     if (child) {
-      console.log('child', child);
       const { type: childType } = child;
       if (typeof childType === 'string') {
         return child;

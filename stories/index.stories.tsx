@@ -8,6 +8,7 @@ import Curd from '../src';
 import StandardTable from '../src/components/StandardTable';
 import FormMateContext from '../src/FormMateContext';
 import { FormProvider, createFormItems } from './antd-form-mate';
+import setFormItemsConfig from './map';
 
 const { QueryPanel, CurdTable } = Curd;
 
@@ -123,6 +124,96 @@ class StandardTableDemo extends React.Component {
       },
       {
         id: 'cmj',
+        avatar: 'xxx',
+        name: '陈美君',
+        nickname: 'MIMI',
+        birthday: '01.15',
+        speciality: '钢琴、吉他',
+        habit: '旅游、宅',
+      },
+      {
+        id: 'szn1',
+        avatar: 'xxx',
+        name: '孙珍妮',
+        nickname: '珍妮',
+        birthday: '05.05',
+        speciality: '唱歌、吉他',
+        habit: '吃东西、逛街',
+      },
+      {
+        id: 'cmj2',
+        avatar: 'xxx',
+        name: '陈美君',
+        nickname: 'MIMI',
+        birthday: '01.15',
+        speciality: '钢琴、吉他',
+        habit: '旅游、宅',
+      },
+      {
+        id: 'szn3',
+        avatar: 'xxx',
+        name: '孙珍妮',
+        nickname: '珍妮',
+        birthday: '05.05',
+        speciality: '唱歌、吉他',
+        habit: '吃东西、逛街',
+      },
+      {
+        id: 'cmj4',
+        avatar: 'xxx',
+        name: '陈美君',
+        nickname: 'MIMI',
+        birthday: '01.15',
+        speciality: '钢琴、吉他',
+        habit: '旅游、宅',
+      },
+      {
+        id: 'szn5',
+        avatar: 'xxx',
+        name: '孙珍妮',
+        nickname: '珍妮',
+        birthday: '05.05',
+        speciality: '唱歌、吉他',
+        habit: '吃东西、逛街',
+      },
+      {
+        id: 'cmj6',
+        avatar: 'xxx',
+        name: '陈美君',
+        nickname: 'MIMI',
+        birthday: '01.15',
+        speciality: '钢琴、吉他',
+        habit: '旅游、宅',
+      },
+      {
+        id: 'szn7',
+        avatar: 'xxx',
+        name: '孙珍妮',
+        nickname: '珍妮',
+        birthday: '05.05',
+        speciality: '唱歌、吉他',
+        habit: '吃东西、逛街',
+      },
+      {
+        id: 'cmj8',
+        avatar: 'xxx',
+        name: '陈美君',
+        nickname: 'MIMI',
+        birthday: '01.15',
+        speciality: '钢琴、吉他',
+        habit: '旅游、宅',
+      },
+      {
+        id: 'szn9',
+        avatar: 'xxx',
+        name: '孙珍妮',
+        nickname: '珍妮',
+        birthday: '05.05',
+        speciality: '唱歌、吉他',
+        habit: '吃东西、逛街',
+      },
+      {
+        id: 'cmj11',
         avatar: 'xxx',
         name: '陈美君',
         nickname: 'MIMI',
@@ -349,6 +440,7 @@ class CurdTableDemo extends React.Component {
                 this.setState({ selectedRows: row });
               }}
               checkable={checkable}
+              setFormItemsConfig={setFormItemsConfig as any}
             />
           </Curd>
         </FormMateContext.Provider>

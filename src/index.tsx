@@ -168,14 +168,15 @@ class Curd extends PureComponent<CurdProps> {
   }
 
   render() {
-    // const { children } = this.props;
+    const { children } = this.props;
     return (
       <Card bordered={false}>
         {/* {this.renderQueryPanel()}
         {this.renderOperators()}
         {this.renderContainer()}
         {this.renderChildren()} */}
-        {this.renderChildren()}
+        {/* {this.renderChildren()} */}
+        {children}
       </Card>
     );
   }

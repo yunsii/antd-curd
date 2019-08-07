@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { PureComponent, Fragment } from 'react';
 import { FormProps } from 'antd/lib/form';
 import { ItemConfig } from 'antd-form-mate';
 import classNames from 'classnames';
@@ -42,7 +42,7 @@ export interface CurdTableProps extends StandardTableProps {
   setFormItemsConfig?: (
     detail: {},
     mode: 'create' | 'detail' | 'update',
-    form: FormProps['form']
+    form?: FormProps['form']
   ) => ItemConfig[];
   afterPopupNotVisible?: () => void;
   interceptors?: {
@@ -68,57 +68,75 @@ export interface CurdTableProps extends StandardTableProps {
   handleSearch?: () => void;
 }
 
-function CurdTable(props: CurdTableProps) {
-  const {
-    columns,
-    actionsConfig,
-    afterPopupNotVisible,
-    interceptors = {},
-    modelName,
-    dispatch,
-    handleSearch,
-    createTitle,
-    detailTitle,
-    updateTitle,
-    ...rest
-  } = props;
-
-  const [popupVisible, setPopupVisible] = useState(null);
-  const [record, setRecord] = useState({} as any);
-
-
-  const willFetchDetail = () => {
-    return DetailName in props && 'detailLoading' in props;
+class CurdTable extends PureComponent<CurdTableProps> {
+  static defaultProps = {
+    createTitle: '新建对象',
+    detailTitle: '对象详情',
+    updateTitle: '编辑对象',
+    fetchLoading: false,
+    createLoading: false,
+    updateLoading: false,
+    deleteLoading: false,
+    createButtonName: '新建',
+    dispatch: () => { },
+    queryArgsConfig: [],
+    queryPanelProps: {},
+    containerType: 'table',
+    containerProps: {},
+    renderItem: () => { },
+    data: {},
+    actionsConfig: {},
+    popupType: 'drawer',
+    popupProps: {},
+    setFormItemsConfig: () => [],
+    interceptors: {},
   }
 
-  const fetchDetail = () => {
+  state = {
+    popupVisible: null,
+    record: {} as any,
+  }
+
+  willFetchDetail = () => {
+    return DetailName in this.props && 'detailLoading' in this.props;
+  }
+
+  fetchDetail = () => {
+    const { dispatch, modelName } = this.props;
+    const { record } = this.state;
     dispatch({
       type: `${modelName}/detail`,
       id: record.id,
     });
   }
 
-  const fetchDetailOrNot = () => {
-    if (willFetchDetail) {
-      fetchDetail();
+  fetchDetailOrNot = () => {
+    if (this.willFetchDetail) {
+      this.fetchDetail();
     }
   };
 
-  const handleVisible = (action, visible, record?: any) => {
+  handleVisible = (action, visible, record?: any) => {
+    const { interceptors = {}, afterPopupNotVisible } = this.props;
     const { handleCreateClick } = interceptors;
     if (handleCreateClick && action === CreateName) {
       const isBreak = handleCreateClick();
       if (isBreak) return;
     }
-    setPopupVisible(action);
+    this.setState({
+      popupVisible: action,
+    })
     if (visible) {
-      setRecord(record || {});
+      this.setState({
+        record: record || {},
+      })
     } else {
       callFunctionIfFunction(afterPopupNotVisible)();
     }
   };
 
-  const deleteModel = id => {
+  deleteModel = id => {
+    const { dispatch, modelName, handleSearch } = this.props;
     dispatch({
       type: `${modelName}/delete`,
       id,
@@ -130,7 +148,8 @@ function CurdTable(props: CurdTableProps) {
     });
   };
 
-  const enhanceColumns = () => {
+  enhanceColumns = () => {
+    const { columns, actionsConfig, interceptors } = this.props;
     if (!columns) return [];
     if (!actionsConfig) return columns;
     return [
@@ -139,9 +158,9 @@ function CurdTable(props: CurdTableProps) {
         title: '操作',
         render: (value, record) => {
           const actionsMethod = {
-            fetchDetailOrNot,
-            handleVisible,
-            deleteModel,
+            fetchDetailOrNot: this.fetchDetailOrNot,
+            handleVisible: this.handleVisible,
+            deleteModel: this.deleteModel,
             interceptors,
           }
           const actions = setActions(record, actionsMethod, actionsConfig);
@@ -151,7 +170,8 @@ function CurdTable(props: CurdTableProps) {
     ];
   };
 
-  const setPopupModeAndRecord = () => {
+  setPopupModeAndRecord = () => {
+    const { popupVisible, record } = this.state;
     if (popupVisible === DetailName) {
       return [DetailName, record];
     }
@@ -161,7 +181,9 @@ function CurdTable(props: CurdTableProps) {
     return [CreateName, {}];
   };
 
-  const getPopupTitle = () => {
+  getPopupTitle = () => {
+    const { createTitle, detailTitle, updateTitle } = this.props;
+    const { popupVisible } = this.state;
     if (popupVisible === DetailName) {
       return detailTitle;
     }
@@ -171,10 +193,11 @@ function CurdTable(props: CurdTableProps) {
     return createTitle;
   };
 
-  const closePopup = () => setPopupVisible(null);
+  closePopup = () => this.setState({ popupVisible: null });
 
-  const handleCreateOk = async fieldsValue => {
+  handleCreateOk = async fieldsValue => {
     console.log('handleCreateOk', fieldsValue);
+    const { interceptors, modelName, dispatch, handleSearch } = this.props;
     const newFieldsValue = await updateFieldsValueByInterceptors(
       fieldsValue,
       interceptors,
@@ -186,15 +209,17 @@ function CurdTable(props: CurdTableProps) {
       payload: newFieldsValue,
       callback: response => {
         if (!response) {
-          closePopup();
+          this.closePopup();
           callFunctionIfFunction(handleSearch)();
         }
       },
     });
   };
 
-  const handleUpdateOk = async fieldsValue => {
+  handleUpdateOk = async fieldsValue => {
     console.log('handleUpdateOk', fieldsValue);
+    const { dispatch, modelName, interceptors } = this.props;
+    const { record } = this.state;
     const newFieldsValue = await updateFieldsValueByInterceptors(
       fieldsValue,
       interceptors,
@@ -207,24 +232,25 @@ function CurdTable(props: CurdTableProps) {
       payload: newFieldsValue,
       callback: response => {
         if (!response) {
-          closePopup();
+          this.closePopup();
         }
       },
     });
   };
 
-  const handleOk = fieldsValue => {
+  handleOk = fieldsValue => {
+    const { popupVisible } = this.state;
     if (popupVisible === DetailName) {
-      closePopup();
+      this.closePopup();
       return null;
     }
     if (popupVisible === UpdateName) {
-      return handleUpdateOk(fieldsValue);
+      return this.handleUpdateOk(fieldsValue);
     }
-    return handleCreateOk(fieldsValue);
+    return this.handleCreateOk(fieldsValue);
   };
 
-  const renderPopup = () => {
+  renderPopup = () => {
     let result;
     const {
       detail,
@@ -234,19 +260,20 @@ function CurdTable(props: CurdTableProps) {
       setFormItemsConfig,
       popupType,
       popupProps,
-    } = props;
+    } = this.props;
+    const { popupVisible } = this.state;
     const { drawerConfig, modalConfig, ...restPopupProps } = popupProps as any;
     const loading = createLoading || detailLoading || updateLoading;
-    const [mode, record] = setPopupModeAndRecord();
+    const [mode, record] = this.setPopupModeAndRecord();
     const showDetail = [DetailName, UpdateName].includes(mode);
 
     const composePopupProps = {
       ...modalConfig,
       ...drawerConfig,
-      title: getPopupTitle(),
-      visible: popupVisible,
-      onCancel: closePopup,
-      onClose: closePopup,
+      title: this.getPopupTitle(),
+      visible: !!popupVisible,
+      onCancel: this.closePopup,
+      onClose: this.closePopup,
     };
 
     if (popupType === 'drawer') {
@@ -255,9 +282,9 @@ function CurdTable(props: CurdTableProps) {
           drawerConfig={composePopupProps}
           {...restPopupProps}
           loading={loading}
-          onOk={handleOk}
+          onOk={this.handleOk}
           setItemsConfig={setFormItemsConfig}
-          detail={willFetchDetail() && showDetail ? detail : record}
+          detail={this.willFetchDetail() && showDetail ? detail : record}
           mode={mode}
         />
       );
@@ -266,12 +293,12 @@ function CurdTable(props: CurdTableProps) {
         <DetailFormModal
           modalConfig={{
             ...composePopupProps,
-            onOk: handleOk,
+            onOk: this.handleOk,
           }}
           {...restPopupProps}
           loading={loading}
           setItemsConfig={setFormItemsConfig}
-          detail={willFetchDetail() && showDetail ? detail : record}
+          detail={this.willFetchDetail() && showDetail ? detail : record}
           mode={mode}
         />
       );
@@ -279,36 +306,29 @@ function CurdTable(props: CurdTableProps) {
     return result;
   };
 
-  return (
-    <Fragment>
-      <StandardTable {...rest} columns={enhanceColumns()} />
-      {renderPopup()}
-    </Fragment>
+  render() {
+    const {
+      columns,
+      actionsConfig,
+      afterPopupNotVisible,
+      interceptors = {},
+      modelName,
+      dispatch,
+      handleSearch,
+      createTitle,
+      detailTitle,
+      updateTitle,
+      ...rest
+    } = this.props;
 
-  )
-}
+    return (
+      <Fragment>
+        <StandardTable {...rest} columns={this.enhanceColumns()} />
+        {this.renderPopup()}
+      </Fragment>
 
-CurdTable.defaultProps = {
-  createTitle: '新建对象',
-  detailTitle: '对象详情',
-  updateTitle: '编辑对象',
-  fetchLoading: false,
-  createLoading: false,
-  updateLoading: false,
-  deleteLoading: false,
-  createButtonName: '新建',
-  dispatch: () => { },
-  queryArgsConfig: [],
-  queryPanelProps: {},
-  containerType: 'table',
-  containerProps: {},
-  renderItem: () => { },
-  data: {},
-  actionsConfig: {},
-  popupType: 'drawer',
-  popupProps: {},
-  setFormItemsConfig: () => [],
-  interceptors: {},
+    )
+  }
 }
 
 export default CurdTable;
