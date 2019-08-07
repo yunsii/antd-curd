@@ -1,10 +1,10 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { PureComponent } from 'react';
 import { Row, Col, Form, Icon, Button } from 'antd';
-import FormMate from 'antd-form-mate';
 import { callFunctionIfFunction } from '../../utils';
 import styles from './index.less';
+import FormMateContext from '../../FormMateContext';
 
-const { FormProvider, createFormItems } = FormMate;
 const RowCount = [1, 2, 3, 4, 6, 8, 12, 24];
 const addAllowClearToItemsConfig = itemsConfig =>
   itemsConfig.map(item => {
@@ -102,19 +102,27 @@ class QueryPanel extends PureComponent {
         </div>
       </div>
     );
-    formItems = [...createFormItems(formItems), actions];
+    const setFormItems = (createFormItems) => createFormItems ? [...createFormItems(formItems), actions] : [];
 
     return (
       <Form onSubmit={this.handleSubmit} layout="inline">
-        <FormProvider value={form}>
-          <Row type="flex" gutter={{ md: 8, lg: 24, xl: 48 }} {...rowProps}>
-            {formItems.map(item => (
-              <Col {...colProps} key={item.key}>
-                {item}
-              </Col>
-            ))}
-          </Row>
-        </FormProvider>
+        <FormMateContext.Consumer>
+          {({ FormProvider, createFormItems }) => {
+            if (FormProvider && createFormItems) {
+              return (
+                <FormProvider value={form}>
+                  <Row type="flex" gutter={{ md: 8, lg: 24, xl: 48 }} {...rowProps}>
+                    {setFormItems(createFormItems).map(item => (
+                      <Col {...colProps} key={item.key}>
+                        {item}
+                      </Col>
+                    ))}
+                  </Row>
+                </FormProvider>
+              )
+            }
+          }}
+        </FormMateContext.Consumer>
       </Form>
     );
   }
@@ -126,9 +134,12 @@ class QueryPanel extends PureComponent {
 
 export default Form.create({
   onValuesChange: (props, changedValues, allValues) => {
-    const { onValuesChange } = props;
+    const { onValuesChange, setSearchForm } = props;
     if (onValuesChange) {
       onValuesChange(changedValues, allValues);
+    }
+    if (setSearchForm) {
+      setSearchForm(allValues);
     }
   }
 })(QueryPanel);

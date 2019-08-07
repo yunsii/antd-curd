@@ -5,7 +5,7 @@ const moduleName = "index";
 
 const webpackConfig = {
   mode: "production",
-  entry: "./src/index.tsx",
+  entry: "./src/index.ts",
   output: {
     filename: `${moduleName}.js`,
     library: moduleName,

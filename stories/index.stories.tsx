@@ -2,15 +2,16 @@ import * as React from 'react';
 import { storiesOf } from '@storybook/react';
 // import { action } from '@storybook/addon-actions';
 // import * as moment from 'moment';
-import { Button, Card, Switch, Form } from 'antd';
+import { Button, Card, Switch, Form, Radio } from 'antd';
 // import { WrappedFormUtils } from 'antd/lib/form/Form';
-import Curd from '../src';
+import Curd from '../src/curd';
 import StandardTable from '../src/components/StandardTable';
 import FormMateContext from '../src/FormMateContext';
 import { FormProvider, createFormItems } from './antd-form-mate';
 import setFormItemsConfig from './map';
 
 const { QueryPanel, CurdTable } = Curd;
+const { Group: RadioGroup } = Radio;
 
 const queryArgsConfig = [
   {
@@ -60,17 +61,24 @@ class QueryPanelDemo extends React.Component {
           </Button>
         </Card>
         <Card bordered={false}>
-          <QueryPanel
-            queryArgsConfig={queryArgsConfig}
-            wrappedComponentRef={(self) => {
-              console.log(self);
-              this.queryPanel = self;
+          <FormMateContext.Provider
+            value={{
+              FormProvider,
+              createFormItems,
             }}
-            onValuesChange={(changedValues, allValues) => {
-              const { props: queryPanelProps } = this.queryPanel as any;
-              console.log(queryPanelProps ? queryPanelProps.form.getFieldsValue() : {});
-            }}
-          />
+          >
+            <QueryPanel
+              queryArgsConfig={queryArgsConfig}
+              wrappedComponentRef={(self) => {
+                console.log(self);
+                this.queryPanel = self;
+              }}
+              onValuesChange={(changedValues, allValues) => {
+                const { props: queryPanelProps } = this.queryPanel as any;
+                console.log(queryPanelProps ? queryPanelProps.form.getFieldsValue() : {});
+              }}
+            />
+          </FormMateContext.Provider>
         </Card>
       </React.Fragment>
 
@@ -263,6 +271,8 @@ class CurdTableDemo extends React.Component {
   state = {
     selectedRows: [],
     checkable: true,
+    operators: true,
+    popupType: 'drawer',
   }
 
   columns = [
@@ -406,7 +416,7 @@ class CurdTableDemo extends React.Component {
   }
 
   render() {
-    const { selectedRows, checkable } = this.state;
+    const { selectedRows, checkable, operators, popupType } = this.state;
     return (
       <React.Fragment>
         <Card>
@@ -420,6 +430,22 @@ class CurdTableDemo extends React.Component {
                   })
                 }}
               />
+            </Form.Item>
+            <Form.Item label="操作栏" >
+              <Switch
+                checked={operators}
+                onChange={() => {
+                  this.setState({
+                    operators: !operators,
+                  })
+                }}
+              />
+            </Form.Item>
+            <Form.Item label="弹窗">
+              <RadioGroup onChange={(event) => this.setState({ popupType: event.target.value })} value={popupType}>
+                <Radio value="drawer">抽屉</Radio>
+                <Radio value="modal">模态框</Radio>
+              </RadioGroup>
             </Form.Item>
           </Form>
         </Card>
@@ -440,7 +466,15 @@ class CurdTableDemo extends React.Component {
                 this.setState({ selectedRows: row });
               }}
               checkable={checkable}
+              popupType={popupType as any}
               setFormItemsConfig={setFormItemsConfig as any}
+              actionsConfig={{
+                confirmProps: {
+                  okText: '确定',
+                  cancelText: '取消',
+                }
+              } as any}
+              operators={operators}
             />
           </Curd>
         </FormMateContext.Provider>

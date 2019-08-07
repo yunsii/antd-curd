@@ -1,16 +1,18 @@
 import React, { PureComponent, Fragment } from 'react';
 import { FormProps } from 'antd/lib/form';
+import { PopconfirmProps } from 'antd/lib/popconfirm';
 import { ItemConfig } from 'antd-form-mate';
-import classNames from 'classnames';
+// import classNames from 'classnames';
 import { setActions } from './actions';
 import { ActionType } from './actions/ActionType';
 import { addDivider } from '../../utils';
+import Operators from './Operators';
 import StandardTable, { StandardTableProps } from '../StandardTable/index';
 import DetailFormDrawer from '../DetailFormDrawer';
 import DetailFormModal from '../DetailFormModal';
 import { CustomDetailFormDrawerProps } from './CustomDetailFormDrawerProps';
 import { CustomDetailFormModalProps } from './CustomDetailFormModalProps';
-import { CreateName, DetailName, UpdateName, DetailVisible, UpdateVisible } from '../../constant';
+import { CreateName, DetailName, UpdateName } from '../../constant';
 import { callFunctionIfFunction } from '../../utils';
 
 
@@ -58,15 +60,24 @@ export interface CurdTableProps extends StandardTableProps {
     showActionsCount?: number;
     extraActions?: ActionType[];
     confirmKeys?: (number | [number, (record?: any) => string])[];
+    confirmProps?: PopconfirmProps,
     hideActions?: number[];
     detailActionTitle?: string;
     updateActionTitle?: string;
     deleteActionTitle?: string;
   } | false | null;
+  operators?: React.ReactNode[] | boolean | null;
   dispatch?: any;
+  searchForm?: {};
+  autoFetch?: boolean,
 
   handleSearch?: () => void;
 }
+
+const getValue = obj =>
+  Object.keys(obj)
+    .map(key => obj[key])
+    .join(',');
 
 class CurdTable extends PureComponent<CurdTableProps> {
   static defaultProps = {
@@ -90,11 +101,24 @@ class CurdTable extends PureComponent<CurdTableProps> {
     popupProps: {},
     setFormItemsConfig: () => [],
     interceptors: {},
+    operators: [],
+    searchForm: {},
+    autoFetch: true,
   }
 
   state = {
     popupVisible: null,
     record: {} as any,
+  }
+  
+  componentDidMount() {
+    const { modelName, dispatch, autoFetch } = this.props;
+    console.log('curdTable componentDidMount', modelName, dispatch, autoFetch)
+    if (autoFetch) {
+      dispatch({
+        type: `${modelName}/fetch`,
+      });
+    }
   }
 
   willFetchDetail = () => {
@@ -250,6 +274,29 @@ class CurdTable extends PureComponent<CurdTableProps> {
     return this.handleCreateOk(fieldsValue);
   };
 
+  handleStandardTableChange = (pagination, filtersArg = {}, sorter = {} as any) => {
+    const { modelName, dispatch, searchForm } = this.props;
+    const filters = Object.keys(filtersArg).reduce((obj, key) => {
+      const newObj = { ...obj };
+      newObj[key] = getValue(filtersArg[key]);
+      return newObj;
+    }, {});
+    const params = {
+      page: pagination.current,
+      limit: pagination.pageSize,
+      ...searchForm,
+      ...filters,
+    };
+
+    if (sorter.field) {
+      params['sorter'] = `${sorter.field}_${sorter.order}`;
+    }
+    dispatch({
+      type: `${modelName}/fetch`,
+      payload: params,
+    });
+  };
+
   renderPopup = () => {
     let result;
     const {
@@ -311,19 +358,29 @@ class CurdTable extends PureComponent<CurdTableProps> {
       columns,
       actionsConfig,
       afterPopupNotVisible,
-      interceptors = {},
       modelName,
       dispatch,
       handleSearch,
       createTitle,
       detailTitle,
       updateTitle,
+      operators,
+      createButtonName,
+      fetchLoading,
       ...rest
     } = this.props;
 
     return (
       <Fragment>
-        <StandardTable {...rest} columns={this.enhanceColumns()} />
+        {operators ?
+          <Operators
+            curd={this}
+            createButtonName={createButtonName}
+          >
+            {operators}
+          </Operators> :
+          null}
+        <StandardTable {...rest} loading={fetchLoading} columns={this.enhanceColumns()} />
         {this.renderPopup()}
       </Fragment>
 

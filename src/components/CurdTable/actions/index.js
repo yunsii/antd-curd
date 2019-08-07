@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react';
 import _isArray from 'lodash/isArray';
 import { Icon, Dropdown, Menu, Popconfirm, Modal } from 'antd';
@@ -91,12 +92,13 @@ export function initialActions(record, actionsMethod, actionsConfig) {
   return [sortedActions.slice(0, showActionsCount), sortedActions.slice(showActionsCount)];
 }
 
-const renderShowActions = record => (actions, confirmKeys = []) => {
+const renderShowActions = record => (actions, confirmKeys = [], confirmProps = {}) => {
   return actions.map(item => {
     const [isConfirmKey, confirmKey] = isConfirmKeyAndItem(item.key, confirmKeys);
     if (isConfirmKey) {
       return (
         <Popconfirm
+          {...confirmProps}
           key={item.key}
           title={setConfirmTitle(confirmKey, item, record)}
           onClick={event => {
@@ -122,13 +124,13 @@ const renderShowActions = record => (actions, confirmKeys = []) => {
   });
 };
 
-export const renderActions = record => (actions, moreActions, confirmKeys) => {
+export const renderActions = record => (actions, moreActions, confirmKeys, confirmProps) => {
   if (!moreActions.length) {
-    return renderShowActions(record)(actions, confirmKeys);
+    return renderShowActions(record)(actions, confirmKeys, confirmProps);
   }
 
   return [
-    ...renderShowActions(record)(actions, confirmKeys),
+    ...renderShowActions(record)(actions, confirmKeys, confirmProps),
     <Dropdown
       key="more"
       // 阻止 Dropdown 点击事件冒泡，否则会触发 actions 容器点击事件
@@ -179,7 +181,8 @@ export const renderActions = record => (actions, moreActions, confirmKeys) => {
 export function setActions(record, actionsMethod, actionsConfig) {
   const {
     confirmKeys = [12],
+    confirmProps,
   } = actionsConfig;
   const [actions, moreActions] = initialActions(record, actionsMethod, actionsConfig);
-  return renderActions(record)(actions, moreActions, confirmKeys);
+  return renderActions(record)(actions, moreActions, confirmKeys, confirmProps);
 }

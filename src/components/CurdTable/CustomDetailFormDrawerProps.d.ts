@@ -1,4 +1,4 @@
-import { DetailFormDrawerProps } from './components/CurdTable/DetailFormDrawer/index';
+import { DetailFormDrawerProps } from '../DetailFormDrawer';
 
 export interface CustomDetailFormDrawerProps extends DetailFormDrawerProps {
   drawerConfig: {
