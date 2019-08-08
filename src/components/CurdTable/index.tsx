@@ -53,7 +53,7 @@ export interface CurdTableProps extends StandardTableProps {
     mode: 'create' | 'detail' | 'update',
     form?: FormProps['form']
   ) => ItemConfig[];
-  afterPopupNotVisible?: () => void;
+  afterPopupClose?: () => void;
   interceptors?: {
     updateFieldsValue?: (fieldsValue: any, mode?: 'create' | 'update') => any;
     updateSearchValue?: (fieldsValue: any) => any;
@@ -148,7 +148,7 @@ class CurdTable extends PureComponent<CurdTableProps> {
   };
 
   handleVisible = (action, visible, record?: any) => {
-    const { interceptors = {}, afterPopupNotVisible } = this.props;
+    const { interceptors = {} } = this.props;
     const { handleCreateClick } = interceptors;
     if (handleCreateClick && action === CreateName) {
       const isBreak = handleCreateClick();
@@ -161,8 +161,6 @@ class CurdTable extends PureComponent<CurdTableProps> {
       this.setState({
         record: record || {},
       })
-    } else {
-      callFunctionIfFunction(afterPopupNotVisible)();
     }
   };
 
@@ -220,7 +218,11 @@ class CurdTable extends PureComponent<CurdTableProps> {
     return createTitle;
   };
 
-  closePopup = () => this.setState({ popupVisible: null });
+  closePopup = () => {
+    const { afterPopupClose } = this.props;
+    this.setState({ popupVisible: null });
+    callFunctionIfFunction(afterPopupClose)();
+  }
 
   handleCreateOk = async fieldsValue => {
     console.log('handleCreateOk', fieldsValue);
@@ -361,7 +363,7 @@ class CurdTable extends PureComponent<CurdTableProps> {
     const {
       columns,
       actionsConfig,
-      afterPopupNotVisible,
+      afterPopupClose,
       dispatch,
       handleSearch,
       createTitle,
