@@ -63,10 +63,10 @@ class QueryPanel extends PureComponent {
   };
 
   handleSearch = async (searchForm) => {
-    const { __curd__, updateSearchValue } = this.props;
+    const { __curd__ } = this.props;
     console.log('__curd__', __curd__)
     if (__curd__) {
-      const { modelName, dispatch } = __curd__.props;
+      const { modelName, dispatch, updateSearchValue } = __curd__.props;
       let newSearchValue = { ...searchForm };
       if (updateSearchValue) {
         newSearchValue = updateSearchValue(searchForm);
@@ -154,12 +154,16 @@ class QueryPanel extends PureComponent {
 
 export default Form.create({
   onValuesChange: (props, changedValues, allValues) => {
-    const { onValuesChange, __curd__ } = props;
+    const { onValuesChange, __curd__, updateSearchValue } = props;
     if (onValuesChange) {
       onValuesChange(changedValues, allValues);
     }
     if (__curd__) {
-      __curd__.setState({ searchForm: allValues });
+      let newSearchValue = { ...allValues };
+      if (updateSearchValue) {
+        newSearchValue = updateSearchValue(newSearchValue);
+      }
+      __curd__.setState({ searchForm: newSearchValue });
     }
   }
 })(QueryPanel);
