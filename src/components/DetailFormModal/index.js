@@ -1,5 +1,5 @@
 /* eslint-disable no-use-before-define */
-import React from 'react';
+import React, { Fragment } from 'react';
 import { Modal, Form, Row, Col, Spin } from 'antd';
 import FormMateContext from '../../FormMateContext';
 import { injectChildren } from '../../utils';
@@ -50,12 +50,14 @@ function DetailFormModal(props) {
         {({ FormProvider, createFormItems }) => {
           if (FormProvider && createFormItems) {
             return (
-              <Spin spinning={loading}>
+              <Fragment>
                 <div className={itemsWrapperClassName} style={itemsWrapperStyle}>
-                  <FormProvider value={form}>{setColsItems(createFormItems)}</FormProvider>
+                  <Spin spinning={loading}>
+                    <FormProvider value={form}>{setColsItems(createFormItems)}</FormProvider>
+                  </Spin>
                 </div>
                 {mode ? injectChildren(children, { mode }) : children}
-              </Spin>
+              </Fragment>
             )
           }
         }}

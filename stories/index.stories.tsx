@@ -457,7 +457,6 @@ class CurdTableDemo extends React.Component {
         >
           <Curd>
             <CurdTable
-              modelName='test'
               columns={this.columns}
               data={this.data}
               selectedRows={selectedRows}
