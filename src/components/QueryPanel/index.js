@@ -63,10 +63,10 @@ class QueryPanel extends PureComponent {
   };
 
   handleSearch = async (searchForm) => {
-    const { __curd__ } = this.props;
+    const { __curd__, updateSearchValue } = this.props;
     console.log('__curd__', __curd__)
     if (__curd__) {
-      const { modelName, dispatch, updateSearchValue } = __curd__.props;
+      const { modelName, dispatch } = __curd__.props;
       let newSearchValue = { ...searchForm };
       if (updateSearchValue) {
         newSearchValue = updateSearchValue(searchForm);
