@@ -1,8 +1,8 @@
 import React, { PureComponent } from 'react';
 import { Card } from 'antd';
-import CurdTable from './components/CurdTable/index';
+import CurdTable from './components/CurdTable';
 // import TableList from './components/TableList';
-import QueryPanel from './components/QueryPanel/index';
+import QueryPanel from './components/QueryPanel';
 import { injectChildren } from './utils';
 
 
@@ -20,7 +20,6 @@ class Curd extends PureComponent<CurdProps> {
 
   static QueryPanel = QueryPanel;
   static CurdTable = CurdTable;
-
 
   state = {
     searchForm: {},

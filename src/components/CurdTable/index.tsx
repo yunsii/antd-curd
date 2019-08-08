@@ -2,7 +2,6 @@ import React, { PureComponent, Fragment } from 'react';
 import { FormProps } from 'antd/lib/form';
 import { PopconfirmProps } from 'antd/lib/popconfirm';
 import { ItemConfig } from 'antd-form-mate';
-// import classNames from 'classnames';
 import { setActions } from './actions';
 import { ActionType } from './actions/ActionType';
 import { addDivider } from '../../utils';
@@ -120,7 +119,6 @@ class CurdTable extends PureComponent<CurdTableProps> {
 
   componentDidMount() {
     const { dispatch, autoFetch } = this.props;
-    console.log('curdTable componentDidMount', dispatch, autoFetch)
     if (autoFetch) {
       dispatch({
         type: `${getModelName(this.props)}/fetch`,

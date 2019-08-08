@@ -1,23 +1,42 @@
 /* eslint-disable no-use-before-define */
 import React, { Fragment } from 'react';
 import { Modal, Form, Row, Col, Spin } from 'antd';
+import { ModalProps } from 'antd/lib/modal';
+import { FormProps, } from 'antd/lib/form';
+import { ItemConfig } from 'antd-form-mate';
 import FormMateContext from '../../FormMateContext';
 import { injectChildren } from '../../utils';
 
+export interface DetailFormModalProps {
+  modalConfig: ModalProps;
+  loading?: boolean;
+  setItemsConfig: (detail: any, mode: string, form: FormProps['form']) => ItemConfig[];
+  detail?: any;
+  mode?: string;
+  itemsLayout?: {
+    labelCol?: any;
+    wrapperCol?: any;
+  };
+  itemsWrapperStyle?: React.CSSProperties;
+  itemsWrapperClassName?: string;
+  children?: JSX.Element;
+  cols?: number;
+  form: FormProps["form"];
+}
 
-function DetailFormModal(props) {
+function DetailFormModal(props: DetailFormModalProps) {
   const {
-    modalConfig: { onOk: handleOk, ...restModalConfig },
+    modalConfig: { onOk: handleOk = () => { }, ...restModalConfig },
     cols = 1,
     children,
     setItemsConfig,
     detail = {},
-    mode,
+    mode = '',
     itemsLayout,
-    itemsWrapperStyle,
+    itemsWrapperStyle = {} as any,
     itemsWrapperClassName,
     loading = false,
-    form,
+    form = {} as any,
   } = props;
 
   const onOk = () => {
@@ -60,10 +79,11 @@ function DetailFormModal(props) {
               </Fragment>
             )
           }
+          return null;
         }}
       </FormMateContext.Consumer>
     </Modal>
   );
 }
 
-export default Form.create()(DetailFormModal);
+export default Form.create()(DetailFormModal as any);

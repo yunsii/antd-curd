@@ -1,18 +1,38 @@
 import React from 'react';
 import { Spin, Button, Drawer, Form } from 'antd';
+import { DrawerProps } from 'antd/lib/drawer';
+import { FormProps } from 'antd/lib/form';
+import { ItemConfig } from 'antd-form-mate';
 import FormMateContext from '../../FormMateContext';
 
+export interface DetailFormDrawerProps {
+  drawerConfig: DrawerProps;
+  onOk?: Function;
+  setItemsConfig: (detail: any, mode: string, form: FormProps['form']) => ItemConfig[];
+  detail?: any;
+  mode?: string;
+  itemsLayout?: {
+    labelCol?: any;
+    wrapperCol?: any;
+  };
+  loading?: boolean;
+  form: any;
+  cancelText?: string;
+  okText?: string;
+}
 
-const DetailFormDrawer = props => {
+function DetailFormDrawer(props: DetailFormDrawerProps) {
   const {
     drawerConfig,
-    onOk: handleOk,
-    form,
+    onOk: handleOk = () => { },
+    form = {} as any,
     detail = {},
-    mode,
+    mode = '',
     setItemsConfig,
     itemsLayout,
     loading = false,
+    cancelText = '取消',
+    okText = '确定',
   } = props;
   const itemsConfig = setItemsConfig(detail, mode, form);
 
@@ -45,17 +65,18 @@ const DetailFormDrawer = props => {
                       textAlign: 'right',
                     }}
                   >
-                    <Button onClick={drawerConfig.onClose} style={{ marginRight: 8 }}>
-                      取消
+                    <Button onClick={drawerConfig.onClose as any} style={{ marginRight: 8 }}>
+                      {cancelText}
                     </Button>
                     <Button onClick={okHandle} type="primary">
-                      确定
+                      {okText}
                     </Button>
                   </div>
                 ) : null}
               </Spin>
             )
           }
+          return null;
         }}
       </FormMateContext.Consumer>
     </Drawer>
