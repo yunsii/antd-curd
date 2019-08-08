@@ -387,6 +387,7 @@ class CurdTable extends PureComponent<CurdTableProps> {
           {...rest}
           loading={fetchLoading}
           columns={this.enhanceColumns()}
+          onChange={this.handleStandardTableChange}
         />
         {this.renderPopup()}
       </Fragment>
