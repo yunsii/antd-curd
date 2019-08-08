@@ -54,8 +54,28 @@ class QueryPanel extends PureComponent {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
       console.log('QueryPanel form:', fieldsValue);
-      callFunctionIfFunction(onSearch)(fieldsValue);
+      if (onSearch) {
+        onSearch(fieldsValue);
+        return;
+      }
+      this.handleSearch(fieldsValue)
     });
+  };
+
+  handleSearch = async (searchForm) => {
+    const { __curd__, updateSearchValue } = this.props;
+    console.log('__curd__', __curd__)
+    if (__curd__) {
+      const { modelName, dispatch } = __curd__.props;
+      let newSearchValue = { ...searchForm };
+      if (updateSearchValue) {
+        newSearchValue = updateSearchValue(searchForm);
+      }
+      dispatch({
+        type: `${modelName}/fetch`,
+        payload: { ...newSearchValue },
+      });
+    }
   };
 
   renderForm() {
@@ -134,12 +154,12 @@ class QueryPanel extends PureComponent {
 
 export default Form.create({
   onValuesChange: (props, changedValues, allValues) => {
-    const { onValuesChange, setSearchForm } = props;
+    const { onValuesChange, __curd__ } = props;
     if (onValuesChange) {
       onValuesChange(changedValues, allValues);
     }
-    if (setSearchForm) {
-      setSearchForm(allValues);
+    if (__curd__) {
+      __curd__.setState({ searchForm: allValues });
     }
   }
 })(QueryPanel);

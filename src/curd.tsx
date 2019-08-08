@@ -7,32 +7,15 @@ import { injectChildren } from './utils';
 
 
 export interface CurdProps {
-  dispatch: any;
-  children: any;
+  modelName: string;
+  dispatch: Function;
+  children?: any;
 }
 
 class Curd extends PureComponent<CurdProps> {
   static defaultProps = {
-    createTitle: '新建对象',
-    detailTitle: '对象详情',
-    updateTitle: '编辑对象',
-    fetchLoading: false,
-    createLoading: false,
-    updateLoading: false,
-    deleteLoading: false,
-    createButtonName: '新建',
-    dispatch: () => { },
-    queryArgsConfig: [],
-    queryPanelProps: {},
-    containerType: 'table',
-    containerProps: {},
-    renderItem: () => { },
-    data: {},
-    actionsConfig: {},
-    popupType: 'drawer',
-    popupProps: {},
-    setFormItemsConfig: () => { },
-    interceptors: {},
+    modelName: '',
+    dispatch: Function,
   };
 
   static QueryPanel = QueryPanel;
@@ -40,15 +23,17 @@ class Curd extends PureComponent<CurdProps> {
 
 
   state = {
-    createVisible: false,
-    detailVisible: false,
-    updateVisible: false,
-    selectedRows: [],
-    formValues: {},
-    record: {} as any,
-
-    queryForm: {},
+    searchForm: {},
   };
+
+  handleSearch = () => {
+    const { modelName, dispatch } = this.props;
+    const { searchForm } = this.state;
+    dispatch({
+      type: `${modelName}/fetch`,
+      payload: { ...searchForm },
+    })
+  }
 
   // renderContainer = () => {
   //   let result = null;
