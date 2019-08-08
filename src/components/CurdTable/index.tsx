@@ -171,11 +171,7 @@ class CurdTable extends PureComponent<CurdTableProps> {
     dispatch({
       type: `${getModelName(this.props)}/delete`,
       id,
-      callback: response => {
-        if (!response) {
-          callFunctionIfFunction(handleSearch)();
-        }
-      },
+      onOk: () => callFunctionIfFunction(handleSearch)(),
     });
   };
 
@@ -238,11 +234,9 @@ class CurdTable extends PureComponent<CurdTableProps> {
     dispatch({
       type: `${getModelName(this.props)}/create`,
       payload: newFieldsValue,
-      callback: response => {
-        if (!response) {
-          this.closePopup();
-          callFunctionIfFunction(handleSearch)();
-        }
+      onOk: () => {
+        this.closePopup();
+        callFunctionIfFunction(handleSearch)();
       },
     });
   };
@@ -261,10 +255,8 @@ class CurdTable extends PureComponent<CurdTableProps> {
       type: `${getModelName(this.props)}/update`,
       id: record.id,
       payload: newFieldsValue,
-      callback: response => {
-        if (!response) {
-          this.closePopup();
-        }
+      onOk: () => {
+        this.closePopup();
       },
     });
   };
