@@ -29,6 +29,7 @@ export interface StandardTableProps {
     sorter: SorterResult<any>,
     extra?: TableCurrentDataSource<any>
   ) => void;
+  pagination?: PaginationConfig | false,
   loading?: boolean;
 }
 
@@ -89,16 +90,20 @@ class StandardTable extends PureComponent<StandardTableProps, StandardTableState
 
   render() {
     const { selectedRowKeys, needTotalList } = this.state;
-    const { data = {}, rowKey, checkable = true, rowClassName, ...rest } = this.props;
+    const { data = {}, rowKey, checkable = true, rowClassName, pagination: extraPagination, ...rest } = this.props;
     const { list = [], pagination } = data;
 
-    const paginationProps = {
+    let paginationProps = {
       showSizeChanger: true,
       showQuickJumper: true,
       hideOnSinglePage: true,
       showTotal: (total, range) => `${range[0]}-${range[1]}，总计 ${total} 条`,
+      ...extraPagination,
       ...pagination,
     };
+    if (extraPagination === false) {
+      paginationProps = false;
+    }
 
     let rowSelection: any = {
       selectedRowKeys,
