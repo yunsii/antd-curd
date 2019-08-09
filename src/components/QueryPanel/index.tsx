@@ -42,6 +42,7 @@ export declare interface QueryPanelProps {
   updateSearchValue?: (fieldsValue: any) => any;
   wrappedComponentRef?: (self: QueryPanel) => void;
   form?: FormProps["form"];
+  reSearchAfterReset?: boolean;
   __curd__?: Curd;
 };
 
@@ -70,12 +71,18 @@ export default class QueryPanel extends PureComponent<QueryPanelProps, QueryPane
   };
 
   handleFormReset = () => {
-    const { form, onReset, onValuesChange } = this.props;
+    const { form, onReset, onValuesChange, reSearchAfterReset, __curd__ } = this.props;
     form && form.resetFields();
     if (onValuesChange) {
       onValuesChange({}, {});
     }
-
+    if (__curd__) {
+      __curd__.setState({ searchForm: {} }, () => {
+        if (reSearchAfterReset) {
+          __curd__.handleSearch();
+        }
+      });
+    }
     callFunctionIfFunction(onReset)();
   };
 
