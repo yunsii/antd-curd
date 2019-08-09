@@ -24,9 +24,15 @@ function setConfirmTitle(confirmKey, item, record) {
   return `确定${item.title}吗？`;
 }
 
-export function sortAndFilterActionsAsc(actions, hideActions = []) {
+export type ActionType = {
+  key: number;
+  title: string;
+  handleClick: (record: any) => void;
+};
+
+export function sortAndFilterActionsAsc(actions: ActionType[], hideActions = []) {
   return [...actions]
-    .filter(item => !hideActions.includes(item.key))
+    .filter((item) => !hideActions.includes(item.key as never))
     .sort((x, y) => {
       if (x.key > y.key) return 1;
       if (x.key < y.key) return -1;
@@ -60,7 +66,7 @@ export function initialActions(record, actionsMethod, actionsConfig) {
           if (isBreak) return;
         }
         handleVisible(DetailName, true, record);
-        fetchDetailOrNot();
+        fetchDetailOrNot(record);
       },
     },
     {
@@ -72,7 +78,7 @@ export function initialActions(record, actionsMethod, actionsConfig) {
           if (isBreak) return;
         }
         handleVisible(UpdateName, true, record);
-        fetchDetailOrNot()
+        fetchDetailOrNot(record)
       },
     },
     {
@@ -101,10 +107,17 @@ const renderShowActions = record => (actions, confirmKeys = [], confirmProps = {
           {...confirmProps}
           key={item.key}
           title={setConfirmTitle(confirmKey, item, record)}
-          onClick={event => {
-            event.stopPropagation();
+          onConfirm={(event) => {
+            if (event) {
+              event.stopPropagation();
+            }
+            item.handleClick(record)
           }}
-          onConfirm={() => item.handleClick(record)}
+          onCancel={(event) => {
+            if (event) {
+              event.stopPropagation();
+            }
+          }}
         >
           <a>{item.title}</a>
         </Popconfirm>
@@ -133,10 +146,6 @@ export const renderActions = record => (actions, moreActions, confirmKeys, confi
     ...renderShowActions(record)(actions, confirmKeys, confirmProps),
     <Dropdown
       key="more"
-      // 阻止 Dropdown 点击事件冒泡，否则会触发 actions 容器点击事件
-      onClick={event => {
-        event.stopPropagation();
-      }}
       overlay={
         // 阻止 Menu 点击事件冒泡，否则会触发 actions 容器点击事件
         <Menu
