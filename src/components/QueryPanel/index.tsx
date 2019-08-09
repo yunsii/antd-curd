@@ -8,6 +8,7 @@ import { callFunctionIfFunction } from '../../utils';
 import styles from './index.less';
 import FormMateContext from '../../FormMateContext';
 import Curd from '../../Curd';
+import { queryPanelText } from '../../config';
 
 const RowCount = [1, 2, 3, 4, 6, 8, 12, 24];
 const addAllowClearToItemsConfig = itemsConfig =>
@@ -37,10 +38,6 @@ export declare interface QueryPanelProps {
   maxCount?: number;
   rowProps?: RowProps;
   colProps?: ColProps;
-  collapseText?: string;
-  expandText?: string;
-  searchText?: string;
-  resetText?: string;
   onValuesChange?: (changedValues: any, allValues: any) => void;
   updateSearchValue?: (fieldsValue: any) => any;
   wrappedComponentRef?: (self: QueryPanel) => void;
@@ -68,13 +65,6 @@ interface QueryPanelState {
   }
 }) as any)
 export default class QueryPanel extends PureComponent<QueryPanelProps, QueryPanelState> {
-  static defaultProps = {
-    collapseText: '收起',
-    expandText: '展开',
-    searchText: '查询',
-    resetText: '重置',
-  }
-
   state = {
     expandForm: false,
   };
@@ -132,10 +122,6 @@ export default class QueryPanel extends PureComponent<QueryPanelProps, QueryPane
       maxCount = 2,
       rowProps = {},
       colProps: customColProps,
-      collapseText,
-      expandText,
-      searchText,
-      resetText,
     } = this.props;
     if (!queryArgsConfig.length) return null;
     let colProps = { span: calculateSpan(rowCount) } as any;
@@ -152,21 +138,21 @@ export default class QueryPanel extends PureComponent<QueryPanelProps, QueryPane
 
     const action = expandForm ? (
       <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
-        {collapseText} <Icon type="up" />
+        {queryPanelText.collapse} <Icon type="up" />
       </a>
     ) : (
         <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
-          {expandText} <Icon type="down" />
+          {queryPanelText.expand} <Icon type="down" />
         </a>
       );
     const actions = (
       <div style={{ overflow: 'hidden' }}>
         <div style={{ marginBottom: 24 }}>
           <Button type="primary" htmlType="submit">
-            {searchText}
+            {queryPanelText.search}
           </Button>
           <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
-            {resetText}
+            {queryPanelText.reset}
           </Button>
           {queryArgsConfig.length > maxCount ? action : null}
         </div>

@@ -4,6 +4,7 @@ import { DrawerProps } from 'antd/lib/drawer';
 import { FormProps } from 'antd/lib/form';
 import { ItemConfig } from 'antd-form-mate';
 import FormMateContext from '../../FormMateContext';
+import { detailFormDrawerText } from '../../config';
 
 export interface DetailFormDrawerProps {
   drawerConfig: DrawerProps;
@@ -17,8 +18,6 @@ export interface DetailFormDrawerProps {
   };
   loading?: boolean;
   form: any;
-  cancelText?: string;
-  okText?: string;
 }
 
 function DetailFormDrawer(props: DetailFormDrawerProps) {
@@ -31,8 +30,6 @@ function DetailFormDrawer(props: DetailFormDrawerProps) {
     setItemsConfig,
     itemsLayout,
     loading = false,
-    cancelText = '取消',
-    okText = '确定',
   } = props;
   const itemsConfig = setItemsConfig(detail, mode, form);
 
@@ -66,10 +63,10 @@ function DetailFormDrawer(props: DetailFormDrawerProps) {
                     }}
                   >
                     <Button onClick={drawerConfig.onClose as any} style={{ marginRight: 8 }}>
-                      {cancelText}
+                      {detailFormDrawerText.cancel}
                     </Button>
                     <Button onClick={okHandle} type="primary">
-                      {okText}
+                      {detailFormDrawerText.ok}
                     </Button>
                   </div>
                 ) : null}
