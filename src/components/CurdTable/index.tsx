@@ -11,7 +11,9 @@ import DetailFormModal from '../DetailFormModal';
 import { CustomDetailFormDrawerProps } from './CustomDetailFormDrawerProps';
 import { CustomDetailFormModalProps } from './CustomDetailFormModalProps';
 import { CreateName, DetailName, UpdateName } from '../../constant';
+import { formatSorter, searchFieldName } from '../../config';
 import { callFunctionIfFunction } from '../../utils';
+import Curd from '../../Curd';
 
 
 const getValue = obj =>
@@ -35,6 +37,7 @@ function getModelName(props) {
   }
   throw new Error('CurdTable can\'t get modelName from __curd__');
 }
+
 
 export interface CurdTableProps extends StandardTableProps {
   /** popup title of create */
@@ -83,10 +86,9 @@ export interface CurdTableProps extends StandardTableProps {
   operators?: React.ReactNode[] | boolean | null;
   dispatch?: any;
   /** call model's fetch effect when componentDidMount */
-  autoFetch?: boolean,
-  __curd__?: any,
-
-  handleSearch?: () => void;
+  autoFetch?: boolean;
+  reSearchAfterUpdate?: boolean;
+  __curd__?: Curd,
 }
 
 interface CurdState {
@@ -118,6 +120,7 @@ class CurdTable extends PureComponent<CurdTableProps, CurdState> {
     interceptors: {},
     operators: [],
     autoFetch: true,
+    reSearchAfterUpdate: false,
     __curd__: null,
   }
 
@@ -170,12 +173,38 @@ class CurdTable extends PureComponent<CurdTableProps, CurdState> {
     }
   };
 
+  reSearch = () => {
+    const { __curd__ } = this.props;
+    if (__curd__) {
+      __curd__.handleSearch();
+    }
+  }
+
+  getSearchForm = () => {
+    const { __curd__ } = this.props;
+    let result = {};
+    if (__curd__) {
+      const { searchForm } = __curd__.state;
+      result = { ...searchForm };
+    }
+    return result;
+  }
+
+  setSearchForm = (fieldsValue) => {
+    const { __curd__ } = this.props;
+    if (__curd__) {
+      __curd__.setState({
+        searchForm: { ...fieldsValue },
+      })
+    }
+  }
+
   deleteModel = id => {
-    const { dispatch, handleSearch } = this.props;
+    const { dispatch } = this.props;
     dispatch({
       type: `${getModelName(this.props)}/delete`,
       id,
-      onOk: () => callFunctionIfFunction(handleSearch)(),
+      onOk: () => this.reSearch(),
     });
   };
 
@@ -225,10 +254,10 @@ class CurdTable extends PureComponent<CurdTableProps, CurdState> {
   };
 
   closePopup = () => this.setState({ popupVisible: null });
-  
+
   handleCreateOk = async fieldsValue => {
     console.log('handleCreateOk', fieldsValue);
-    const { interceptors, dispatch, handleSearch } = this.props;
+    const { interceptors, dispatch } = this.props;
     const newFieldsValue = await updateFieldsValueByInterceptors(
       fieldsValue,
       interceptors,
@@ -240,14 +269,14 @@ class CurdTable extends PureComponent<CurdTableProps, CurdState> {
       payload: newFieldsValue,
       onOk: () => {
         this.closePopup();
-        callFunctionIfFunction(handleSearch)();
+        this.reSearch();
       },
     });
   };
 
   handleUpdateOk = async fieldsValue => {
     console.log('handleUpdateOk', fieldsValue);
-    const { dispatch, interceptors } = this.props;
+    const { dispatch, interceptors, reSearchAfterUpdate } = this.props;
     const { record } = this.state;
     const newFieldsValue = await updateFieldsValueByInterceptors(
       fieldsValue,
@@ -261,6 +290,9 @@ class CurdTable extends PureComponent<CurdTableProps, CurdState> {
       payload: newFieldsValue,
       onOk: () => {
         this.closePopup();
+        if (reSearchAfterUpdate) {
+          this.reSearch();
+        }
       },
     });
   };
@@ -278,26 +310,20 @@ class CurdTable extends PureComponent<CurdTableProps, CurdState> {
   };
 
   handleStandardTableChange = (pagination, filtersArg = {}, sorter = {} as any) => {
-    const { dispatch, __curd__ } = this.props;
-    let searchForm = {};
-    if (__curd__ && __curd__.state) {
-      const { searchForm: searchFormState } = __curd__.state;
-      searchForm = { ...searchFormState };
-    }
+    const { dispatch } = this.props;
     const filters = Object.keys(filtersArg).reduce((obj, key) => {
       const newObj = { ...obj };
       newObj[key] = getValue(filtersArg[key]);
       return newObj;
     }, {});
     const params = {
-      page: pagination.current,
-      limit: pagination.pageSize,
-      ...searchForm,
+      [searchFieldName.page]: pagination.current,
+      [searchFieldName.limit]: pagination.pageSize,
+      ...this.getSearchForm(),
       ...filters,
     };
-
     if (sorter.field) {
-      params['sorter'] = `${sorter.field}_${sorter.order}`;
+      params[searchFieldName.sortor] = formatSorter(sorter);
     }
     dispatch({
       type: `${getModelName(this.props)}/fetch`,
@@ -376,7 +402,6 @@ class CurdTable extends PureComponent<CurdTableProps, CurdState> {
       actionsConfig,
       afterPopupClose,
       dispatch,
-      handleSearch,
       createTitle,
       detailTitle,
       updateTitle,
