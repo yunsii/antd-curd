@@ -56,19 +56,27 @@ interface QueryPanelState {
     if (onValuesChange) {
       onValuesChange(changedValues, allValues);
     }
-    if (__curd__) {
-      let newSearchValue = { ...allValues };
-      if (updateSearchValue) {
-        newSearchValue = updateSearchValue(newSearchValue);
-      }
-      __curd__.setState({ searchForm: newSearchValue });
-    }
   }
 }) as any)
 export default class QueryPanel extends PureComponent<QueryPanelProps, QueryPanelState> {
   state = {
     expandForm: false,
   };
+
+  setSearchFormAndSearch = (fieldsValue) => {
+    const { __curd__, updateSearchValue } = this.props;
+    if (__curd__) {
+      let newSearchValue = { ...fieldsValue };
+      if (updateSearchValue) {
+        newSearchValue = updateSearchValue(newSearchValue);
+      }
+      __curd__.setState({
+        searchForm: { ...fieldsValue },
+      }, () => {
+        __curd__.handleSearch();
+      })
+    }
+  }
 
   handleFormReset = () => {
     const { form, onReset, onValuesChange, reSearchAfterReset, __curd__ } = this.props;
@@ -102,23 +110,8 @@ export default class QueryPanel extends PureComponent<QueryPanelProps, QueryPane
         onSearch(fieldsValue);
         return;
       }
-      this.handleSearch(fieldsValue)
+      this.setSearchFormAndSearch(fieldsValue);
     });
-  };
-
-  handleSearch = async (fieldsValue) => {
-    const { __curd__, updateSearchValue } = this.props;
-    if (__curd__) {
-      const { modelName, dispatch } = __curd__.props;
-      let newSearchValue = { ...fieldsValue };
-      if (updateSearchValue) {
-        newSearchValue = updateSearchValue(newSearchValue);
-      }
-      dispatch({
-        type: `${modelName}/fetch`,
-        payload: { ...newSearchValue },
-      });
-    }
   };
 
   renderForm() {
