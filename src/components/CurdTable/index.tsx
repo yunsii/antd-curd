@@ -150,7 +150,7 @@ class CurdTable extends PureComponent<CurdTableProps, CurdState> {
   }
 
   fetchDetailOrNot = () => {
-    if (this.willFetchDetail) {
+    if (this.willFetchDetail()) {
       this.fetchDetail();
     }
   };

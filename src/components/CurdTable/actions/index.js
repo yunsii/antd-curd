@@ -59,8 +59,8 @@ export function initialActions(record, actionsMethod, actionsConfig) {
           const isBreak = handleDetailClick(record);
           if (isBreak) return;
         }
-        fetchDetailOrNot();
         handleVisible(DetailName, true, record);
+        fetchDetailOrNot();
       },
     },
     {
@@ -71,8 +71,8 @@ export function initialActions(record, actionsMethod, actionsConfig) {
           const isBreak = handleUpdateClick(record);
           if (isBreak) return;
         }
-        fetchDetailOrNot()
         handleVisible(UpdateName, true, record);
+        fetchDetailOrNot()
       },
     },
     {
