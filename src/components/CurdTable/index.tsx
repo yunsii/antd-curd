@@ -15,6 +15,11 @@ import { CreateName, DetailName, UpdateName } from '../../constant';
 import { callFunctionIfFunction } from '../../utils';
 
 
+const getValue = obj =>
+  Object.keys(obj)
+    .map(key => obj[key])
+    .join(',');
+
 async function updateFieldsValueByInterceptors(fieldsValue, interceptors, mode) {
   const { updateFieldsValue } = interceptors;
   let newFieldsValue = { ...fieldsValue };
@@ -44,6 +49,7 @@ export interface CurdTableProps extends StandardTableProps {
   detailLoading?: boolean;
   updateLoading?: boolean;
   deleteLoading?: boolean;
+  /** if value is '', hide the button */
   createButtonName?: string;
   popupType?: 'modal' | 'drawer' | null;
   popupProps?: CustomDetailFormDrawerProps | CustomDetailFormModalProps;
@@ -54,10 +60,13 @@ export interface CurdTableProps extends StandardTableProps {
   ) => ItemConfig[];
   afterPopupClose?: () => void;
   interceptors?: {
+    /** update form values after click ok */
     updateFieldsValue?: (fieldsValue: any, mode?: 'create' | 'update') => any;
-    updateSearchValue?: (fieldsValue: any) => any;
+    /** callback on click create button, will break default behavior if return value is true */
     handleCreateClick?: () => boolean | undefined;
+    /** callback on click detail button, will break default behavior if return value is true */
     handleDetailClick?: (record: any) => boolean | undefined;
+    /** callback on click update button, will break default behavior if return value is true */
     handleUpdateClick?: (record: any) => boolean | undefined;
     handleDeleteClick?: (record: any) => void;
   };
@@ -74,18 +83,19 @@ export interface CurdTableProps extends StandardTableProps {
   } | false | null;
   operators?: React.ReactNode[] | boolean | null;
   dispatch?: any;
+  /** call model's fetch effect when componentDidMount */
   autoFetch?: boolean,
   __curd__?: any,
 
   handleSearch?: () => void;
 }
 
-const getValue = obj =>
-  Object.keys(obj)
-    .map(key => obj[key])
-    .join(',');
+interface CurdState {
+  popupVisible: string | null;
+  record: any;
+}
 
-class CurdTable extends PureComponent<CurdTableProps> {
+class CurdTable extends PureComponent<CurdTableProps, CurdState> {
   static defaultProps = {
     createTitle: '新建对象',
     detailTitle: '对象详情',

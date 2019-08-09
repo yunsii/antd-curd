@@ -1,11 +1,13 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { PureComponent } from 'react';
 import { Row, Col, Form, Icon, Button } from 'antd';
+import { FormProps } from 'antd/lib/form';
 import { RowProps } from 'antd/lib/row';
 import { ColProps } from 'antd/lib/col';
 import { callFunctionIfFunction } from '../../utils';
 import styles from './index.less';
 import FormMateContext from '../../FormMateContext';
+import Curd from '../../Curd';
 
 const RowCount = [1, 2, 3, 4, 6, 8, 12, 24];
 const addAllowClearToItemsConfig = itemsConfig =>
@@ -30,6 +32,7 @@ function calculateSpan(rowCount) {
 export declare interface QueryPanelProps {
   queryArgsConfig: any[];
   onSearch?: (fieldsValue: any) => void;
+  onReset?: () => void;
   rowCount?: 1 | 2 | 3 | 4 | 6 | 8 | 12 | 24;
   maxCount?: number;
   rowProps?: RowProps;
@@ -40,8 +43,9 @@ export declare interface QueryPanelProps {
   resetText?: string;
   onValuesChange?: (changedValues: any, allValues: any) => void;
   updateSearchValue?: (fieldsValue: any) => any;
-  __curd__?: any;
-  [k: string]: any;
+  wrappedComponentRef?: (self: QueryPanel) => void;
+  form?: FormProps["form"];
+  __curd__?: Curd;
 };
 
 interface QueryPanelState {
@@ -77,7 +81,7 @@ export default class QueryPanel extends PureComponent<QueryPanelProps, QueryPane
 
   handleFormReset = () => {
     const { form, onReset, onValuesChange } = this.props;
-    form.resetFields();
+    form && form.resetFields();
     if (onValuesChange) {
       onValuesChange({}, {});
     }
@@ -95,8 +99,7 @@ export default class QueryPanel extends PureComponent<QueryPanelProps, QueryPane
   handleSubmit = event => {
     event.preventDefault();
     const { form, onSearch } = this.props;
-
-    form.validateFields((err, fieldsValue) => {
+    form && form.validateFields((err, fieldsValue) => {
       if (err) return;
       if (onSearch) {
         onSearch(fieldsValue);
