@@ -1,3 +1,5 @@
+import { SorterResult } from 'antd/lib/table';
+
 export const queryPanelText = {
   collapse: '收起',
   expand: '展开',
@@ -39,5 +41,35 @@ export function setDetailFormDrawerText(config: {
   }
   if (config.cancel) {
     detailFormDrawerText["cancel"] = config.cancel
+  }
+}
+
+export let formatSorter: (sorter: SorterResult<any>) => any = (sorter: SorterResult<any>) => `${sorter.field}_${sorter.order}`
+
+export function setFormatSorter(customSorter: (sorter: SorterResult<any>) => any) {
+  if (customSorter instanceof Function) {
+    formatSorter = customSorter
+  }
+}
+
+export const searchFieldName = {
+  page: 'page',
+  limit: 'limit',
+  sortor: 'sortor',
+}
+
+export function setSearchFieldName(config: {
+  page?: string,
+  limit?: string,
+  sortor?: string,
+}) {
+  if (config.page) {
+    searchFieldName["page"] = config.page
+  }
+  if (config.limit) {
+    searchFieldName["limit"] = config.limit
+  }
+  if (config.sortor) {
+    searchFieldName["sortor"] = config.sortor
   }
 }
