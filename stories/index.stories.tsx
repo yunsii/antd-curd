@@ -4,11 +4,15 @@ import { storiesOf } from '@storybook/react';
 // import * as moment from 'moment';
 import { Button, Card, Switch, Form, Radio } from 'antd';
 // import { WrappedFormUtils } from 'antd/lib/form/Form';
-import Curd from '../src/curd';
+import { Curd } from '../src';
 import StandardTable from '../src/components/StandardTable';
+import TableList from '../src/components/TableList';
 import FormMateContext from '../src/FormMateContext';
 import { FormProvider, createFormItems } from './antd-form-mate';
+import renderCard from './CustomCard';
+import CurdTableListDemo from './CurdTableList';
 import setFormItemsConfig from './map';
+import { columns, data as mockData } from './mock';
 
 const { QueryPanel, CurdTable } = Curd;
 const { Group: RadioGroup } = Radio;
@@ -90,150 +94,12 @@ class StandardTableDemo extends React.Component {
   state = {
     selectedRows: [],
     checkable: true,
-  }
-
-  columns = [
-    {
-      title: '公式照',
-      dataIndex: 'avatar',
-    },
-    {
-      title: '姓名',
-      dataIndex: 'name',
-    },
-    {
-      title: '昵称',
-      dataIndex: 'nickname',
-    },
-    {
-      title: '生日',
-      dataIndex: 'birthday',
-    },
-    {
-      title: '特长',
-      dataIndex: 'speciality',
-    },
-    {
-      title: '爱好',
-      dataIndex: 'habit',
-    },
-  ];
-
-  data = {
-    list: [
-      {
-        id: 'szn',
-        avatar: 'xxx',
-        name: '孙珍妮',
-        nickname: '珍妮',
-        birthday: '05.05',
-        speciality: '唱歌、吉他',
-        habit: '吃东西、逛街',
-      },
-      {
-        id: 'cmj',
-        avatar: 'xxx',
-        name: '陈美君',
-        nickname: 'MIMI',
-        birthday: '01.15',
-        speciality: '钢琴、吉他',
-        habit: '旅游、宅',
-      },
-      {
-        id: 'szn1',
-        avatar: 'xxx',
-        name: '孙珍妮',
-        nickname: '珍妮',
-        birthday: '05.05',
-        speciality: '唱歌、吉他',
-        habit: '吃东西、逛街',
-      },
-      {
-        id: 'cmj2',
-        avatar: 'xxx',
-        name: '陈美君',
-        nickname: 'MIMI',
-        birthday: '01.15',
-        speciality: '钢琴、吉他',
-        habit: '旅游、宅',
-      },
-      {
-        id: 'szn3',
-        avatar: 'xxx',
-        name: '孙珍妮',
-        nickname: '珍妮',
-        birthday: '05.05',
-        speciality: '唱歌、吉他',
-        habit: '吃东西、逛街',
-      },
-      {
-        id: 'cmj4',
-        avatar: 'xxx',
-        name: '陈美君',
-        nickname: 'MIMI',
-        birthday: '01.15',
-        speciality: '钢琴、吉他',
-        habit: '旅游、宅',
-      },
-      {
-        id: 'szn5',
-        avatar: 'xxx',
-        name: '孙珍妮',
-        nickname: '珍妮',
-        birthday: '05.05',
-        speciality: '唱歌、吉他',
-        habit: '吃东西、逛街',
-      },
-      {
-        id: 'cmj6',
-        avatar: 'xxx',
-        name: '陈美君',
-        nickname: 'MIMI',
-        birthday: '01.15',
-        speciality: '钢琴、吉他',
-        habit: '旅游、宅',
-      },
-      {
-        id: 'szn7',
-        avatar: 'xxx',
-        name: '孙珍妮',
-        nickname: '珍妮',
-        birthday: '05.05',
-        speciality: '唱歌、吉他',
-        habit: '吃东西、逛街',
-      },
-      {
-        id: 'cmj8',
-        avatar: 'xxx',
-        name: '陈美君',
-        nickname: 'MIMI',
-        birthday: '01.15',
-        speciality: '钢琴、吉他',
-        habit: '旅游、宅',
-      },
-      {
-        id: 'szn9',
-        avatar: 'xxx',
-        name: '孙珍妮',
-        nickname: '珍妮',
-        birthday: '05.05',
-        speciality: '唱歌、吉他',
-        habit: '吃东西、逛街',
-      },
-      {
-        id: 'cmj11',
-        avatar: 'xxx',
-        name: '陈美君',
-        nickname: 'MIMI',
-        birthday: '01.15',
-        speciality: '钢琴、吉他',
-        habit: '旅游、宅',
-      },
-    ]
+    pagination: true,
   }
 
   render() {
-    const { selectedRows, checkable } = this.state;
+    const { selectedRows, checkable, pagination } = this.state;
+    console.log(pagination)
     return (
       <React.Fragment>
         <Card>
@@ -248,18 +114,29 @@ class StandardTableDemo extends React.Component {
                 }}
               />
             </Form.Item>
+            <Form.Item label="分页器" >
+              <Switch
+                checked={pagination}
+                onChange={() => {
+                  this.setState({
+                    pagination: !pagination,
+                  })
+                }}
+              />
+            </Form.Item>
           </Form>
         </Card>
         <Card bordered={false}>
           <StandardTable
-            columns={this.columns}
-            data={this.data}
+            columns={columns}
+            data={mockData}
             selectedRows={selectedRows}
             onSelectRow={(row) => {
               console.log(row);
               this.setState({ selectedRows: row });
             }}
             checkable={checkable}
+            pagination={pagination ? {} : false}
           />
         </Card>
       </React.Fragment>
@@ -273,146 +150,6 @@ class CurdTableDemo extends React.Component {
     checkable: true,
     operators: true,
     popupType: 'drawer',
-  }
-
-  columns = [
-    {
-      title: '公式照',
-      dataIndex: 'avatar',
-    },
-    {
-      title: '姓名',
-      dataIndex: 'name',
-    },
-    {
-      title: '昵称',
-      dataIndex: 'nickname',
-    },
-    {
-      title: '生日',
-      dataIndex: 'birthday',
-    },
-    {
-      title: '特长',
-      dataIndex: 'speciality',
-    },
-    {
-      title: '爱好',
-      dataIndex: 'habit',
-    },
-  ];
-
-  data = {
-    list: [
-      {
-        id: 'szn',
-        avatar: 'xxx',
-        name: '孙珍妮',
-        nickname: '珍妮',
-        birthday: '05.05',
-        speciality: '唱歌、吉他',
-        habit: '吃东西、逛街',
-      },
-      {
-        id: 'cmj',
-        avatar: 'xxx',
-        name: '陈美君',
-        nickname: 'MIMI',
-        birthday: '01.15',
-        speciality: '钢琴、吉他',
-        habit: '旅游、宅',
-      },
-      {
-        id: 'szn1',
-        avatar: 'xxx',
-        name: '孙珍妮',
-        nickname: '珍妮',
-        birthday: '05.05',
-        speciality: '唱歌、吉他',
-        habit: '吃东西、逛街',
-      },
-      {
-        id: 'cmj2',
-        avatar: 'xxx',
-        name: '陈美君',
-        nickname: 'MIMI',
-        birthday: '01.15',
-        speciality: '钢琴、吉他',
-        habit: '旅游、宅',
-      },
-      {
-        id: 'szn3',
-        avatar: 'xxx',
-        name: '孙珍妮',
-        nickname: '珍妮',
-        birthday: '05.05',
-        speciality: '唱歌、吉他',
-        habit: '吃东西、逛街',
-      },
-      {
-        id: 'cmj4',
-        avatar: 'xxx',
-        name: '陈美君',
-        nickname: 'MIMI',
-        birthday: '01.15',
-        speciality: '钢琴、吉他',
-        habit: '旅游、宅',
-      },
-      {
-        id: 'szn5',
-        avatar: 'xxx',
-        name: '孙珍妮',
-        nickname: '珍妮',
-        birthday: '05.05',
-        speciality: '唱歌、吉他',
-        habit: '吃东西、逛街',
-      },
-      {
-        id: 'cmj6',
-        avatar: 'xxx',
-        name: '陈美君',
-        nickname: 'MIMI',
-        birthday: '01.15',
-        speciality: '钢琴、吉他',
-        habit: '旅游、宅',
-      },
-      {
-        id: 'szn7',
-        avatar: 'xxx',
-        name: '孙珍妮',
-        nickname: '珍妮',
-        birthday: '05.05',
-        speciality: '唱歌、吉他',
-        habit: '吃东西、逛街',
-      },
-      {
-        id: 'cmj8',
-        avatar: 'xxx',
-        name: '陈美君',
-        nickname: 'MIMI',
-        birthday: '01.15',
-        speciality: '钢琴、吉他',
-        habit: '旅游、宅',
-      },
-      {
-        id: 'szn9',
-        avatar: 'xxx',
-        name: '孙珍妮',
-        nickname: '珍妮',
-        birthday: '05.05',
-        speciality: '唱歌、吉他',
-        habit: '吃东西、逛街',
-      },
-      {
-        id: 'cmj11',
-        avatar: 'xxx',
-        name: '陈美君',
-        nickname: 'MIMI',
-        birthday: '01.15',
-        speciality: '钢琴、吉他',
-        habit: '旅游、宅',
-      },
-    ]
   }
 
   render() {
@@ -457,8 +194,8 @@ class CurdTableDemo extends React.Component {
         >
           <Curd>
             <CurdTable
-              columns={this.columns}
-              data={this.data}
+              columns={columns}
+              data={mockData}
               selectedRows={selectedRows}
               onSelectRow={(row) => {
                 console.log(row);
@@ -482,7 +219,21 @@ class CurdTableDemo extends React.Component {
   }
 }
 
+class TableListDemo extends React.Component {
+  render() {
+    return (
+      <TableList
+        data={mockData.list}
+        renderItem={renderCard}
+      />
+    )
+  }
+}
+
+
 storiesOf('custom components', module)
   .add('QueryPanel', () => <QueryPanelDemo />)
   .add('StandardTable', () => <StandardTableDemo />)
-  .add('CurdTable', () => <CurdTableDemo />);
+  .add('TableList', () => <TableListDemo />)
+  .add('CurdTable', () => <CurdTableDemo />)
+  .add('CurdTableList', () => <CurdTableListDemo />);

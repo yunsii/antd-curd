@@ -9,3 +9,4 @@ export { default as Curd } from './Curd';
 export { default as FormMateContext } from './FormMateContext';
 
 export { default as StandardTable } from './components/StandardTable';
+export { default as TableList } from './components/TableList';

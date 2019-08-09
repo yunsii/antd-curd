@@ -64,7 +64,8 @@
     "typescript": "^3.5.3",
     "webpack": "^4.39.1",
     "webpack-cli": "^3.3.6",
-    "webpack-node-externals": "^1.7.2"
+    "webpack-node-externals": "^1.7.2",
+    "react-infinite-scroller": "^1.2.4"
   },
   "keywords": [
     "antd",
