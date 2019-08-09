@@ -2,8 +2,7 @@ import React, { PureComponent, Fragment } from 'react';
 import { FormProps } from 'antd/lib/form';
 import { PopconfirmProps } from 'antd/lib/popconfirm';
 import { ItemConfig } from 'antd-form-mate';
-import { setActions } from './actions';
-import { ActionType } from './actions/ActionType';
+import { setActions, ActionType } from './actions';
 import { addDivider } from '../../utils';
 import Operators from './Operators';
 import StandardTable, { StandardTableProps } from '../StandardTable/index';
@@ -140,18 +139,17 @@ class CurdTable extends PureComponent<CurdTableProps, CurdState> {
     return DetailName in this.props && 'detailLoading' in this.props;
   }
 
-  fetchDetail = () => {
+  fetchDetail = (record) => {
     const { dispatch } = this.props;
-    const { record } = this.state;
     dispatch({
       type: `${getModelName(this.props)}/detail`,
       id: record.id,
     });
   }
 
-  fetchDetailOrNot = () => {
+  fetchDetailOrNot = (record) => {
     if (this.willFetchDetail()) {
-      this.fetchDetail();
+      this.fetchDetail(record);
     }
   };
 
@@ -226,12 +224,8 @@ class CurdTable extends PureComponent<CurdTableProps, CurdState> {
     return createTitle;
   };
 
-  closePopup = () => {
-    const { afterPopupClose } = this.props;
-    this.setState({ popupVisible: null });
-    callFunctionIfFunction(afterPopupClose)();
-  }
-
+  closePopup = () => this.setState({ popupVisible: null });
+  
   handleCreateOk = async fieldsValue => {
     console.log('handleCreateOk', fieldsValue);
     const { interceptors, dispatch, handleSearch } = this.props;
@@ -275,12 +269,12 @@ class CurdTable extends PureComponent<CurdTableProps, CurdState> {
     const { popupVisible } = this.state;
     if (popupVisible === DetailName) {
       this.closePopup();
-      return null;
+      return;
     }
     if (popupVisible === UpdateName) {
-      return this.handleUpdateOk(fieldsValue);
+      this.handleUpdateOk(fieldsValue);
     }
-    return this.handleCreateOk(fieldsValue);
+    this.handleCreateOk(fieldsValue);
   };
 
   handleStandardTableChange = (pagination, filtersArg = {}, sorter = {} as any) => {
@@ -321,6 +315,7 @@ class CurdTable extends PureComponent<CurdTableProps, CurdState> {
       setFormItemsConfig,
       popupType,
       popupProps,
+      afterPopupClose,
     } = this.props;
     const { popupVisible } = this.state;
     const { drawerConfig, modalConfig, ...restPopupProps } = popupProps as any;
@@ -340,7 +335,14 @@ class CurdTable extends PureComponent<CurdTableProps, CurdState> {
     if (popupType === 'drawer') {
       result = (
         <DetailFormDrawer
-          drawerConfig={composePopupProps}
+          drawerConfig={{
+            ...composePopupProps,
+            afterVisibleChange: (visible) => {
+              if (!visible) {
+                callFunctionIfFunction(afterPopupClose)();
+              }
+            },
+          }}
           {...restPopupProps}
           loading={loading}
           onOk={this.handleOk}
@@ -355,6 +357,7 @@ class CurdTable extends PureComponent<CurdTableProps, CurdState> {
           modalConfig={{
             ...composePopupProps,
             onOk: this.handleOk,
+            afterClose: afterPopupClose,
           }}
           {...restPopupProps}
           loading={loading}
