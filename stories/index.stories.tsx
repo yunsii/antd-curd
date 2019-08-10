@@ -6,11 +6,11 @@ import { Button, Card, Switch, Form, Radio } from 'antd';
 // import { WrappedFormUtils } from 'antd/lib/form/Form';
 import { Curd } from '../src';
 import StandardTable from '../src/components/StandardTable';
-import TableList from '../src/components/TableList';
+import StandardList from '../src/components/StandardList';
 import FormMateContext from '../src/FormMateContext';
 import { FormProvider, createFormItems } from './antd-form-mate';
 import renderCard from './CustomCard';
-import CurdTableListDemo from './CurdTableList';
+import CurdListDemo from './CurdList';
 import setFormItemsConfig from './map';
 import { columns, data as mockData } from './mock';
 
@@ -219,10 +219,10 @@ class CurdTableDemo extends React.Component {
   }
 }
 
-class TableListDemo extends React.Component {
+class StandardListDemo extends React.Component {
   render() {
     return (
-      <TableList
+      <StandardList
         data={mockData.list}
         renderItem={renderCard}
       />
@@ -234,6 +234,6 @@ class TableListDemo extends React.Component {
 storiesOf('custom components', module)
   .add('QueryPanel', () => <QueryPanelDemo />)
   .add('StandardTable', () => <StandardTableDemo />)
-  .add('TableList', () => <TableListDemo />)
+  .add('StandardList', () => <StandardListDemo />)
   .add('CurdTable', () => <CurdTableDemo />)
-  .add('CurdTableList', () => <CurdTableListDemo />);
+  .add('CurdList', () => <CurdListDemo />);

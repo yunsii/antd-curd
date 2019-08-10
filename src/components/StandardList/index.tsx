@@ -21,7 +21,7 @@ export type renderItemConfig = {
   checkable?: boolean;
 }
 
-export interface TableListProps {
+export interface StandardListProps {
   data: any[];
   onSelectRow?: (recordArray: any[]) => void;
   rowKey?: string;
@@ -33,18 +33,17 @@ export interface TableListProps {
   loading?: boolean;
 }
 
-interface TableListState {
+interface StandardListState {
   selectedRowKeys: number[] | string[];
 }
 
-class TableList extends PureComponent<TableListProps, TableListState> {
+class StandardList extends PureComponent<StandardListProps, StandardListState> {
   static defaultProps = {
     data: [],
     loading: false,
-    pagination: true,
   };
 
-  constructor(props: TableListProps) {
+  constructor(props: StandardListProps) {
     super(props);
     this.state = {
       selectedRowKeys: [],
@@ -184,4 +183,4 @@ class TableList extends PureComponent<TableListProps, TableListState> {
   }
 }
 
-export default TableList;
+export default StandardList;

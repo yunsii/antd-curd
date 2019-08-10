@@ -59,7 +59,7 @@ export default class CurdTableListDemo extends React.Component {
           useWindow={false}
         >
           <Curd>
-            <Curd.TableList
+            <Curd.CurdList
               data={data}
               renderItem={renderCard}
               pagination={false}
