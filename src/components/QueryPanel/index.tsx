@@ -85,7 +85,7 @@ export default class QueryPanel extends PureComponent<QueryPanelProps, QueryPane
       onValuesChange({}, {});
     }
     if (__curd__) {
-      __curd__.setState({ searchForm: {} }, () => {
+      __curd__.setState({ searchForm: {}, searchParams: {} }, () => {
         if (reSearchAfterReset) {
           __curd__.handleSearch();
         }
