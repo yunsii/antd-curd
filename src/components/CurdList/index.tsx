@@ -21,7 +21,7 @@ export type renderItemConfig = {
   checkable?: boolean;
 }
 
-export interface TableListProps {
+export interface CurdListProps {
   data: any[];
   onSelectRow?: (recordArray: any[]) => void;
   rowKey?: string;
@@ -33,18 +33,18 @@ export interface TableListProps {
   loading?: boolean;
 }
 
-interface TableListState {
+interface CurdListState {
   selectedRowKeys: number[] | string[];
 }
 
-class TableList extends PureComponent<TableListProps, TableListState> {
+class CurdList extends PureComponent<CurdListProps, CurdListState> {
   static defaultProps = {
     data: [],
     loading: false,
     pagination: true,
   };
 
-  constructor(props: TableListProps) {
+  constructor(props: CurdListProps) {
     super(props);
     this.state = {
       selectedRowKeys: [],
@@ -184,4 +184,4 @@ class TableList extends PureComponent<TableListProps, TableListState> {
   }
 }
 
-export default TableList;
+export default CurdList;
