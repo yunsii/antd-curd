@@ -1,7 +1,6 @@
 import React, { PureComponent } from 'react';
 import { Card } from 'antd';
-import CurdTable from './components/CurdTable/index';
-import CurdList from './components/CurdList/index';
+import CurdBox from './components/CurdBox/index';
 import QueryPanel from './components/QueryPanel/index';
 import { injectChildren } from './utils';
 
@@ -23,12 +22,11 @@ export interface CurdState {
 class Curd extends PureComponent<CurdProps, CurdState> {
   static defaultProps = {
     modelName: '',
-    dispatch: Function,
+    dispatch: () => { },
   };
 
   static QueryPanel = QueryPanel;
-  static CurdTable = CurdTable;
-  static CurdList = CurdList;
+  static CurdBox = CurdBox;
 
   state = {
     searchForm: {} as any,

@@ -10,11 +10,11 @@ import StandardList from '../src/components/StandardList';
 import FormMateContext from '../src/FormMateContext';
 import { FormProvider, createFormItems } from './antd-form-mate';
 import renderCard from './CustomCard';
-import CurdListDemo from './CurdList';
+import CurdListBoxDemo from './CurdListBox';
 import setFormItemsConfig from './map';
 import { columns, data as mockData } from './mock';
 
-const { QueryPanel, CurdTable } = Curd;
+const { QueryPanel, CurdBox } = Curd;
 const { Group: RadioGroup } = Radio;
 
 const queryArgsConfig = [
@@ -39,7 +39,7 @@ const queryArgsConfig = [
       label: '过期日期',
     },
     componentProps: {
-      placeholder: '查询过期日期前的所有商品',
+      placeholder: '查询过期日期前的商品',
     },
   },
 ];
@@ -144,7 +144,7 @@ class StandardTableDemo extends React.Component {
   }
 }
 
-class CurdTableDemo extends React.Component {
+class CurdTableBoxDemo extends React.Component {
   state = {
     selectedRows: [],
     checkable: true,
@@ -293,7 +293,7 @@ class CurdTableDemo extends React.Component {
           }}
         >
           <Curd onRef={(curd) => this.curd = curd}>
-            <CurdTable
+            <CurdBox
               columns={this.columns()}
               data={mockData}
               selectedRows={selectedRows}
@@ -343,5 +343,5 @@ storiesOf('custom components', module)
   .add('QueryPanel', () => <QueryPanelDemo />)
   .add('StandardTable', () => <StandardTableDemo />)
   .add('StandardList', () => <StandardListDemo />)
-  .add('CurdTable', () => <CurdTableDemo />)
-  .add('CurdList', () => <CurdListDemo />);
+  .add('CurdTableBox', () => <CurdTableBoxDemo />)
+  .add('CurdListBox', () => <CurdListBoxDemo />);

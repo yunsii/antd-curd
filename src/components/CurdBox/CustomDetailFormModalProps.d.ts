@@ -1,4 +1,4 @@
-import { DetailFormModalProps } from '../DetailFormModal';
+import { DetailFormModalProps } from '../DetailFormModal/index';
 
 export interface CustomDetailFormModalProps extends DetailFormModalProps {
   modalConfig: {

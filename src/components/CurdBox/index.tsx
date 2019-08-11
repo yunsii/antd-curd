@@ -3,12 +3,13 @@ import { FormProps } from 'antd/lib/form';
 import { PaginationConfig, SorterResult, TableCurrentDataSource } from 'antd/lib/table';
 import { PopconfirmProps } from 'antd/lib/popconfirm';
 import { ItemConfig } from 'antd-form-mate';
-import { setActions, ActionType } from './actions';
+import { setActions, ActionType } from './actions/index';
 import { addDivider } from '../../utils';
-import Operators from './Operators';
+import Operators from './Operators/index';
 import StandardTable, { StandardTableProps } from '../StandardTable/index';
-import DetailFormDrawer from '../DetailFormDrawer';
-import DetailFormModal from '../DetailFormModal';
+import StandardList, { StandardListProps } from '../StandardList/index';
+import DetailFormDrawer from '../DetailFormDrawer/index';
+import DetailFormModal from '../DetailFormModal/index';
 import { CustomDetailFormDrawerProps } from './CustomDetailFormDrawerProps';
 import { CustomDetailFormModalProps } from './CustomDetailFormModalProps';
 import { CreateName, DetailName, UpdateName } from '../../constant';
@@ -21,6 +22,19 @@ const getValue = obj =>
   Object.keys(obj)
     .map(key => obj[key])
     .join(',');
+
+export type RecordSelection = {
+  selectedRowKeys: number[];
+  onSelectChange: (selectedRowKeys: any[]) => void;
+  getCheckboxProps: (record: any) => any;
+}
+
+export type RenderItemConfig = {
+  record: any;
+  actions: React.ReactNode[] | null;
+  recordSelection: RecordSelection;
+  checkable?: boolean;
+}
 
 async function updateFieldsValueByInterceptors(fieldsValue, interceptors, mode) {
   const { updateFieldsValue } = interceptors;
@@ -117,6 +131,9 @@ export interface CurdTableProps extends StandardTableProps {
   /** call model's fetch effect when componentDidMount */
   autoFetch?: boolean;
   reSearchAfterUpdate?: boolean;
+
+  type?: 'list',
+  renderItem?: (config: RenderItemConfig) => React.ReactNode;
   __curd__?: Curd,
 }
 
@@ -218,8 +235,18 @@ class CurdTable extends PureComponent<CurdTableProps, CurdState> {
     });
   };
 
+  setActionsMethod = () => {
+    const { interceptors } = this.props;
+    return ({
+      fetchDetailOrNot: this.fetchDetailOrNot,
+      handleVisible: this.handleVisible,
+      deleteModel: this.deleteModel,
+      interceptors,
+    })
+  }
+
   enhanceColumns = () => {
-    const { columns, actionsConfig, interceptors } = this.props;
+    const { columns, actionsConfig } = this.props;
     if (!columns) return [];
     if (!actionsConfig) return columns;
     return [
@@ -227,13 +254,7 @@ class CurdTable extends PureComponent<CurdTableProps, CurdState> {
       {
         title: '操作',
         render: (value, record) => {
-          const actionsMethod = {
-            fetchDetailOrNot: this.fetchDetailOrNot,
-            handleVisible: this.handleVisible,
-            deleteModel: this.deleteModel,
-            interceptors,
-          }
-          const actions = setActions(record, actionsMethod, actionsConfig);
+          const actions = setActions(record, this.setActionsMethod(), actionsConfig);
           return addDivider(actions);
         }
       },
@@ -352,6 +373,45 @@ class CurdTable extends PureComponent<CurdTableProps, CurdState> {
     }
   };
 
+  renderContainer = () => {
+    const {
+      columns,
+      actionsConfig,
+      afterPopupClose,
+      dispatch,
+      createTitle,
+      detailTitle,
+      updateTitle,
+      operators,
+      createButtonName,
+      fetchLoading,
+      type,
+      renderItem,
+      ...rest
+    } = this.props;
+
+    if (type === 'list' && renderItem) {
+      return (
+        <StandardList
+          {...rest}
+          renderItem={renderItem}
+          loading={fetchLoading}
+          setActions={record => setActions(record, this.setActionsMethod(), actionsConfig)}
+          onChange={this.handleStandardTableChange}
+        />
+      )
+    }
+
+    return (
+      <StandardTable
+        {...rest}
+        loading={fetchLoading}
+        columns={this.enhanceColumns()}
+        onChange={this.handleStandardTableChange}
+      />
+    )
+  }
+
   renderPopup = () => {
     let result;
     const {
@@ -442,12 +502,7 @@ class CurdTable extends PureComponent<CurdTableProps, CurdState> {
             {operators}
           </Operators> :
           null}
-        <StandardTable
-          {...rest}
-          loading={fetchLoading}
-          columns={this.enhanceColumns()}
-          onChange={this.handleStandardTableChange}
-        />
+        {this.renderContainer()}
         {this.renderPopup()}
       </Fragment>
 

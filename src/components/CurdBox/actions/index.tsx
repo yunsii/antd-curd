@@ -45,7 +45,7 @@ export function initialActions(record, actionsMethod, actionsConfig) {
     fetchDetailOrNot,
     handleVisible,
     deleteModel,
-    interceptors,
+    interceptors = {},
   } = actionsMethod;
   const {
     detailActionTitle = '详情',

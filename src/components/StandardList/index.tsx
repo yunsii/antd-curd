@@ -4,7 +4,7 @@ import { callFunctionIfFunction } from '../../utils';
 import styles from './index.less';
 
 export type Page = {
-  page: number;
+  current: number;
   pageSize: number;
 }
 
@@ -74,11 +74,11 @@ class StandardList extends PureComponent<StandardListProps, StandardListState> {
     }
   };
 
-  handlePageChange = (page: number, pageSize: number) => {
-    console.log(page, pageSize);
+  handlePageChange = (current: number, pageSize: number) => {
+    console.log(current, pageSize);
     const { onChange } = this.props;
     callFunctionIfFunction(onChange)({
-      page,
+      current,
       pageSize,
     } as Page)
   };

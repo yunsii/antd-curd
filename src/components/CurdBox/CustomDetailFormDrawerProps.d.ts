@@ -1,4 +1,4 @@
-import { DetailFormDrawerProps } from '../DetailFormDrawer';
+import { DetailFormDrawerProps } from '../DetailFormDrawer/index';
 
 export interface CustomDetailFormDrawerProps extends DetailFormDrawerProps {
   drawerConfig: {
