@@ -150,7 +150,98 @@ class CurdTableDemo extends React.Component {
     checkable: true,
     operators: true,
     popupType: 'drawer',
+
+    filteredInfo: null as any,
+    sortedInfo: null as any,
+  };
+
+  curd: Curd;
+
+  columns = () => {
+    let { sortedInfo, filteredInfo } = this.state;
+    sortedInfo = sortedInfo || {};
+    filteredInfo = filteredInfo || {};
+
+    return [
+      {
+        title: '姓名',
+        dataIndex: 'name',
+        filters: [{ text: '孙珍妮', value: 'szn' }, { text: '陈美君', value: 'cmj' }],
+        filterMultiple: false,
+        filteredValue: filteredInfo.name || null,
+      },
+      {
+        title: '昵称',
+        dataIndex: 'nickname',
+      },
+      {
+        title: '生日',
+        dataIndex: 'birthday',
+        sorter: (a, b) => a.birthday - b.birthday,
+        sortOrder: sortedInfo.columnKey === 'birthday' && sortedInfo.order,
+        filters: [{ text: '05.05', value: '05.05' }, { text: '01.15', value: '01.15' }],
+        filteredValue: filteredInfo.birthday || null,
+      },
+      {
+        title: '特长',
+        dataIndex: 'speciality',
+      },
+      {
+        title: '爱好',
+        dataIndex: 'habit',
+        sorter: (a, b) => a.habit.length - b.habit.length,
+        sortOrder: sortedInfo.columnKey === 'habit' && sortedInfo.order,
+      },
+    ]
   }
+
+  setBirthdaySort = () => {
+    this.setState({
+      sortedInfo: {
+        order: 'descend',
+        columnKey: 'birthday',
+      },
+    });
+    if (this.curd) {
+      const { searchParams } = this.curd.state;
+      this.curd.setState({
+        searchParams: {
+          ...searchParams,
+          sorter: "birthday_descend",
+        }
+      })
+    }
+  };
+
+  clearFilters = () => {
+    this.setState({ filteredInfo: null });
+    if (this.curd) {
+      const { searchParams } = this.curd.state;
+      const { name, birthday, ...rest} = searchParams;
+      this.curd.setState({
+        searchParams: {
+          ...rest,
+        }
+      })
+    }
+  };
+
+  clearAll = () => {
+    this.setState({
+      filteredInfo: null,
+      sortedInfo: null,
+    });
+    if (this.curd) {
+      const { searchParams } = this.curd.state;
+      const { page, limit} = searchParams;
+      this.curd.setState({
+        searchParams: {
+          page,
+          limit,
+        }
+      })
+    }
+  };
 
   render() {
     const { selectedRows, checkable, operators, popupType } = this.state;
@@ -184,6 +275,15 @@ class CurdTableDemo extends React.Component {
                 <Radio value="modal">模态框</Radio>
               </RadioGroup>
             </Form.Item>
+            <Form.Item>
+              <Button onClick={this.setBirthdaySort}>以生日排序</Button>
+            </Form.Item>
+            <Form.Item>
+              <Button onClick={this.clearFilters}>清除过滤器</Button>
+            </Form.Item>
+            <Form.Item>
+              <Button onClick={this.clearAll}>清除过滤器和排序器</Button>
+            </Form.Item>
           </Form>
         </Card>
         <FormMateContext.Provider
@@ -192,9 +292,9 @@ class CurdTableDemo extends React.Component {
             createFormItems,
           }}
         >
-          <Curd>
+          <Curd onRef={(curd) => this.curd = curd}>
             <CurdTable
-              columns={columns}
+              columns={this.columns()}
               data={mockData}
               selectedRows={selectedRows}
               onSelectRow={(row) => {
@@ -211,6 +311,14 @@ class CurdTableDemo extends React.Component {
                 }
               } as any}
               operators={operators}
+              interceptors={{
+                handleFilterAndSort: (filters, sorter) => {
+                  this.setState({
+                    filteredInfo: filters,
+                    sortedInfo: sorter,
+                  });
+                }
+              }}
             />
           </Curd>
         </FormMateContext.Provider>
