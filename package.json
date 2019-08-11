@@ -5,7 +5,7 @@
   "main": "./dist/index.js",
   "dependencies": {
     "antd": "^3.20.7",
-    "antd-form-mate": "^0.1.8",
+    "antd-form-mate": "^0.1.13",
     "babel-plugin-import": "^1.12.0",
     "dva-base-models": "^1.1.6",
     "moment": "^2.24.0",
