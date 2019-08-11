@@ -1,5 +1,6 @@
 import React, { PureComponent, Fragment } from 'react';
 import { FormProps } from 'antd/lib/form';
+import { PaginationConfig, SorterResult, TableCurrentDataSource } from 'antd/lib/table';
 import { PopconfirmProps } from 'antd/lib/popconfirm';
 import { ItemConfig } from 'antd-form-mate';
 import { setActions, ActionType } from './actions';
@@ -38,6 +39,29 @@ function getModelName(props) {
   throw new Error('CurdTable can\'t get modelName from __curd__');
 }
 
+function defaultHandleFilterAndSort(
+  filtersArg = {} as Record<keyof any, string[]>,
+  sorter = {} as SorterResult<any>,
+  extra?: TableCurrentDataSource<any>
+) {
+  console.log(filtersArg, sorter);
+  let result: any = {};
+  const filters = Object.keys(filtersArg).reduce((obj, key) => {
+    const newObj = { ...obj };
+    if (filtersArg[key]) {
+      newObj[key] = getValue(filtersArg[key]);
+    }
+    return newObj;
+  }, {});
+  result = {
+    ...filters,
+  };
+  if (sorter.field) {
+    result[searchFieldName.sortor] = formatSorter(sorter);
+  }
+  return { ...result };
+}
+
 
 export interface CurdTableProps extends StandardTableProps {
   /** popup title of create */
@@ -71,6 +95,11 @@ export interface CurdTableProps extends StandardTableProps {
     /** callback on click update button, will break default behavior if return value is true */
     handleUpdateClick?: (record: any) => boolean | undefined;
     handleDeleteClick?: (record: any) => void;
+    handleFilterAndSort?: (
+      filtersArg: Record<keyof any, string[]>,
+      sorter: SorterResult<any>,
+      extra?: TableCurrentDataSource<any>
+    ) => any;
   };
   detail?: {};
   actionsConfig?: {
@@ -177,25 +206,6 @@ class CurdTable extends PureComponent<CurdTableProps, CurdState> {
     const { __curd__ } = this.props;
     if (__curd__) {
       __curd__.handleSearch();
-    }
-  }
-
-  getSearchForm = () => {
-    const { __curd__ } = this.props;
-    let result = {};
-    if (__curd__) {
-      const { searchForm } = __curd__.state;
-      result = { ...searchForm };
-    }
-    return result;
-  }
-
-  setSearchForm = (fieldsValue) => {
-    const { __curd__ } = this.props;
-    if (__curd__) {
-      __curd__.setState({
-        searchForm: { ...fieldsValue },
-      })
     }
   }
 
@@ -309,26 +319,37 @@ class CurdTable extends PureComponent<CurdTableProps, CurdState> {
     this.handleCreateOk(fieldsValue);
   };
 
-  handleStandardTableChange = (pagination, filtersArg = {}, sorter = {} as any) => {
-    const { dispatch } = this.props;
-    const filters = Object.keys(filtersArg).reduce((obj, key) => {
-      const newObj = { ...obj };
-      newObj[key] = getValue(filtersArg[key]);
-      return newObj;
-    }, {});
+  // https://ant.design/components/table-cn/#components-table-demo-reset-filter
+  // 只支持一个 sorter
+  handleStandardTableChange = (
+    pagination: PaginationConfig,
+    filtersArg = {} as Record<keyof any, string[]>,
+    sorter = {} as SorterResult<any>,
+    extra?: TableCurrentDataSource<any>
+  ) => {
+    console.log('pagination', pagination);
+    console.log('filtersArg', filtersArg);
+    console.log('sorter', sorter);
+    const { interceptors = {}, __curd__ } = this.props;
+    const { handleFilterAndSort = () => { } } = interceptors;
+
+    const hasCustomFilterAndSorter: boolean = handleFilterAndSort && handleFilterAndSort(filtersArg, sorter, extra);
+
     const params = {
       [searchFieldName.page]: pagination.current,
       [searchFieldName.limit]: pagination.pageSize,
-      ...this.getSearchForm(),
-      ...filters,
+      ...hasCustomFilterAndSorter ?
+        handleFilterAndSort(filtersArg, sorter, extra) :
+        defaultHandleFilterAndSort(filtersArg, sorter, extra),
     };
-    if (sorter.field) {
-      params[searchFieldName.sortor] = formatSorter(sorter);
+
+    console.log('changed parama', params);
+    // sync curd's searchParams
+    if (__curd__) {
+      __curd__.setState({ searchParams: params }, () => {
+        __curd__.handleSearch();
+      });
     }
-    dispatch({
-      type: `${getModelName(this.props)}/fetch`,
-      payload: params,
-    });
   };
 
   renderPopup = () => {
