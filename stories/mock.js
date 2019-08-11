@@ -11,6 +11,8 @@ export const columns = [
   {
     title: '姓名',
     dataIndex: 'name',
+    filters: [{ text: '孙珍妮', value: 'szn' }, { text: '陈美君', value: 'cmj' }],
+    filterMultiple: false,
   },
   {
     title: '昵称',
@@ -19,6 +21,8 @@ export const columns = [
   {
     title: '生日',
     dataIndex: 'birthday',
+    sorter: (a, b) => a.birthday - b.birthday,
+    filters: [{ text: '05.05', value: '05.05' }, { text: '01.15', value: '01.15' }],
   },
   {
     title: '特长',
@@ -27,6 +31,7 @@ export const columns = [
   {
     title: '爱好',
     dataIndex: 'habit',
+    sorter: (a, b) => a.habit.length - b.habit.length,
   },
 ]
 
