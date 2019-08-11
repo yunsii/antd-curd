@@ -103,24 +103,29 @@ const renderShowActions = record => (actions, confirmKeys = [], confirmProps = {
     const [isConfirmKey, confirmKey] = isConfirmKeyAndItem(item.key, confirmKeys);
     if (isConfirmKey) {
       return (
-        <Popconfirm
-          {...confirmProps}
-          key={item.key}
-          title={setConfirmTitle(confirmKey, item, record)}
-          onConfirm={(event) => {
-            if (event) {
-              event.stopPropagation();
-            }
-            item.handleClick(record)
-          }}
-          onCancel={(event) => {
+        <div
+          onClick={(event) => {
             if (event) {
               event.stopPropagation();
             }
           }}
         >
-          <a>{item.title}</a>
-        </Popconfirm>
+          <Popconfirm
+            {...confirmProps}
+            key={item.key}
+            title={setConfirmTitle(confirmKey, item, record)}
+            onConfirm={() => {
+              item.handleClick(record)
+            }}
+            onCancel={(event) => {
+              if (event) {
+                event.stopPropagation();
+              }
+            }}
+          >
+            <a>{item.title}</a>
+          </Popconfirm>
+        </div>
       );
     }
     return (
@@ -144,46 +149,54 @@ export const renderActions = record => (actions, moreActions, confirmKeys, confi
 
   return [
     ...renderShowActions(record)(actions, confirmKeys, confirmProps),
-    <Dropdown
-      key="more"
-      overlay={
-        // 阻止 Menu 点击事件冒泡，否则会触发 actions 容器点击事件
-        <Menu
-          onClick={({ domEvent }) => {
-            domEvent.stopPropagation();
-          }}
-        >
-          {moreActions.map(item => {
-            const [isConfirmKey, confirmKey] = isConfirmKeyAndItem(item.key, confirmKeys);
-            return (
-              <Menu.Item
-                key={item.key}
-                onClick={() => {
-                  if (isConfirmKey) {
-                    Modal.confirm({
-                      title: setConfirmTitle(confirmKey, item, record),
-                      onOk() {
-                        item.handleClick(record);
-                      },
-                      okText: '确定',
-                      cancelText: '取消',
-                    });
-                    return;
-                  }
-                  item.handleClick(record);
-                }}
-              >
-                <a>{item.title}</a>
-              </Menu.Item>
-            );
-          })}
-        </Menu>
-      }
+    <div
+      onClick={(event) => {
+        if (event) {
+          event.stopPropagation();
+        }
+      }}
     >
-      <a style={{ whiteSpace: 'nowrap' }}>
-        更多 <Icon type="down" style={{ width: 24 }} />
-      </a>
-    </Dropdown>,
+      <Dropdown
+        key="more"
+        overlay={
+          // 阻止 Menu 点击事件冒泡，否则会触发 actions 容器点击事件
+          <Menu
+            onClick={({ domEvent }) => {
+              domEvent.stopPropagation();
+            }}
+          >
+            {moreActions.map(item => {
+              const [isConfirmKey, confirmKey] = isConfirmKeyAndItem(item.key, confirmKeys);
+              return (
+                <Menu.Item
+                  key={item.key}
+                  onClick={() => {
+                    if (isConfirmKey) {
+                      Modal.confirm({
+                        title: setConfirmTitle(confirmKey, item, record),
+                        onOk() {
+                          item.handleClick(record);
+                        },
+                        okText: '确定',
+                        cancelText: '取消',
+                      });
+                      return;
+                    }
+                    item.handleClick(record);
+                  }}
+                >
+                  <a>{item.title}</a>
+                </Menu.Item>
+              );
+            })}
+          </Menu>
+        }
+      >
+        <a style={{ whiteSpace: 'nowrap' }}>
+          更多 <Icon type="down" style={{ width: 24 }} />
+        </a>
+      </Dropdown>
+    </div>
   ];
 };
 
