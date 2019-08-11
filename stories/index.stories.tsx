@@ -27,6 +27,13 @@ const queryArgsConfig = [
   },
   {
     type: 'string',
+    field: 'place',
+    formItemProps: {
+      label: '位置',
+    },
+  },
+  {
+    type: 'string',
     field: 'productNumber',
     formItemProps: {
       label: '商品编号',
@@ -36,7 +43,7 @@ const queryArgsConfig = [
     type: 'date',
     field: 'endDay',
     formItemProps: {
-      label: '过期日期',
+      label: '商品过期日期',
     },
     componentProps: {
       placeholder: '查询过期日期前的商品',
