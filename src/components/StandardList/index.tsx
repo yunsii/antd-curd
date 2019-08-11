@@ -22,7 +22,7 @@ export type renderItemConfig = {
 }
 
 export interface StandardListProps {
-  data: any[];
+  data: { list: any[], pagination: any };
   onSelectRow?: (recordArray: any[]) => void;
   rowKey?: string;
   checkable?: boolean;
@@ -39,7 +39,7 @@ interface StandardListState {
 
 class StandardList extends PureComponent<StandardListProps, StandardListState> {
   static defaultProps = {
-    data: [],
+    data: {},
     loading: false,
   };
 
@@ -55,22 +55,24 @@ class StandardList extends PureComponent<StandardListProps, StandardListState> {
   };
 
   onCheckAllChange = () => {
-    const { data = [] } = this.props;
+    const { data = {} as any } = this.props;
+    const { list = [] as any[] } = data;
     const { selectedRowKeys } = this.state;
-    if (selectedRowKeys.length < data.length) {
-      this.handleSelectChange(data.map(item => item.id));
+    if (selectedRowKeys.length < list.length) {
+      this.handleSelectChange(list.map(item => item.id));
       return;
     }
     this.handleSelectChange([]);
   };
 
   handleSelectChange = selectedRowKeys => {
-    const { data = [], onSelectRow } = this.props;
+    const { data = {} as any, onSelectRow } = this.props;
+    const { list = [] as any[] } = data;
     this.setState({
       selectedRowKeys,
     });
     if (onSelectRow) {
-      onSelectRow(data.filter(item => selectedRowKeys.includes(item.id)));
+      onSelectRow(list.filter(item => selectedRowKeys.includes(item.id)));
     }
   };
 
@@ -89,7 +91,7 @@ class StandardList extends PureComponent<StandardListProps, StandardListState> {
 
   render() {
     const {
-      data = [],
+      data = {} as any,
       checkable = true,
       renderItem,
       selectedRows,
@@ -98,6 +100,7 @@ class StandardList extends PureComponent<StandardListProps, StandardListState> {
       onChange,
       ...rest
     } = this.props;
+    const { list = [] as any[] } = data;
     const { selectedRowKeys } = this.state;
 
     let recordSelection: any = {
@@ -116,7 +119,7 @@ class StandardList extends PureComponent<StandardListProps, StandardListState> {
         rowKey="id"
         grid={{ gutter: 24, lg: 3, md: 2, sm: 1, xs: 1 }}
         {...rest}
-        dataSource={data}
+        dataSource={list}
         renderItem={(record: any) => (
           <List.Item style={{ position: 'relative' }}>
             {checkable ? (
