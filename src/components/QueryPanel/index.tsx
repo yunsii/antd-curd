@@ -52,7 +52,7 @@ interface QueryPanelState {
 
 @(Form.create({
   onValuesChange: (props, changedValues, allValues) => {
-    const { onValuesChange, __curd__, updateSearchValue } = props as any;
+    const { onValuesChange } = props as any;
     if (onValuesChange) {
       onValuesChange(changedValues, allValues);
     }
@@ -71,7 +71,7 @@ export default class QueryPanel extends PureComponent<QueryPanelProps, QueryPane
         newSearchValue = updateSearchValue(newSearchValue);
       }
       __curd__.setState({
-        searchForm: { ...fieldsValue },
+        searchForm: { ...newSearchValue },
       }, () => {
         __curd__.handleSearch();
       })
