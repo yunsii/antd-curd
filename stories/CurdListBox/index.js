@@ -6,7 +6,7 @@ import { data as mockData } from '../mock';
 import styles from './index.less';
 import renderCard from '../CustomCard';
 
-export default class CurdTableListDemo extends React.Component {
+export default class CurdListBoxDemo extends React.Component {
   constructor(props) {
     super(props);
 
@@ -59,10 +59,11 @@ export default class CurdTableListDemo extends React.Component {
           useWindow={false}
         >
           <Curd>
-            <Curd.CurdList
+            <Curd.CurdBox
               data={data}
               renderItem={renderCard}
               pagination={false}
+              type='list'
             />
             {this.state.loading && this.state.hasMore && (
               <div className={styles["demo-loading-container"]}>
