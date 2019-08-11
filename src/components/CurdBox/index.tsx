@@ -7,7 +7,7 @@ import { setActions, ActionType } from './actions/index';
 import { addDivider } from '../../utils';
 import Operators from './Operators/index';
 import StandardTable, { StandardTableProps } from '../StandardTable/index';
-import StandardList, { StandardListProps } from '../StandardList/index';
+import StandardList from '../StandardList/index';
 import DetailFormDrawer from '../DetailFormDrawer/index';
 import DetailFormModal from '../DetailFormModal/index';
 import { CustomDetailFormDrawerProps } from './CustomDetailFormDrawerProps';
@@ -50,7 +50,7 @@ function getModelName(props) {
   if (__curd__) {
     return __curd__.props.modelName;
   }
-  throw new Error('CurdTable can\'t get modelName from __curd__');
+  throw new Error('CurdBox can\'t get modelName from __curd__');
 }
 
 function defaultHandleFilterAndSort(
@@ -77,7 +77,7 @@ function defaultHandleFilterAndSort(
 }
 
 
-export interface CurdTableProps extends StandardTableProps {
+export interface CurdBoxProps extends StandardTableProps {
   /** popup title of create */
   createTitle?: string;
   /** popup title of detail */
@@ -142,7 +142,7 @@ interface CurdState {
   record: any;
 }
 
-class CurdTable extends PureComponent<CurdTableProps, CurdState> {
+class CurdBox extends PureComponent<CurdBoxProps, CurdState> {
   static defaultProps = {
     createTitle: '新建对象',
     detailTitle: '对象详情',
@@ -169,6 +169,9 @@ class CurdTable extends PureComponent<CurdTableProps, CurdState> {
     reSearchAfterUpdate: false,
     __curd__: null,
   }
+
+  static StandardTable = StandardTable;
+  static StandardList = StandardList;
 
   state = {
     popupVisible: null,
@@ -386,14 +389,26 @@ class CurdTable extends PureComponent<CurdTableProps, CurdState> {
       createButtonName,
       fetchLoading,
       type,
-      renderItem,
       ...rest
     } = this.props;
+
+    const {
+      data,
+      onSelectRow,
+      rowKey,
+      checkable,
+      selectedRows,
+      renderItem,
+    } = rest;
 
     if (type === 'list' && renderItem) {
       return (
         <StandardList
-          {...rest}
+          data={data}
+          onSelectRow={onSelectRow}
+          rowKey={rowKey}
+          checkable={checkable}
+          selectedRows={selectedRows}
           renderItem={renderItem}
           loading={fetchLoading}
           setActions={record => setActions(record, this.setActionsMethod(), actionsConfig)}
@@ -479,27 +494,18 @@ class CurdTable extends PureComponent<CurdTableProps, CurdState> {
 
   render() {
     const {
-      columns,
-      actionsConfig,
-      afterPopupClose,
-      dispatch,
-      createTitle,
-      detailTitle,
-      updateTitle,
       operators,
       createButtonName,
-      fetchLoading,
-      ...rest
     } = this.props;
 
     return (
       <Fragment>
         {operators ?
           <Operators
-            curdTable={this}
+            curdBox={this}
             createButtonName={createButtonName}
           >
-            {operators}
+            {operators as any}
           </Operators> :
           null}
         {this.renderContainer()}
@@ -510,4 +516,4 @@ class CurdTable extends PureComponent<CurdTableProps, CurdState> {
   }
 }
 
-export default CurdTable;
+export default CurdBox;
