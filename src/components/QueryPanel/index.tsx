@@ -124,7 +124,7 @@ export default class QueryPanel extends PureComponent<QueryPanelProps, QueryPane
       colProps: customColProps,
     } = this.props;
     if (!queryArgsConfig.length) return null;
-    let colProps = { span: calculateSpan(rowCount) } as any;
+    let colProps: any = { span: calculateSpan(rowCount) };
     if (customColProps) {
       colProps = customColProps;
     }
@@ -158,7 +158,9 @@ export default class QueryPanel extends PureComponent<QueryPanelProps, QueryPane
         </div>
       </div>
     );
-    const setFormItems = (createFormItems) => createFormItems ? [...createFormItems(formItems), actions] : [];
+    const setFormItems = (createFormItems) => createFormItems ?
+      [...createFormItems(formItems, { labelCol: { span: 8 }, wrapperCol: { span: 16 } }), actions] :
+      [];
 
     return (
       <Form onSubmit={this.handleSubmit} layout="inline">
