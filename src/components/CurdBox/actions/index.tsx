@@ -103,7 +103,8 @@ const renderShowActions = record => (actions, confirmKeys = [], confirmProps = {
     const [isConfirmKey, confirmKey] = isConfirmKeyAndItem(item.key, confirmKeys);
     if (isConfirmKey) {
       return (
-        <div
+        <span
+          key={item.key}
           onClick={(event) => {
             if (event) {
               event.stopPropagation();
@@ -112,7 +113,6 @@ const renderShowActions = record => (actions, confirmKeys = [], confirmProps = {
         >
           <Popconfirm
             {...confirmProps}
-            key={item.key}
             title={setConfirmTitle(confirmKey, item, record)}
             onConfirm={() => {
               item.handleClick(record)
@@ -125,7 +125,7 @@ const renderShowActions = record => (actions, confirmKeys = [], confirmProps = {
           >
             <a>{item.title}</a>
           </Popconfirm>
-        </div>
+        </span>
       );
     }
     return (
@@ -149,7 +149,7 @@ export const renderActions = record => (actions, moreActions, confirmKeys, confi
 
   return [
     ...renderShowActions(record)(actions, confirmKeys, confirmProps),
-    <div
+    <span
       onClick={(event) => {
         if (event) {
           event.stopPropagation();
@@ -196,7 +196,7 @@ export const renderActions = record => (actions, moreActions, confirmKeys, confi
           更多 <Icon type="down" style={{ width: 24 }} />
         </a>
       </Dropdown>
-    </div>
+    </span>
   ];
 };
 
