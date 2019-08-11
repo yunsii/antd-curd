@@ -169,7 +169,7 @@ export default class QueryPanel extends PureComponent<QueryPanelProps, QueryPane
             if (FormProvider && createFormItems) {
               return (
                 <FormProvider value={form}>
-                  <Row type="flex" gutter={{ md: 8, lg: 24, xl: 48 }} {...rowProps}>
+                  <Row type="flex" gutter={{ xs: 8, sm: 12, lg: 24, xl: 48 }} {...rowProps}>
                     {setFormItems(createFormItems).map(item => (
                       <Col {...colProps} key={item.key}>
                         {item}
