@@ -4,7 +4,7 @@
 
 ## [StandardTable](/src/components/StandardTable/index.tsx)
 
-基于 ant-deisgn-pro-v2 中的 StandardTable 组件。
+基于 ant-deisgn-pro-v2 中的 [StandardTable](https://github.com/ant-design/ant-design-pro/blob/v2/src/components/StandardTable/index.js) 组件。
 
 * 默认开启 hideOnSinglePage
 * 间隔行着色
