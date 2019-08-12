@@ -7,10 +7,11 @@ export interface CustomStandardTableProps {
   __curdBox__?: CurdBox;
   data: { list: any[], pagination?: any };
   columns: any[];
+  fetchLoading?: boolean;
 }
 
 function CustomStandardTable(props: CustomStandardTableProps) {
-  const { __curdBox__, columns, ...rest } = props;
+  const { __curdBox__, columns, fetchLoading, ...rest } = props;
   if (__curdBox__) {
     const { handleDataChange } = __curdBox__;
     const enhanceColumns = () => {
@@ -30,6 +31,7 @@ function CustomStandardTable(props: CustomStandardTableProps) {
     return (
       <StandardTable
         {...rest}
+        loading={fetchLoading}
         columns={enhanceColumns()}
         onChange={handleDataChange}
       />
