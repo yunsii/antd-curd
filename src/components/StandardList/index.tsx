@@ -22,7 +22,7 @@ export type renderItemConfig = {
 }
 
 export interface StandardListProps {
-  data: { list: any[], pagination: any };
+  data: { list: any[], pagination?: any };
   onSelectRow?: (recordArray: any[]) => void;
   rowKey?: string;
   checkable?: boolean;

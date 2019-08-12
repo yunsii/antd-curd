@@ -4,9 +4,9 @@ import { PaginationConfig, SorterResult, TableCurrentDataSource } from 'antd/lib
 import { PopconfirmProps } from 'antd/lib/popconfirm';
 import { ItemConfig } from 'antd-form-mate';
 import { setActions, ActionType } from './actions/index';
-import { addDivider } from '../../utils';
+import { injectChildren } from '../../utils';
 import Operators from './Operators/index';
-import StandardTable, { StandardTableProps } from '../StandardTable/index';
+import StandardTable from '../StandardTable/index';
 import StandardList from '../StandardList/index';
 import DetailFormDrawer from '../DetailFormDrawer/index';
 import DetailFormModal from '../DetailFormModal/index';
@@ -77,7 +77,7 @@ function defaultHandleFilterAndSort(
 }
 
 
-export interface CurdBoxProps extends StandardTableProps {
+export interface CurdBoxProps {
   /** popup title of create */
   createTitle?: string;
   /** popup title of detail */
@@ -131,9 +131,6 @@ export interface CurdBoxProps extends StandardTableProps {
   /** call model's fetch effect when componentDidMount */
   autoFetch?: boolean;
   reSearchAfterUpdate?: boolean;
-
-  type?: 'list',
-  renderItem?: (config: RenderItemConfig) => React.ReactNode;
   __curd__?: Curd,
 }
 
@@ -157,8 +154,6 @@ class CurdBox extends PureComponent<CurdBoxProps, CurdState> {
     queryPanelProps: {},
     containerType: 'table',
     containerProps: {},
-    renderItem: () => { },
-    data: {},
     actionsConfig: {},
     popupType: 'drawer',
     popupProps: {},
@@ -248,21 +243,10 @@ class CurdBox extends PureComponent<CurdBoxProps, CurdState> {
     })
   }
 
-  enhanceColumns = () => {
-    const { columns, actionsConfig } = this.props;
-    if (!columns) return [];
-    if (!actionsConfig) return columns;
-    return [
-      ...columns,
-      {
-        title: '操作',
-        render: (value, record) => {
-          const actions = setActions(record, this.setActionsMethod(), actionsConfig);
-          return addDivider(actions);
-        }
-      },
-    ];
-  };
+  renderActions = (record) => {
+    const { actionsConfig } = this.props;
+    return setActions(record, this.setActionsMethod(), actionsConfig);
+  }
 
   setPopupModeAndRecord = () => {
     const { popupVisible, record } = this.state;
@@ -378,7 +362,6 @@ class CurdBox extends PureComponent<CurdBoxProps, CurdState> {
 
   renderContainer = () => {
     const {
-      columns,
       actionsConfig,
       afterPopupClose,
       dispatch,
@@ -388,43 +371,14 @@ class CurdBox extends PureComponent<CurdBoxProps, CurdState> {
       operators,
       createButtonName,
       fetchLoading,
-      type,
       ...rest
     } = this.props;
 
     const {
-      data,
-      onSelectRow,
-      rowKey,
-      checkable,
-      selectedRows,
-      renderItem,
+      children,
     } = rest;
 
-    if (type === 'list' && renderItem) {
-      return (
-        <StandardList
-          data={data}
-          onSelectRow={onSelectRow}
-          rowKey={rowKey}
-          checkable={checkable}
-          selectedRows={selectedRows}
-          renderItem={renderItem}
-          loading={fetchLoading}
-          setActions={record => setActions(record, this.setActionsMethod(), actionsConfig)}
-          onChange={this.handleStandardTableChange}
-        />
-      )
-    }
-
-    return (
-      <StandardTable
-        {...rest}
-        loading={fetchLoading}
-        columns={this.enhanceColumns()}
-        onChange={this.handleStandardTableChange}
-      />
-    )
+    return (injectChildren(children, { __curdBox__: this }));
   }
 
   renderPopup = () => {
@@ -511,7 +465,6 @@ class CurdBox extends PureComponent<CurdBoxProps, CurdState> {
         {this.renderContainer()}
         {this.renderPopup()}
       </Fragment>
-
     )
   }
 }
