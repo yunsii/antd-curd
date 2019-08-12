@@ -102,7 +102,9 @@ export default class QueryPanel extends PureComponent<QueryPanelProps, QueryPane
   };
 
   handleSubmit = event => {
-    event.preventDefault();
+    if (event) {
+      event.preventDefault();
+    }
     const { form, onSearch } = this.props;
     form && form.validateFields((err, fieldsValue) => {
       if (err) return;
