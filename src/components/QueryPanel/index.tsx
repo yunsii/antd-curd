@@ -6,7 +6,7 @@ import { RowProps } from 'antd/lib/row';
 import { ColProps } from 'antd/lib/col';
 import { callFunctionIfFunction } from '../../utils';
 import styles from './index.less';
-import FormMateContext from '../../FormMateContext';
+import { FormMate } from '../../FormMate';
 import Curd from '../../Curd';
 import { queryPanelText } from '../../config';
 
@@ -160,30 +160,20 @@ export default class QueryPanel extends PureComponent<QueryPanelProps, QueryPane
         </div>
       </div>
     );
-    const setFormItems = (createFormItems) => createFormItems ?
-      [...createFormItems(formItems, { labelCol: { span: 8 }, wrapperCol: { span: 16 } }), actions] :
-      [];
+    const items =
+      [...FormMate.createFormItems(formItems, { labelCol: { span: 8 }, wrapperCol: { span: 16 } }), actions];
 
     return (
       <Form onSubmit={this.handleSubmit} layout="inline">
-        <FormMateContext.Consumer>
-          {({ FormProvider, createFormItems }) => {
-            if (FormProvider && createFormItems) {
-              return (
-                <FormProvider value={form}>
-                  <Row type="flex" gutter={{ xs: 8, sm: 12, lg: 24, xl: 48 }} {...rowProps}>
-                    {setFormItems(createFormItems).map(item => (
-                      <Col {...colProps} key={item.key}>
-                        {item}
-                      </Col>
-                    ))}
-                  </Row>
-                </FormProvider>
-              )
-            }
-            return null;
-          }}
-        </FormMateContext.Consumer>
+        <FormMate.FormProvider value={form as any}>
+          <Row type="flex" gutter={{ xs: 8, sm: 12, lg: 24, xl: 48 }} {...rowProps}>
+            {items.map(item => (
+              <Col {...colProps} key={item.key}>
+                {item}
+              </Col>
+            ))}
+          </Row>
+        </FormMate.FormProvider>
       </Form>
     );
   }

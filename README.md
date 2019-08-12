@@ -33,10 +33,6 @@
 
 基于 antd-form-mate 实现的查询面板组件，具体实现可参考 [QueryPanel/index.js](/src/components/QueryPanel/index.tsx) ，只需传入表单配置和 `onSearch` 方法即可使用。同时提供了重置表单后的 `onReset` 函数。参数定义可参考 [QueryPanel/index.d.ts](/src/components/QueryPanel/index.tsx) 。
 
-## [FormMateContext](/src/FormMateContext.ts)
-
-为 Curd 组件提供 FormProvider 和 createFormItems ，组件内部的表单容器都要用到。
-
 ## [Curd](/src/Curd.tsx)
 
 `state` 中保存了当前页面的查询参数 `searchForm` ，还有一个 `handleSearch` 方法可供直接调起查询接口。

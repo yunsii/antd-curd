@@ -7,8 +7,7 @@ import { Button, Card, Switch, Form, Radio } from 'antd';
 import { Curd } from '../src';
 import StandardTable from '../src/components/StandardTable';
 import StandardList from '../src/components/StandardList';
-import FormMateContext from '../src/FormMateContext';
-import { FormProvider, createFormItems } from './antd-form-mate';
+import './antd-form-mate';
 import renderCard from './CustomCard';
 import CurdListDemo from './CurdListDemo';
 import setFormItemsConfig from './map';
@@ -37,6 +36,13 @@ const queryArgsConfig = [
     field: 'productNumber',
     formItemProps: {
       label: '商品编号',
+    },
+  },
+  {
+    type: 'picture',
+    field: 'picture',
+    formItemProps: {
+      label: '图片',
     },
   },
   {
@@ -72,24 +78,17 @@ class QueryPanelDemo extends React.Component {
           </Button>
         </Card>
         <Card bordered={false}>
-          <FormMateContext.Provider
-            value={{
-              FormProvider,
-              createFormItems,
+          <QueryPanel
+            queryArgsConfig={queryArgsConfig}
+            wrappedComponentRef={(self) => {
+              console.log(self);
+              this.queryPanel = self;
             }}
-          >
-            <QueryPanel
-              queryArgsConfig={queryArgsConfig}
-              wrappedComponentRef={(self) => {
-                console.log(self);
-                this.queryPanel = self;
-              }}
-              onValuesChange={(changedValues, allValues) => {
-                const { props: queryPanelProps } = this.queryPanel as any;
-                console.log(queryPanelProps ? queryPanelProps.form.getFieldsValue() : {});
-              }}
-            />
-          </FormMateContext.Provider>
+            onValuesChange={(changedValues, allValues) => {
+              const { props: queryPanelProps } = this.queryPanel as any;
+              console.log(queryPanelProps ? queryPanelProps.form.getFieldsValue() : {});
+            }}
+          />
         </Card>
       </React.Fragment>
 
@@ -224,7 +223,7 @@ class CurdTableDemo extends React.Component {
     this.setState({ filteredInfo: null });
     if (this.curd) {
       const { searchParams } = this.curd.state;
-      const { name, birthday, ...rest} = searchParams;
+      const { name, birthday, ...rest } = searchParams;
       this.curd.setState({
         searchParams: {
           ...rest,
@@ -240,7 +239,7 @@ class CurdTableDemo extends React.Component {
     });
     if (this.curd) {
       const { searchParams } = this.curd.state;
-      const { page, limit} = searchParams;
+      const { page, limit } = searchParams;
       this.curd.setState({
         searchParams: {
           page,
@@ -293,42 +292,35 @@ class CurdTableDemo extends React.Component {
             </Form.Item>
           </Form>
         </Card>
-        <FormMateContext.Provider
-          value={{
-            FormProvider,
-            createFormItems,
-          }}
-        >
-          <Curd onRef={(curd) => this.curd = curd}>
-            <CurdTable
-              columns={this.columns()}
-              data={mockData}
-              selectedRows={selectedRows}
-              onSelectRow={(row) => {
-                console.log(row);
-                this.setState({ selectedRows: row });
-              }}
-              checkable={checkable}
-              popupType={popupType as any}
-              setFormItemsConfig={setFormItemsConfig as any}
-              actionsConfig={{
-                confirmProps: {
-                  okText: '确定',
-                  cancelText: '取消',
-                }
-              } as any}
-              operators={operators}
-              interceptors={{
-                handleFilterAndSort: (filters, sorter) => {
-                  this.setState({
-                    filteredInfo: filters,
-                    sortedInfo: sorter,
-                  });
-                }
-              }}
-            />
-          </Curd>
-        </FormMateContext.Provider>
+        <Curd onRef={(curd) => this.curd = curd}>
+          <CurdTable
+            columns={this.columns()}
+            data={mockData}
+            selectedRows={selectedRows}
+            onSelectRow={(row) => {
+              console.log(row);
+              this.setState({ selectedRows: row });
+            }}
+            checkable={checkable}
+            popupType={popupType as any}
+            setFormItemsConfig={setFormItemsConfig as any}
+            actionsConfig={{
+              confirmProps: {
+                okText: '确定',
+                cancelText: '取消',
+              }
+            } as any}
+            operators={operators}
+            interceptors={{
+              handleFilterAndSort: (filters, sorter) => {
+                this.setState({
+                  filteredInfo: filters,
+                  sortedInfo: sorter,
+                });
+              }
+            }}
+          />
+        </Curd>
       </React.Fragment>
     )
   }

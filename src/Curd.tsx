@@ -5,7 +5,6 @@ import CurdList from './components/CurdList/index';
 import QueryPanel from './components/QueryPanel/index';
 import { injectChildren } from './utils';
 
-
 export interface CurdProps {
   modelName: string;
   dispatch: Function;

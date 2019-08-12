@@ -3,7 +3,7 @@ import { Spin, Button, Drawer, Form } from 'antd';
 import { DrawerProps } from 'antd/lib/drawer';
 import { FormProps } from 'antd/lib/form';
 import { ItemConfig } from 'antd-form-mate';
-import FormMateContext from '../../FormMateContext';
+import { FormMate } from '../../FormMate';
 import { detailFormDrawerText } from '../../config';
 
 export interface DetailFormDrawerProps {
@@ -43,39 +43,30 @@ function DetailFormDrawer(props: DetailFormDrawerProps) {
 
   return (
     <Drawer destroyOnClose width={560} {...drawerConfig}>
-      <FormMateContext.Consumer>
-        {({ FormProvider, createFormItems }) => {
-          if (FormProvider && createFormItems) {
-            return (
-              <Spin spinning={loading}>
-                <FormProvider value={form}>{createFormItems(itemsConfig, itemsLayout)}</FormProvider>
-                {handleOk ? (
-                  <div
-                    style={{
-                      // position: 'absolute',
-                      // left: 0,
-                      // bottom: -10,
-                      width: '100%',
-                      borderTop: '1px solid #e9e9e9',
-                      padding: '10px 16px',
-                      background: '#fff',
-                      textAlign: 'right',
-                    }}
-                  >
-                    <Button onClick={drawerConfig.onClose as any} style={{ marginRight: 8 }}>
-                      {detailFormDrawerText.cancel}
-                    </Button>
-                    <Button onClick={okHandle} type="primary">
-                      {detailFormDrawerText.ok}
-                    </Button>
-                  </div>
-                ) : null}
-              </Spin>
-            )
-          }
-          return null;
-        }}
-      </FormMateContext.Consumer>
+      <Spin spinning={loading}>
+        <FormMate.FormProvider value={form}>{FormMate.createFormItems(itemsConfig, itemsLayout)}</FormMate.FormProvider>
+        {handleOk ? (
+          <div
+            style={{
+              // position: 'absolute',
+              // left: 0,
+              // bottom: -10,
+              width: '100%',
+              borderTop: '1px solid #e9e9e9',
+              padding: '10px 16px',
+              background: '#fff',
+              textAlign: 'right',
+            }}
+          >
+            <Button onClick={drawerConfig.onClose as any} style={{ marginRight: 8 }}>
+              {detailFormDrawerText.cancel}
+            </Button>
+            <Button onClick={okHandle} type="primary">
+              {detailFormDrawerText.ok}
+            </Button>
+          </div>
+        ) : null}
+      </Spin>
     </Drawer>
   );
 };
