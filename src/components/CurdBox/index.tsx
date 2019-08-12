@@ -329,7 +329,7 @@ class CurdBox extends PureComponent<CurdBoxProps, CurdState> {
 
   // https://ant.design/components/table-cn/#components-table-demo-reset-filter
   // 只支持一个 sorter
-  handleStandardTableChange = (
+  handleDataChange = (
     pagination: PaginationConfig,
     filtersArg = {} as Record<keyof any, string[]>,
     sorter = {} as SorterResult<any>,

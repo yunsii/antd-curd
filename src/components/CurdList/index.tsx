@@ -11,12 +11,12 @@ export interface CustomStandardListProps {
 function CustomStandardList(props: CustomStandardListProps) {
   const { __curdBox__, ...rest } = props;
   if (__curdBox__) {
-    const { handleStandardTableChange } = __curdBox__;
+    const { handleDataChange } = __curdBox__;
     return (
       <StandardList
         {...rest}
         setActions={(record) => __curdBox__.renderActions(record)}
-        onChange={handleStandardTableChange}
+        onChange={handleDataChange}
       />
     )
   }

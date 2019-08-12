@@ -12,7 +12,7 @@ export interface CustomStandardTableProps {
 function CustomStandardTable(props: CustomStandardTableProps) {
   const { __curdBox__, columns, ...rest } = props;
   if (__curdBox__) {
-    const { handleStandardTableChange } = __curdBox__;
+    const { handleDataChange } = __curdBox__;
     const enhanceColumns = () => {
       const { actionsConfig } = __curdBox__.props;
       if (!columns) return [];
@@ -31,7 +31,7 @@ function CustomStandardTable(props: CustomStandardTableProps) {
       <StandardTable
         {...rest}
         columns={enhanceColumns()}
-        onChange={handleStandardTableChange}
+        onChange={handleDataChange}
       />
     )
   }
