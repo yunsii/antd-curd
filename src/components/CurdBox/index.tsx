@@ -344,6 +344,7 @@ class CurdBox extends PureComponent<CurdBoxProps, CurdState> {
     }
     if (popupVisible === UpdateName) {
       this.handleUpdateOk(fieldsValue);
+      return;
     }
     this.handleCreateOk(fieldsValue);
   };
