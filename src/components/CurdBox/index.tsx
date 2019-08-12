@@ -10,13 +10,34 @@ import StandardTable from '../StandardTable/index';
 import StandardList from '../StandardList/index';
 import DetailFormDrawer from '../DetailFormDrawer/index';
 import DetailFormModal from '../DetailFormModal/index';
-import { CustomDetailFormDrawerProps } from './CustomDetailFormDrawerProps';
-import { CustomDetailFormModalProps } from './CustomDetailFormModalProps';
 import { CreateName, DetailName, UpdateName } from '../../constant';
 import { formatSorter, searchFieldName } from '../../config';
 import { callFunctionIfFunction } from '../../utils';
 import Curd from '../../Curd';
+import { DetailFormModalProps } from '../DetailFormModal/index';
+import { DetailFormDrawerProps } from '../DetailFormDrawer/index';
 
+export interface CustomDetailFormDrawerProps extends DetailFormDrawerProps {
+  drawerConfig: {
+    title?: never;
+    visible?: never;
+    onClose?: never;
+  };
+  onOk?: never;
+  itemsConfig: never;
+  loading?: never;
+}
+
+export interface CustomDetailFormModalProps extends DetailFormModalProps {
+  modalConfig: {
+    title?: never;
+    visible?: never;
+    onClose?: never;
+    onOk?: never;
+  };
+  itemsConfig: never;
+  loading?: never;
+}
 
 const getValue = obj =>
   Object.keys(obj)
