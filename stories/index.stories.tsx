@@ -10,11 +10,11 @@ import StandardList from '../src/components/StandardList';
 import FormMateContext from '../src/FormMateContext';
 import { FormProvider, createFormItems } from './antd-form-mate';
 import renderCard from './CustomCard';
-import CurdListBoxDemo from './CurdListBox';
+import CurdListDemo from './CurdListDemo';
 import setFormItemsConfig from './map';
 import { columns, data as mockData } from './mock';
 
-const { QueryPanel, CurdBox } = Curd;
+const { QueryPanel, CurdTable } = Curd;
 const { Group: RadioGroup } = Radio;
 
 const queryArgsConfig = [
@@ -151,7 +151,7 @@ class StandardTableDemo extends React.Component {
   }
 }
 
-class CurdTableBoxDemo extends React.Component {
+class CurdTableDemo extends React.Component {
   state = {
     selectedRows: [],
     checkable: true,
@@ -300,7 +300,7 @@ class CurdTableBoxDemo extends React.Component {
           }}
         >
           <Curd onRef={(curd) => this.curd = curd}>
-            <CurdBox
+            <CurdTable
               columns={this.columns()}
               data={mockData}
               selectedRows={selectedRows}
@@ -338,7 +338,7 @@ class StandardListDemo extends React.Component {
   render() {
     return (
       <StandardList
-        data={mockData.list}
+        data={mockData}
         renderItem={renderCard}
       />
     )
@@ -350,5 +350,5 @@ storiesOf('custom components', module)
   .add('QueryPanel', () => <QueryPanelDemo />)
   .add('StandardTable', () => <StandardTableDemo />)
   .add('StandardList', () => <StandardListDemo />)
-  .add('CurdTableBox', () => <CurdTableBoxDemo />)
-  .add('CurdListBox', () => <CurdListBoxDemo />);
+  .add('CurdTable', () => <CurdTableDemo />)
+  .add('CurdList', () => <CurdListDemo />);

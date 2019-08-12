@@ -59,8 +59,8 @@ export default class CurdListBoxDemo extends React.Component {
           useWindow={false}
         >
           <Curd>
-            <Curd.CurdBox
-              data={data}
+            <Curd.CurdList
+              data={{ list: data }}
               renderItem={renderCard}
               pagination={false}
               type='list'
