@@ -73,7 +73,6 @@
 | dipatch | dva 注入的 dispatch 函数 | Function | - |
 | type | 数据容器类型 | 'list' | `'table'` |
 | operators | 类似新增按钮的功能，会注入 Curd 的组件实例（可访问控制该页面组件的所有属性）用于扩展功能，如重新搜索等 | React.ReactNode[] | - |
-| renderItem | 数据容器类型为 `'list'` 可用，用于自定义渲染组件 | ({ record, actions, recordSelection, checkable }) => React.ReactNode | - |
 | data | 数据列表和分页器 | any | {} |
 | actionsConfig | 表格配置 | [actionsConfig](#actionsConfig) | - |
 | popupType | 弹窗类型 | 'modal' \| 'drawer' | - |
@@ -109,5 +108,15 @@
 #### 注意事项
 
 handle**Click 事件（除 handleDeleteClick 事件外）默认不会中断后续的弹窗事件，如果需要中断， `return true` 即可。
+
+## [Curd.CurdTable](/src/components/CurdTable/index.tsx)
+
+## [Curd.CurdList](/src/components/CurdList/index.tsx)
+
+### API
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| renderItem | 数据容器类型为 `'list'` 可用，用于自定义渲染组件 | ({ record, actions, recordSelection, checkable }) => React.ReactNode | - |
 
 [Demo](/stories/index.stories.tsx)
