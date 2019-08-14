@@ -150,6 +150,7 @@ export const renderActions = record => (actions, moreActions, confirmKeys, confi
   return [
     ...renderShowActions(record)(actions, confirmKeys, confirmProps),
     <span
+      key='dropdown'
       onClick={(event) => {
         if (event) {
           event.stopPropagation();
