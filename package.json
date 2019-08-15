@@ -6,13 +6,9 @@
   "dependencies": {
     "antd": "^3.20.7",
     "antd-form-mate": "^0.1.13",
-    "babel-plugin-import": "^1.12.0",
-    "dva-base-models": "^1.1.6",
     "moment": "^2.24.0",
     "react": "^16.8.6",
-    "react-dom": "^16.8.6",
-    "react-scripts": "3.0.1",
-    "ts-import-plugin": "^1.6.1"
+    "react-dom": "^16.8.6"
   },
   "scripts": {
     "start": "npm run storybook",
@@ -52,6 +48,7 @@
     "@types/storybook__react": "^4.0.2",
     "awesome-typescript-loader": "^5.2.1",
     "babel-loader": "^8.0.6",
+    "babel-plugin-import": "^1.12.0",
     "css-loader": "^3.1.0",
     "jest": "^24.8.0",
     "lerna": "^3.16.4",
@@ -60,6 +57,7 @@
     "react-docgen-typescript-loader": "^3.1.0",
     "style-loader": "^0.23.1",
     "ts-jest": "^24.0.2",
+    "ts-import-plugin": "^1.6.1",
     "ts-loader": "^6.0.4",
     "typescript": "^3.5.3",
     "webpack": "^4.39.1",
