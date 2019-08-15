@@ -6,7 +6,6 @@
   "dependencies": {
     "antd": "^3.20.7",
     "antd-form-mate": "^0.1.13",
-    "moment": "^2.24.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6"
   },

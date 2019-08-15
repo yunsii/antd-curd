@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { storiesOf } from '@storybook/react';
 // import { action } from '@storybook/addon-actions';
-// import * as moment from 'moment';
 import { Button, Card, Switch, Form, Radio } from 'antd';
 // import { WrappedFormUtils } from 'antd/lib/form/Form';
 import { Curd } from '../src';
