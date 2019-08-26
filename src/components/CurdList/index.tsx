@@ -2,7 +2,7 @@ import React from 'react';
 import StandardList, { StandardListProps } from '../StandardList/index';
 import CurdBox, { CurdBoxProps } from '../CurdBox';
 
-export interface CustomStandardListProps {
+export interface CustomStandardListProps extends StandardListProps {
   __curdBox__?: CurdBox;
   data: { list: any[], pagination?: any };
   renderItem: StandardListProps["renderItem"];
@@ -10,15 +10,29 @@ export interface CustomStandardListProps {
 }
 
 function CustomStandardList(props: CustomStandardListProps) {
-  const { __curdBox__, fetchLoading, ...rest } = props;
+  const {
+    __curdBox__,
+    fetchLoading,
+    data,
+    onSelectRow,
+    rowKey,
+    checkable,
+    selectedRows,
+    renderItem,
+  } = props;
   if (__curdBox__) {
     const { handleDataChange } = __curdBox__;
     return (
       <StandardList
-        {...rest}
         loading={fetchLoading}
         setActions={(record) => __curdBox__.renderActions(record)}
         onChange={handleDataChange}
+        data={data}
+        onSelectRow={onSelectRow}
+        rowKey={rowKey}
+        checkable={checkable}
+        selectedRows={selectedRows}
+        renderItem={renderItem}
       />
     )
   }
