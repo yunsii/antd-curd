@@ -64,6 +64,8 @@ export default class CurdListBoxDemo extends React.Component {
               renderItem={renderCard}
               pagination={false}
               type='list'
+              popupType='modal'
+              setFormItemsConfig={() => [{ type: 'string', field: 'test', formItemProps: { label: 'test' } }]}
             />
             {this.state.loading && this.state.hasMore && (
               <div className={styles["demo-loading-container"]}>
