@@ -38,13 +38,6 @@ const queryArgsConfig = [
     },
   },
   {
-    type: 'picture',
-    field: 'picture',
-    formItemProps: {
-      label: '图片',
-    },
-  },
-  {
     type: 'date',
     field: 'endDay',
     formItemProps: {
@@ -52,6 +45,13 @@ const queryArgsConfig = [
     },
     componentProps: {
       placeholder: '查询过期日期前的商品',
+    },
+  },
+  {
+    type: 'string',
+    field: 'address',
+    formItemProps: {
+      label: '地址',
     },
   },
 ];
