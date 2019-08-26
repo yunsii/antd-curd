@@ -10,7 +10,6 @@ import { FormMate } from '../../FormMate';
 import Curd from '../../Curd';
 import { queryPanelText } from '../../config';
 
-const RowCount = [1, 2, 3, 4, 6, 8, 12, 24];
 const addAllowClearToItemsConfig = itemsConfig =>
   itemsConfig.map(item => {
     const { componentProps = {}, ...rest } = item;
@@ -23,18 +22,10 @@ const addAllowClearToItemsConfig = itemsConfig =>
     };
   });
 
-function calculateSpan(rowCount) {
-  if (RowCount.includes(rowCount)) {
-    return 24 / rowCount;
-  }
-  throw new Error(`QueryPanel: rowCount value only one of [${RowCount}]`);
-}
-
 export declare interface QueryPanelProps {
   queryArgsConfig: any[];
   onSearch?: (fieldsValue: any) => void;
   onReset?: () => void;
-  rowCount?: 1 | 2 | 3 | 4 | 6 | 8 | 12 | 24;
   maxCount?: number;
   rowProps?: RowProps;
   colProps?: ColProps;
@@ -120,13 +111,14 @@ export default class QueryPanel extends PureComponent<QueryPanelProps, QueryPane
     const {
       form,
       queryArgsConfig = [],
-      rowCount = 3,
-      maxCount = 2,
+      maxCount = 3,
       rowProps = {},
       colProps: customColProps,
     } = this.props;
     if (!queryArgsConfig.length) return null;
-    let colProps: any = { span: calculateSpan(rowCount) };
+    let colProps: any = {
+      xxl: 4, lg: 6, sm: 12, xs: 24,
+    };
     if (customColProps) {
       colProps = customColProps;
     }
@@ -148,7 +140,7 @@ export default class QueryPanel extends PureComponent<QueryPanelProps, QueryPane
         </a>
       );
     const actions = (
-      <div style={{ overflow: 'hidden' }}>
+      <div style={{ whiteSpace: 'nowrap' }}>
         <div style={{ marginBottom: 24 }}>
           <Button type="primary" htmlType="submit">
             {queryPanelText.search}
