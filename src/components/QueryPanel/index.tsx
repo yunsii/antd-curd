@@ -117,7 +117,7 @@ export default class QueryPanel extends PureComponent<QueryPanelProps, QueryPane
     } = this.props;
     if (!queryArgsConfig.length) return null;
     let colProps: any = {
-      xxl: 4, lg: 6, sm: 12, xs: 24,
+      lg: 6, sm: 12, xs: 24,
     };
     if (customColProps) {
       colProps = customColProps;
