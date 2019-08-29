@@ -1,1 +1,1 @@
-export { default as FormMate, config } from 'antd-form-mate';
+export { default as FormMate, config, locale } from 'antd-form-mate';
