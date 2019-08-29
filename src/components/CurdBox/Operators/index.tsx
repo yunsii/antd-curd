@@ -6,7 +6,7 @@ import CurdBox from '../index';
 
 export interface OperatorsProps {
   curdBox: CurdBox;
-  createButtonName?: string;
+  createButtonName?: string | false;
   children?: React.ReactChildren;
 } 
 
