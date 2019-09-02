@@ -2,16 +2,18 @@ import React from 'react';
 import StandardTable, { StandardTableProps } from '../StandardTable/index';
 import CurdBox, { CurdBoxProps } from '../CurdBox';
 import { addDivider } from '../../utils';
+import { injectChildren } from '../../utils';
 
 export interface CustomStandardTableProps {
   __curdBox__?: CurdBox;
   data: { list: any[], pagination?: any };
   columns: any[];
   fetchLoading?: boolean;
+  children?: React.ReactChildren;
 }
 
 function CustomStandardTable(props: CustomStandardTableProps) {
-  const { __curdBox__, columns, fetchLoading, ...rest } = props;
+  const { __curdBox__, columns, fetchLoading, children, ...rest } = props;
   if (__curdBox__) {
     const { handleDataChange } = __curdBox__;
     const enhanceColumns = () => {
@@ -29,12 +31,15 @@ function CustomStandardTable(props: CustomStandardTableProps) {
       ];
     };
     return (
-      <StandardTable
-        {...rest}
-        loading={fetchLoading}
-        columns={enhanceColumns()}
-        onChange={handleDataChange}
-      />
+      <>
+        <StandardTable
+          {...rest}
+          loading={fetchLoading}
+          columns={enhanceColumns()}
+          onChange={handleDataChange}
+        />
+        {injectChildren(children, { __curdBox__ })}
+      </>
     )
   }
   return null
