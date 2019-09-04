@@ -58,14 +58,14 @@
 | `detailLoading` | 请求 model 详情 loading | `boolean` | - |
 | `updateLoading` | 更新 model loading | `boolean` | - |
 | `deleteLoading` | 删除 model loading | `boolean` | - |
-| `createButtonName` | 新建按钮名称，为空时隐藏按钮 | `string | false` | `'新建'` |
-| `popupType` | 弹窗类型 | `'modal' | 'drawer'` | - |
+| `createButtonName` | 新建按钮名称，为空时隐藏按钮 | `string \| false` | `'新建'` |
+| `popupType` | 弹窗类型 | `'modal' \| 'drawer'` | - |
 | `popupProps` | 弹窗配置，根据 `popupType` 配置 | [CustomDetailFormDrawerProps](/src/components/CurdBox/index.tsx) \| [CustomDetailFormModalProps](/src/components/CurdBox/index.tsx) | - |
-| `setFormItemsConfig` | 配置表单数据 | `(detail: {}, mode: 'create' | 'detail' | 'update', form) => any[]` | - |
+| `setFormItemsConfig` | 配置表单数据 | `(detail: {}, mode: 'create' \| 'detail' \| 'update', form) => any[]` | - |
 | `afterPopupClose` | 关闭弹窗后回调函数 | `() => void` | - |
 | `interceptors` | 拦截器 | [interceptors](#interceptors) | - |
 | `detail` | model 详情 | `any` | - |
-| `actionsConfig` | 表格配置 | `[actionsConfig](#actionsConfig) | false | null` | - |
+| `actionsConfig` | 表格配置 | `[actionsConfig](#actionsConfig) \| false \| null` | - |
 | `operators` | 类似新增按钮的功能，会注入 Curd 的组件实例（可访问控制该页面组件的所有属性）用于扩展功能，如重新搜索等 | `React.ReactNode[]` | - |
 | `dipatch` | dva 注入的 dispatch 函数 | `Function` | - |
 | `autoFetch` | 渲染后是否自动发起请求，如果需要配置额外的查询参数，可置为 false 手动自定义发起初始化请求 | `boolean` | `true` |
