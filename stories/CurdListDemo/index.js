@@ -63,7 +63,6 @@ export default class CurdListBoxDemo extends React.Component {
               data={{ list: data }}
               renderItem={renderCard}
               pagination={false}
-              type='list'
               popupType='modal'
               setFormItemsConfig={() => [{ type: 'string', field: 'test', formItemProps: { label: 'test' } }]}
             />
