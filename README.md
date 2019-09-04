@@ -76,10 +76,10 @@
 
 | 参数 | 说明 | 类型 | 默认值 |
 | --- | --- | --- | --- |
-| `updateFieldsValue` | 表单数据拦截处理，类似时间区间这样的数据，需要单独处理后再提交 | `(fieldsValue: any, mode?: 'create' | 'update') => any` | - |
-| `handleCreateClick` | 新建点击事件拦截 | `() => boolean | undefined` | - |
-| `handleDetailClick` | 详情点击事件拦截，可通过路由跳转到自定义的对象详情页面 | `(record: any) => boolean | undefined` | - |
-| `handleUpdateClick` | 编辑点击事件拦截 | `(record: any) => boolean | undefined` | - |
+| `updateFieldsValue` | 表单数据拦截处理，类似时间区间这样的数据，需要单独处理后再提交 | `(fieldsValue: any, mode?: 'create' \| 'update') => any` | - |
+| `handleCreateClick` | 新建点击事件拦截 | `() => boolean \| undefined` | - |
+| `handleDetailClick` | 详情点击事件拦截，可通过路由跳转到自定义的对象详情页面 | `(record: any) => boolean \| undefined` | - |
+| `handleUpdateClick` | 编辑点击事件拦截 | `(record: any) => boolean \| undefined` | - |
 | `handleDeleteClick` | 删除点击事件拦截 | `(record: any) => void` | - |
 | `handleFilterAndSort` | 过滤器和排序器处理，可用于使过滤器和分页器受控 | `(filtersArg: Record<keyof any, string[]>, sorter: SorterResult<any>, extra?: TableCurrentDataSource<any>) => any` | - |
 
@@ -89,7 +89,7 @@
 | --- | --- | --- | --- |
 | `showActionsCount` | 除更多外需要展示的操作个数 | `number` | `3` |
 | `extraActions` | 除 **详情（4）**，**编辑（8）**，**删除（12）** 外，可自行配置额外操作。注意，数字是操作的 `key` ，根据 `key` 不同，会按升序排列 | [ActionType](/src/components/CurdBox/actions/index.tsx) | - |
-| `confirmKeys` | 需要弹出确认窗口的 `key` 数组 | `(number | [number, (record?: any) => string])[]` | `[12]` |
+| `confirmKeys` | 需要弹出确认窗口的 `key` 数组 | `(number \| [number, (record?: any) => string])[]` | `[12]` |
 | `confirmProps` | 额外的 Popconfirm 配置 | `PopconfirmProps` | - |
 | `hideActions` | 隐藏操作的 `key` 数组 | `number[]` | - |
 | `detailActionTitle` | 详情 action 名称 | `string` | `'详情'` |
