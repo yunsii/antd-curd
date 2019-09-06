@@ -11,6 +11,10 @@ export default function setFormItemsConfig(detail = {}, mode) {
       },
       fieldProps: {
         initialValue: detail.organ_id,
+        rules: [{
+          required: true,
+          message: '请选择所属团体',
+        }]
       },
       component: (
         <TreeSelect style={{ width: '100%' }} placeholder="请选择所属团体" disabled={!mode} />
