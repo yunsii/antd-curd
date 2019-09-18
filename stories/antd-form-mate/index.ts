@@ -1,6 +1,6 @@
-import { FormMate } from '../../src/FormMate';
+import { config } from '../../src/FormMate';
 
-const { setDefaultExtra } = FormMate;
+const { setDefaultExtra } = config;
 setDefaultExtra({
   picture: '自定义图片默认提示',
 });
