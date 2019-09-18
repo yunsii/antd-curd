@@ -3,8 +3,8 @@ import React, { Fragment } from 'react';
 import { Modal, Form, Row, Col, Spin } from 'antd';
 import { ModalProps } from 'antd/lib/modal';
 import { FormProps, } from 'antd/lib/form';
-import { ItemConfig } from 'antd-form-mate';
-import { FormMate } from '../../FormMate';
+import { createFormItems } from '../../FormMate';
+import { ItemConfig } from 'antd-form-mate/dist/lib/form-mate';
 import { injectChildren } from '../../utils';
 
 export interface DetailFormModalProps {
@@ -49,10 +49,10 @@ function DetailFormModal(props: DetailFormModalProps) {
   const itemsConfig = setItemsConfig(detail, mode, form);
 
   const colsItems = cols === 1 ? (
-    FormMate.createFormItems(itemsConfig, itemsLayout)
+    createFormItems(form)(itemsConfig, itemsLayout)
   ) : (
       <Row type="flex">
-        {FormMate.createFormItems(itemsConfig, itemsLayout).map(item => {
+        {createFormItems(form)(itemsConfig, itemsLayout).map(item => {
           return (
             <Col span={24 / cols} key={item.key as any}>
               {item}
@@ -67,9 +67,7 @@ function DetailFormModal(props: DetailFormModalProps) {
       <Fragment>
         <div className={itemsWrapperClassName} style={itemsWrapperStyle}>
           <Spin spinning={loading}>
-            <FormMate.FormProvider value={form}>
-              {colsItems}
-            </FormMate.FormProvider>
+            {colsItems}
           </Spin>
         </div>
         {mode ? injectChildren(children, { mode }) : children}

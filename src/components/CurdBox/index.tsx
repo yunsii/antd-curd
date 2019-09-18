@@ -2,7 +2,7 @@ import React, { PureComponent, Fragment } from 'react';
 import { FormProps } from 'antd/lib/form';
 import { PaginationConfig, SorterResult, TableCurrentDataSource } from 'antd/lib/table';
 import { PopconfirmProps } from 'antd/lib/popconfirm';
-import { ItemConfig } from 'antd-form-mate';
+import { ItemConfig } from 'antd-form-mate/dist/lib/form-mate';
 import { setActions, ActionType } from './actions/index';
 import { injectChildren } from '../../utils';
 import Operators from './Operators/index';

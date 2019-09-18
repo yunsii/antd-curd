@@ -2,8 +2,8 @@ import React from 'react';
 import { Spin, Button, Drawer, Form } from 'antd';
 import { DrawerProps } from 'antd/lib/drawer';
 import { FormProps } from 'antd/lib/form';
-import { ItemConfig } from 'antd-form-mate';
-import { FormMate } from '../../FormMate';
+import { ItemConfig } from 'antd-form-mate/dist/lib/form-mate';
+import { createFormItems } from '../../FormMate';
 import { detailFormDrawerText } from '../../config';
 
 export interface DetailFormDrawerProps {
@@ -44,7 +44,7 @@ function DetailFormDrawer(props: DetailFormDrawerProps) {
   return (
     <Drawer destroyOnClose width={560} {...drawerConfig}>
       <Spin spinning={loading}>
-        <FormMate.FormProvider value={form}>{FormMate.createFormItems(itemsConfig, itemsLayout)}</FormMate.FormProvider>
+        {createFormItems(form)(itemsConfig, itemsLayout)}
         {handleOk ? (
           <div
             style={{

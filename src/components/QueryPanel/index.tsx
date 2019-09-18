@@ -1,12 +1,12 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { PureComponent } from 'react';
 import { Row, Col, Form, Icon, Button } from 'antd';
-import { FormProps } from 'antd/lib/form';
+import { WrappedFormUtils } from 'antd/lib/form/Form';
 import { RowProps } from 'antd/lib/row';
 import { ColProps } from 'antd/lib/col';
 import { callFunctionIfFunction } from '../../utils';
 import styles from './index.less';
-import { FormMate } from '../../FormMate';
+import { createFormItems } from '../../FormMate';
 import Curd from '../../Curd';
 import { queryPanelText } from '../../config';
 
@@ -32,7 +32,7 @@ export declare interface QueryPanelProps {
   onValuesChange?: (changedValues: any, allValues: any) => void;
   updateSearchValue?: (fieldsValue: any) => any;
   wrappedComponentRef?: (self: QueryPanel) => void;
-  form?: FormProps["form"];
+  form?: WrappedFormUtils;
   reSearchAfterReset?: boolean;
   __curd__?: Curd;
 };
@@ -153,19 +153,17 @@ export default class QueryPanel extends PureComponent<QueryPanelProps, QueryPane
       </div>
     );
     const items =
-      [...FormMate.createFormItems(formItems, { labelCol: { span: 8 }, wrapperCol: { span: 16 } }), actions];
+      [...createFormItems(form as any)(formItems, { labelCol: { span: 8 }, wrapperCol: { span: 16 } }), actions];
 
     return (
       <Form onSubmit={this.handleSubmit} layout="inline">
-        <FormMate.FormProvider value={form as any}>
-          <Row type="flex" gutter={{ xs: 8, sm: 12, lg: 24, xl: 48 }} {...rowProps}>
-            {items.map(item => (
-              <Col {...colProps} key={item.key}>
-                {item}
-              </Col>
-            ))}
-          </Row>
-        </FormMate.FormProvider>
+        <Row type="flex" gutter={{ xs: 8, sm: 12, lg: 24, xl: 48 }} {...rowProps}>
+          {items.map(item => (
+            <Col {...colProps} key={item.key}>
+              {item}
+            </Col>
+          ))}
+        </Row>
       </Form>
     );
   }
