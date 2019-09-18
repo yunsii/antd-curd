@@ -28,11 +28,11 @@
 
 ## [DetailFormDrawer](/src/components/DetailFormDrawer/index.tsx) 详情抽屉
 
-基于 antd-form-mate 实现的详情表单抽屉，参数定义可参见 [DetailFormDrawer/index.d.ts](/src/components/DetailFormDrawer/index.d.ts) 。
+基于 [antd-form-mate](https://github.com/theprimone/antd-form-mate) 实现的详情表单抽屉，参数定义可参见 [DetailFormDrawer/index.d.ts](/src/components/DetailFormDrawer/index.d.ts) 。
 
 ## [DetailFormModal](/src/components/DetailFormModal/index.tsx) 详情模态框
 
-基于 antd-form-mate 实现的详情模态框，参数定义可参见 [DetailFormModal/index.tsx](/src/components/DetailFormModal/index.tsx) 。
+基于 [antd-form-mate](https://github.com/theprimone/antd-form-mate) 实现的详情模态框，参数定义可参见 [DetailFormModal/index.tsx](/src/components/DetailFormModal/index.tsx) 。
 
 ## [QueryPanel](/src/components/QueryPanel/index.tsx) 查询面板
 
