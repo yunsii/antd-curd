@@ -99,18 +99,18 @@ function defaultHandleFilterAndSort(
 
 
 export interface CurdBoxProps {
-  /*! popup title of create */
+  /** popup title of create */
   createTitle?: string;
-  /*! popup title of detail */
+  /** popup title of detail */
   detailTitle?: string;
-  /*! popup title of update */
+  /** popup title of update */
   updateTitle?: string;
   fetchLoading?: boolean;
   createLoading?: boolean;
   detailLoading?: boolean;
   updateLoading?: boolean;
   deleteLoading?: boolean;
-  /*! if value is '' or false, hide the button */
+  /** if value is '' or false, hide the button */
   createButtonName?: string | false;
   popupType?: 'modal' | 'drawer' | null;
   popupProps?: CustomDetailFormDrawerProps | CustomDetailFormModalProps;
@@ -121,16 +121,16 @@ export interface CurdBoxProps {
   ) => ItemConfig[];
   afterPopupClose?: () => void;
   interceptors?: {
-    /*! update form values after click ok */
+    /** update form values after click ok */
     updateFieldsValue?: (fieldsValue: any, mode?: 'create' | 'update') => any;
-    /*! callback on click create button, will break default behavior if return value is true */
+    /** callback on click create button, will break default behavior if return value is true */
     handleCreateClick?: () => boolean | undefined;
-    /*! callback on click detail button, will break default behavior if return value is true */
+    /** callback on click detail button, will break default behavior if return value is true */
     handleDetailClick?: (record: any) => boolean | undefined;
-    /*! callback on click update button, will break default behavior if return value is true */
+    /** callback on click update button, will break default behavior if return value is true */
     handleUpdateClick?: (record: any) => boolean | undefined;
     handleDeleteClick?: (record: any) => void;
-    /*! custom how to generate params to query when change of filter or sorter */
+    /** custom how to generate params to query when change of filter or sorter */
     handleFilterAndSort?: (
       filtersArg: Record<keyof any, string[]>,
       sorter: SorterResult<any>,
@@ -150,7 +150,7 @@ export interface CurdBoxProps {
   } | false | null;
   operators?: React.ReactNode[] | boolean | null;
   dispatch?: any;
-  /*! call model's fetch effect when componentDidMount */
+  /** call model's fetch effect when componentDidMount */
   autoFetch?: boolean;
   reSearchAfterUpdate?: boolean;
   __curd__?: Curd,

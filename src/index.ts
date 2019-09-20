@@ -8,7 +8,7 @@ import {
 export const config = {
   setQueryPanelText,
   setDetailFormDrawerText,
-  /*! only set how to format sorter, not set container's handleFilterAndSort */
+  /** only set how to format sorter, not set container's handleFilterAndSort */
   setFormatSorter,
   setSearchFieldName,
 }
