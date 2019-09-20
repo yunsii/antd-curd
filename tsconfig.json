@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "module": "ESNext",
-    "removeComments": true,
+    "removeComments": false,
     "lib": ["es5", "es6", "es7", "es2017", "dom"],
     "jsx": "react",
     "moduleResolution": "node",
