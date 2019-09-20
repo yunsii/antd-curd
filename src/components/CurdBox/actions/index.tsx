@@ -2,7 +2,7 @@
 import React from 'react';
 import _isArray from 'lodash/isArray';
 import { Icon, Dropdown, Menu, Popconfirm, Modal } from 'antd';
-import { DetailName, UpdateName } from '../../../constant';
+import { DetailName, UpdateName } from '../../../constants';
 
 function isConfirmKeyAndItem(key, confirmKeys) {
   for (let i = 0; i < confirmKeys.length; i += 1) {

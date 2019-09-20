@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from 'antd';
-import { CreateName } from '../../../constant';
+import { CreateName } from '../../../constants';
 import styles from './index.less';
 import CurdBox from '../index';
 

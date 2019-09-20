@@ -10,7 +10,7 @@ import StandardTable from '../StandardTable/index';
 import StandardList from '../StandardList/index';
 import DetailFormDrawer from '../DetailFormDrawer/index';
 import DetailFormModal from '../DetailFormModal/index';
-import { CreateName, DetailName, UpdateName } from '../../constant';
+import { CreateName, DetailName, UpdateName } from '../../constants';
 import { formatSorter, searchFieldName } from '../../config';
 import { callFunctionIfFunction } from '../../utils';
 import Curd from '../../Curd';
