@@ -141,6 +141,7 @@ export interface CurdBoxProps {
   actionsConfig?: {
     showActionsCount?: number;
     extraActions?: ActionType[];
+    /** number[] or [number, setTitle()][] */
     confirmKeys?: (number | [number, (record?: any) => string])[];
     confirmProps?: PopconfirmProps,
     hideActions?: number[];
