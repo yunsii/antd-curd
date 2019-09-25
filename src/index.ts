@@ -14,7 +14,7 @@ export const config = {
 }
 
 export { default as Curd } from './Curd';
-export { createFormItems, config as FormMateConfig, locale as FormMateLocale } from './FormMate';
+export { createFormItems, config as formMateConfig, locale as formMateLocale } from './FormMate';
 
 export { default as StandardTable } from './components/StandardTable';
 export { default as StandardList } from './components/StandardList';
