@@ -90,7 +90,7 @@ class StandardTable extends PureComponent<StandardTableProps, StandardTableState
 
   render() {
     const { selectedRowKeys, needTotalList } = this.state;
-    const { data = {}, rowKey, checkable = true, rowClassName, pagination: extraPagination, ...rest } = this.props;
+    const { data = {}, rowKey = 'id', checkable = true, rowClassName, pagination: extraPagination, ...rest } = this.props;
     const { list = [], pagination } = data;
 
     let paginationProps = {
@@ -145,7 +145,7 @@ class StandardTable extends PureComponent<StandardTableProps, StandardTableState
         ) : null}
         <Table
           rowClassName={classNames(styles.tableRow, rowClassName)}
-          rowKey={rowKey || 'id'}
+          rowKey={rowKey}
           rowSelection={rowSelection}
           dataSource={list}
           pagination={paginationProps}
