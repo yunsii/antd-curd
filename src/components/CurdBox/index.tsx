@@ -97,6 +97,18 @@ function defaultHandleFilterAndSort(
   return { ...result };
 }
 
+export interface ActionsConfig {
+  showActionsCount?: number;
+  extraActions?: ActionType[];
+  /** number[] or [number, setTitle()][] */
+  confirmKeys?: (number | [number, (record?: any) => string])[];
+  confirmProps?: PopconfirmProps,
+  hideActions?: number[] | ((record?: any) => void | number[]);
+  disabledActions?: (record?: any) => void | number[];
+  detailActionTitle?: string;
+  updateActionTitle?: string;
+  deleteActionTitle?: string;
+}
 
 export interface CurdBoxProps {
   /** popup title of create */
@@ -138,17 +150,7 @@ export interface CurdBoxProps {
     ) => any;
   };
   detail?: {};
-  actionsConfig?: {
-    showActionsCount?: number;
-    extraActions?: ActionType[];
-    /** number[] or [number, setTitle()][] */
-    confirmKeys?: (number | [number, (record?: any) => string])[];
-    confirmProps?: PopconfirmProps,
-    hideActions?: number[];
-    detailActionTitle?: string;
-    updateActionTitle?: string;
-    deleteActionTitle?: string;
-  } | false | null;
+  actionsConfig?: ActionsConfig | false | null;
   operators?: React.ReactNode[] | boolean | null;
   dispatch?: any;
   /** call model's fetch effect when componentDidMount */
@@ -266,9 +268,9 @@ class CurdBox extends PureComponent<CurdBoxProps, CurdState> {
     })
   }
 
-  renderActions = (record) => {
+  renderActions = (record: any) => {
     const { actionsConfig } = this.props;
-    return setActions(record, this.setActionsMethod(), actionsConfig);
+    return setActions(record, this.setActionsMethod(), actionsConfig || {});
   }
 
   setPopupModeAndRecord = () => {
@@ -359,9 +361,9 @@ class CurdBox extends PureComponent<CurdBoxProps, CurdState> {
     sorter = {} as SorterResult<any>,
     extra?: TableCurrentDataSource<any>
   ) => {
-    console.log('pagination', pagination);
-    console.log('filtersArg', filtersArg);
-    console.log('sorter', sorter);
+    // console.log('pagination', pagination);
+    // console.log('filtersArg', filtersArg);
+    // console.log('sorter', sorter);
     const { interceptors = {}, __curd__ } = this.props;
     const { handleFilterAndSort = () => { } } = interceptors;
 
@@ -375,7 +377,7 @@ class CurdBox extends PureComponent<CurdBoxProps, CurdState> {
         defaultHandleFilterAndSort(filtersArg, sorter, extra),
     };
 
-    console.log('changed parama', params);
+    // console.log('changed params', params);
     // sync curd's searchParams
     if (__curd__) {
       __curd__.setState({ searchParams: params }, () => {
