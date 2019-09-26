@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { storiesOf } from '@storybook/react';
 // import { action } from '@storybook/addon-actions';
-import { Button, Card, Switch, Form, Radio } from 'antd';
+import { Button, Card, Switch, Form, Radio, message } from 'antd';
 // import { WrappedFormUtils } from 'antd/lib/form/Form';
 import { Curd } from '../src';
 import StandardTable from '../src/components/StandardTable';
@@ -304,11 +304,38 @@ class CurdTableDemo extends React.Component {
             popupType={popupType as any}
             setFormItemsConfig={setFormItemsConfig as any}
             actionsConfig={{
+              extraActions: [
+                {
+                  key: 13,
+                  title: '外务',
+                  handleClick: record => message.info(`调用 ${record.name} 的外务事件`),
+                },
+                {
+                  key: 14,
+                  title: '兼职',
+                  handleClick: record => message.info(`调用 ${record.name} 的兼职事件`),
+                },
+                {
+                  key: 15,
+                  title: '弹出子组件',
+                  handleClick: () => this.setState({ customModelVisible: true }),
+                },
+              ],
               confirmProps: {
                 okText: '确定',
                 cancelText: '取消',
+              } as any,
+              disabledActions: (record) => {
+                if (record.id === 'cmj') {
+                  return [4, 8, 14];
+                }
+              },
+              hideActions: (record) => {
+                if (record.id === 'cmj2') {
+                  return [4, 8];
+                }
               }
-            } as any}
+            }}
             operators={operators}
             interceptors={{
               handleFilterAndSort: (filters, sorter) => {
