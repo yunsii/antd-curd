@@ -1,14 +1,14 @@
 {
   "compilerOptions": {
     "module": "ESNext",
-    "removeComments": false,
     "lib": ["es5", "es6", "es7", "es2017", "dom"],
     "jsx": "react",
     "moduleResolution": "node",
     "rootDirs": ["src", "stories"],
     "outDir": "dist",
+    "removeComments": false,
     "forceConsistentCasingInFileNames": true,
-    "noImplicitReturns": true,
+    "noImplicitReturns": false,
     "noImplicitThis": true,
     "noImplicitAny": false,
     "strictNullChecks": true,
