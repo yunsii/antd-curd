@@ -1,10 +1,17 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react';
 import _isArray from 'lodash/isArray';
+import _isFunction from 'lodash/isFunction';
 import { Icon, Dropdown, Menu, Popconfirm, Modal } from 'antd';
 import { DetailName, UpdateName } from '../../../constants';
+import { CurdBoxProps, ActionsConfig } from '../index';
 
-function isConfirmKeyAndItem(key, confirmKeys) {
+const disabledItemStyle: React.CSSProperties = {
+  color: "rgba(0,0,0,0.25)",
+  cursor: "not-allowed",
+}
+
+function isConfirmKeyAndItem(key: number, confirmKeys: (number | [number, (record: any) => string])[] = []) {
   for (let i = 0; i < confirmKeys.length; i += 1) {
     if (_isArray(confirmKeys[i]) && confirmKeys[i][0] === key) {
       return [true, confirmKeys[i]];
@@ -30,9 +37,16 @@ export type ActionType = {
   handleClick: (record: any) => void;
 };
 
-export function sortAndFilterActionsAsc(actions: ActionType[], hideActions = []) {
+export function sortAndFilterActionsAsc(record: any, actions: ActionType[], hideActions: any = []) {
   return [...actions]
-    .filter((item) => !hideActions.includes(item.key as never))
+    .filter((item) => {
+      if (_isFunction(hideActions)) {
+        const hideActionKeys = hideActions(record) || [];
+        return !hideActionKeys.includes(item.key as never);
+      } else {
+        return !hideActions.includes(item.key as never);
+      }
+    })
     .sort((x, y) => {
       if (x.key > y.key) return 1;
       if (x.key < y.key) return -1;
@@ -40,7 +54,7 @@ export function sortAndFilterActionsAsc(actions: ActionType[], hideActions = [])
     });
 }
 
-export function initialActions(record, actionsMethod, actionsConfig) {
+export function initialActions(record: any, actionsMethod: ActionsMethod, actionsConfig: ActionsConfig) {
   const {
     fetchDetailOrNot,
     handleVisible,
@@ -94,12 +108,19 @@ export function initialActions(record, actionsMethod, actionsConfig) {
     },
     ...extraActions,
   ];
-  const sortedActions = sortAndFilterActionsAsc(actions, hideActions);
+  const sortedActions = sortAndFilterActionsAsc(record, actions, hideActions);
   return [sortedActions.slice(0, showActionsCount), sortedActions.slice(showActionsCount)];
 }
 
-const renderShowActions = record => (actions, confirmKeys = [], confirmProps = {}) => {
+const renderShowActions = (record: any) => (actions: ActionType[], actionsConfig: ActionsConfig, disabledActionKeys: number[] = []) => {
+  const {
+    confirmKeys,
+    confirmProps,
+  } = actionsConfig;
   return actions.map(item => {
+    if (disabledActionKeys.includes(item.key)) {
+      return <span key={item.key} style={disabledItemStyle}>{item.title}</span>
+    }
     const [isConfirmKey, confirmKey] = isConfirmKeyAndItem(item.key, confirmKeys);
     if (isConfirmKey) {
       return (
@@ -142,13 +163,23 @@ const renderShowActions = record => (actions, confirmKeys = [], confirmProps = {
   });
 };
 
-export const renderActions = record => (actions, moreActions, confirmKeys, confirmProps) => {
+export const renderActions = (record: any) => (actions: ActionType[], moreActions: ActionType[], actionsConfig: ActionsConfig) => {
+  const {
+    confirmKeys,
+    disabledActions,
+  } = actionsConfig;
+
+  let disabledActionKeys: number[] = [];
+  if (disabledActions) {
+    disabledActionKeys = disabledActions(record) || [];
+  }
+
   if (!moreActions.length) {
-    return renderShowActions(record)(actions, confirmKeys, confirmProps);
+    return renderShowActions(record)(actions, actionsConfig, disabledActionKeys);
   }
 
   return [
-    ...renderShowActions(record)(actions, confirmKeys, confirmProps),
+    ...renderShowActions(record)(actions, actionsConfig, disabledActionKeys),
     <span
       key='dropdown'
       onClick={(event) => {
@@ -168,9 +199,11 @@ export const renderActions = record => (actions, moreActions, confirmKeys, confi
           >
             {moreActions.map(item => {
               const [isConfirmKey, confirmKey] = isConfirmKeyAndItem(item.key, confirmKeys);
+              const isDisabled = disabledActionKeys.includes(item.key);
               return (
                 <Menu.Item
                   key={item.key}
+                  disabled={isDisabled}
                   onClick={() => {
                     if (isConfirmKey) {
                       Modal.confirm({
@@ -186,7 +219,7 @@ export const renderActions = record => (actions, moreActions, confirmKeys, confi
                     item.handleClick(record);
                   }}
                 >
-                  <a>{item.title}</a>
+                  {isDisabled ? item.title : <a>{item.title}</a>}
                 </Menu.Item>
               );
             })}
@@ -201,11 +234,14 @@ export const renderActions = record => (actions, moreActions, confirmKeys, confi
   ];
 };
 
-export function setActions(record, actionsMethod, actionsConfig) {
-  const {
-    confirmKeys = [12],
-    confirmProps,
-  } = actionsConfig;
+export interface ActionsMethod {
+  fetchDetailOrNot: (record: any) => void,
+  handleVisible: (action: string, visible: boolean, record?: any) => void,
+  deleteModel: (id: any) => void,
+  interceptors: CurdBoxProps["interceptors"],
+}
+
+export function setActions(record: any, actionsMethod: ActionsMethod, actionsConfig: ActionsConfig) {
   const [actions, moreActions] = initialActions(record, actionsMethod, actionsConfig);
-  return renderActions(record)(actions, moreActions, confirmKeys, confirmProps);
+  return renderActions(record)(actions, moreActions, actionsConfig);
 }
