@@ -91,7 +91,7 @@
 | `extraActions` | 除 **详情（4）**，**编辑（8）**，**删除（12）** 外，可自行配置额外操作。注意，数字是操作的 `key` ，根据 `key` 不同，会按升序排列 | [ActionType](/src/components/CurdBox/actions/index.tsx) | - |
 | `confirmKeys` | 需要弹出确认窗口的 `key` 数组 | `(number \| [number, (record?: any) => string])[]` | `[12]` |
 | `confirmProps` | 额外的 Popconfirm 配置 | `PopconfirmProps` | - |
-| `hideActions` | 隐藏操作的 `key` 数组 | `number[] | ((record?: any) => void \| number[])` | - |
+| `hideActions` | 隐藏操作的 `key` 数组 | `number[] \| ((record?: any) => void \| number[])` | - |
 | `disabledActions` | 禁用操作的 `key` 数组 | `(record?: any) => void \| number[]` | - |
 | `detailActionTitle` | 详情 action 名称 | `string` | `'详情'` |
 | `updateActionTitle` | 编辑 action 名称 | `string` | `'编辑'` |
