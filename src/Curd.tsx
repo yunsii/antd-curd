@@ -4,74 +4,94 @@ import CurdTable from './components/CurdTable/index';
 import CurdList from './components/CurdList/index';
 import QueryPanel from './components/QueryPanel/index';
 import { injectChildren } from './utils';
+import DataContext from './DataContext';
+import { searchFieldName } from './config';
 
 export interface CurdProps {
-  modelName: string;
-  dispatch: Function;
-  onRef?: (__curd__: Curd) => void;
-  children?: any;
+	modelName: string;
+	data: { list: any[]; pagination?: any };
+	dispatch: Function;
+	onRef?: (__curd__: Curd) => void;
+	children?: any;
 }
 
 export interface CurdState {
-  /** sharing query panel search form */
-  searchForm: any;
-  /** sharing table's pagination, filter and sorter params */
-  searchParams: any;
+	/** sharing query panel search form */
+	searchForm: any;
+	/** sharing table's pagination, filter and sorter params */
+	searchParams: any;
 }
 
 class Curd extends PureComponent<CurdProps, CurdState> {
-  static defaultProps = {
-    modelName: '',
-    dispatch: () => { },
-  };
+	static defaultProps = {
+		modelName: '',
+		dispatch: () => {}
+	};
 
-  static QueryPanel = QueryPanel;
-  static CurdTable = CurdTable;
-  static CurdList = CurdList;
+	static QueryPanel = QueryPanel;
+	static CurdTable = CurdTable;
+	static CurdList = CurdList;
 
-  state = {
-    searchForm: {} as any,
-    searchParams: {} as any,
-  };
+	state = {
+		searchForm: {} as any,
+		searchParams: {} as any
+	};
 
-  componentDidUpdate() {
-    if (process.env.NODE_ENV === 'development') {
-      const { searchForm, searchParams } = this.state;
-      console.log('latest curd\'s state:');
-      console.log('searchForm', searchForm);
-      console.log('searchParams', searchParams);
-    }
-  }
+	componentDidUpdate() {
+		if (process.env.NODE_ENV === 'development') {
+			const { searchForm, searchParams } = this.state;
+			console.log("latest curd's state:");
+			console.log('searchForm', searchForm);
+			console.log('searchParams', searchParams);
+		}
+	}
 
-  handleSearch = () => {
-    const { modelName, dispatch } = this.props;
-    const { searchForm, searchParams } = this.state;
-    dispatch({
-      type: `${modelName}/fetch`,
-      payload: { ...searchForm, ...searchParams },
-    })
-  }
+	handleSearch = (type?: 'create' | 'update' | 'delete') => {
+		const { modelName, data: { list }, dispatch } = this.props;
+		const { searchForm, searchParams } = this.state;
+		const currentPage = searchParams[searchFieldName.page];
+		const search = () => {
+			dispatch({
+				type: `${modelName}/fetch`,
+				payload: { ...searchForm, ...searchParams }
+			});
+		};
+		if (type === 'delete' && list.length === 1 && currentPage > 1) {
+			this.setState(
+				{
+					searchParams: {
+						...searchParams,
+						[searchFieldName.page]: searchParams[searchFieldName.page] - 1,
+					}
+				},
+				() => search()
+			);
+		} else {
+			search();
+		}
+	};
 
-  renderChildren = () => {
-    const { children } = this.props;
-    return injectChildren(children, { __curd__: this })
-  }
+	renderChildren = () => {
+		const { children } = this.props;
+		return injectChildren(children, { __curd__: this });
+	};
 
-  handleRef = () => {
-    const { onRef } = this.props;
-    if (onRef) {
-      onRef(this);
-    }
-  }
+	handleRef = () => {
+		const { onRef } = this.props;
+		if (onRef) {
+			onRef(this);
+		}
+	};
 
-  render() {
-    this.handleRef();
-    return (
-      <Card bordered={false}>
-        {this.renderChildren()}
-      </Card>
-    );
-  }
+	render() {
+		const { modelName, data } = this.props;
+		this.handleRef();
+		return (
+			<DataContext.Provider value={{ modelName, data }}>
+				<Card bordered={false}>{this.renderChildren()}</Card>
+			</DataContext.Provider>
+		);
+	}
 }
 
 export default Curd;
