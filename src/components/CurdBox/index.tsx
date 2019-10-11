@@ -15,7 +15,7 @@ import DetailFormModal from '../DetailFormModal/index';
 import { CreateName, DetailName, UpdateName } from '../../constants';
 import { formatSorter, searchFieldName } from '../../config';
 import { callFunctionIfFunction } from '../../utils';
-import Curd, { CurdProps } from '../../Curd';
+import Curd from '../../Curd';
 import { DetailFormModalProps } from '../DetailFormModal/index';
 import { DetailFormDrawerProps } from '../DetailFormDrawer/index';
 
@@ -65,7 +65,7 @@ async function updateFieldsValueByInterceptors(fieldsValue, interceptors: CurdBo
 	return newFieldsValue;
 }
 
-function getModelName(props) {
+function getModelName(props: CurdBoxProps) {
 	const { __curd__ } = props;
 	if (__curd__) {
 		return __curd__.props.modelName;
@@ -249,7 +249,7 @@ class CurdBox extends PureComponent<CurdBoxProps, CurdState> {
 		dispatch({
 			type: `${getModelName(this.props)}/delete`,
 			id,
-			onOk: () => this.reSearch('delete')
+			onOk: () => this.reSearch('delete'),
 		});
 	};
 
