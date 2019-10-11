@@ -291,10 +291,9 @@ class CurdTableDemo extends React.Component {
             </Form.Item>
           </Form>
         </Card>
-        <Curd onRef={(curd) => this.curd = curd}>
+        <Curd onRef={(curd) => this.curd = curd} {...this.props} data={mockData}>
           <CurdTable
             columns={this.columns()}
-            data={mockData}
             selectedRows={selectedRows}
             onSelectRow={(row) => {
               console.log(row);
@@ -314,11 +313,6 @@ class CurdTableDemo extends React.Component {
                   key: 14,
                   title: '兼职',
                   handleClick: record => message.info(`调用 ${record.name} 的兼职事件`),
-                },
-                {
-                  key: 15,
-                  title: '弹出子组件',
-                  handleClick: () => this.setState({ customModelVisible: true }),
                 },
               ],
               confirmProps: {
