@@ -25,7 +25,7 @@ export interface CurdState {
 class Curd extends PureComponent<CurdProps, CurdState> {
 	static defaultProps = {
 		modelName: '',
-		dispatch: () => {}
+		dispatch: () => { }
 	};
 
 	static QueryPanel = QueryPanel;
@@ -46,16 +46,19 @@ class Curd extends PureComponent<CurdProps, CurdState> {
 		}
 	}
 
-	handleSearch = (type?: 'create' | 'update' | 'delete') => {
-		const { modelName, data: { list }, dispatch } = this.props;
+	doSearch = () => {
+		const { modelName, dispatch } = this.props;
 		const { searchForm, searchParams } = this.state;
+		dispatch({
+			type: `${modelName}/fetch`,
+			payload: { ...searchForm, ...searchParams }
+		});
+	}
+
+	handleSearch = (type?: 'create' | 'update' | 'delete') => {
+		const { data: { list } } = this.props;
+		const { searchParams } = this.state;
 		const currentPage = searchParams[searchFieldName.page];
-		const search = () => {
-			dispatch({
-				type: `${modelName}/fetch`,
-				payload: { ...searchForm, ...searchParams }
-			});
-		};
 		if (type === 'delete' && list.length === 1 && currentPage > 1) {
 			this.setState(
 				{
@@ -64,10 +67,10 @@ class Curd extends PureComponent<CurdProps, CurdState> {
 						[searchFieldName.page]: searchParams[searchFieldName.page] - 1,
 					}
 				},
-				() => search()
+				() => this.doSearch(),
 			);
 		} else {
-			search();
+			this.doSearch();
 		}
 	};
 
