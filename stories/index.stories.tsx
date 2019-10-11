@@ -337,7 +337,11 @@ class CurdTableDemo extends React.Component {
                   filteredInfo: filters,
                   sortedInfo: sorter,
                 });
-              }
+              },
+              updateFieldsValue: (fieldsValue) => {
+                console.log(fieldsValue);
+                return fieldsValue;
+              },
             }}
           />
         </Curd>

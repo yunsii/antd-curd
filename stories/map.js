@@ -17,7 +17,9 @@ export default function setFormItemsConfig(detail = {}, mode) {
         }]
       },
       component: (
-        <TreeSelect style={{ width: '100%' }} placeholder="请选择所属团体" disabled={!mode} />
+        <TreeSelect style={{ width: '100%' }} placeholder="请选择所属团体" disabled={!mode}>
+          <TreeSelect.TreeNode value='snh' title='SNH48' key='snh' />
+        </TreeSelect>
       ),
     },
     {
