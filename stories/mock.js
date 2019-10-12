@@ -45,6 +45,17 @@ export const data = {
       birthday: '05.05',
       speciality: '唱歌、吉他',
       habit: '吃东西、逛街',
+      children: [
+        {
+          id: 'szn',
+          avatar: 'http://www.snh48.com/images/member/mp_10146.jpg',
+          name: '孙珍妮',
+          nickname: '珍妮',
+          birthday: '05.05',
+          speciality: '唱歌、吉他',
+          habit: '吃东西、逛街',
+        },
+      ],
     },
     {
       id: 'cmj',
