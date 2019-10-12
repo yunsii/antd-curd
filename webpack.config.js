@@ -1,5 +1,6 @@
 const tsImportPluginFactory = require('ts-import-plugin');
 const nodeExternals = require('webpack-node-externals');
+const TerserPlugin = require('terser-webpack-plugin');
 
 const moduleName = "index";
 
@@ -22,11 +23,11 @@ const webpackConfig = {
         loader: 'ts-loader',
         options: {
           getCustomTransformers: () => ({
-            before: [ tsImportPluginFactory({
+            before: [tsImportPluginFactory({
               libraryName: 'antd',
               libraryDirectory: 'es',
               style: true
-            }) ]
+            })]
           }),
         },
       },
@@ -79,6 +80,18 @@ const webpackConfig = {
     ]
   },
   externals: [nodeExternals()],
+  optimization: {
+    minimizer: [
+      new TerserPlugin({
+        sourceMap: true, // Must be set to true if using source-maps in production
+        terserOptions: {
+          compress: {
+            drop_console: true,
+          },
+        },
+      }),
+    ],
+  },
 };
 
 module.exports = webpackConfig;
