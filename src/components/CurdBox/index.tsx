@@ -261,14 +261,14 @@ class CurdBox extends PureComponent<CurdBoxProps, CurdState> {
 			deleteModel: this.deleteModel,
 			interceptors
 		};
-	};
-
+  };
+  
 	renderActions = (record: any) => {
 		const { actionsConfig } = this.props;
-		if (_isObject(actionsConfig)) {
-			const { confirmKeys } = actionsConfig;
+		if (actionsConfig) {
+			const { confirmKeys, ...rest } = actionsConfig;
 			return setActions(record, this.setActionsMethod(), {
-				...actionsConfig,
+				...rest,
 				confirmKeys: confirmKeys || [ 12 ]
 			});
 		}
