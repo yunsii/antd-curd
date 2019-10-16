@@ -5,7 +5,7 @@
   "main": "./dist/index.js",
   "dependencies": {
     "antd": "^3.23.6",
-    "antd-form-mate": "^0.3.8",
+    "antd-form-mate": "^0.3.11",
     "react": "^16.8.6",
     "react-dom": "^16.8.6"
   },
