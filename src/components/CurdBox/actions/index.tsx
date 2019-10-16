@@ -5,11 +5,7 @@ import _isFunction from 'lodash/isFunction';
 import { Icon, Dropdown, Menu, Popconfirm, Modal } from 'antd';
 import { DetailName, UpdateName } from '../../../constants';
 import { CurdBoxProps, ActionsConfig } from '../index';
-
-const disabledItemStyle: React.CSSProperties = {
-	color: 'rgba(0,0,0,0.25)',
-	cursor: 'not-allowed'
-};
+import styles from './index.less';
 
 function isConfirmKeyAndItem(key: number, confirmKeys: (number | [number, (record: any) => string])[] = []) {
 	for (let i = 0; i < confirmKeys.length; i += 1) {
@@ -116,7 +112,7 @@ const renderShowActions = (record: any) => (
 	return actions.map((item) => {
 		if (disabledActionKeys.includes(item.key)) {
 			return (
-				<span key={item.key} style={disabledItemStyle}>
+				<span key={item.key} className={styles.disabledAction}>
 					{item.title}
 				</span>
 			);
