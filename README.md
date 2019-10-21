@@ -1,4 +1,8 @@
-# antd-curd
+<h1 align="center">antd-curd</h1>
+
+<div align="center">
+
+基于 ant design 、 umi 、 dva 的增删改查页面组件
 
 [![GitHub license](https://img.shields.io/github/license/theprimone/antd-curd.svg)](https://github.com/theprimone/antd-curd/blob/master/LICENSE)
 [![npm Version](https://img.shields.io/npm/v/antd-curd.svg)](https://www.npmjs.com/package/antd-curd)
@@ -6,7 +10,7 @@
 [![GitHub issues](https://img.shields.io/github/issues/theprimone/antd-curd.svg)](https://github.com/theprimone/antd-curd/issues)
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/m/theprimone/antd-curd.svg)](https://github.com/theprimone/antd-curd/commits/master)
 
-基于 ant design 、 umi 、 dva 的增删改查页面组件
+</div>
 
 ## [StandardTable](/src/components/StandardTable/index.tsx)
 
