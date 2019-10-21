@@ -1,185 +1,196 @@
 import React, { PureComponent, Fragment } from 'react';
 import { List, Alert, Checkbox } from 'antd';
+import { ListProps } from 'antd/lib/list';
+import { PaginationConfig } from 'antd/lib/pagination';
 import { callFunctionIfFunction } from '../../utils';
 import styles from './index.less';
 
+type OmittedListProps<T> = Omit<ListProps<T>, 'dataSource' | 'renderItem'>;
+
 export type Page = {
-	current: number;
-	pageSize: number;
+  current: number;
+  pageSize: number;
 };
 
 export type RecordSelection = {
-	selectedRowKeys: number[];
-	onSelectChange: (selectedRowKeys: any[]) => void;
-	getCheckboxProps: (record: any) => any;
+  selectedRowKeys: number[];
+  onSelectChange: (selectedRowKeys: any[]) => void;
+  getCheckboxProps: (record: any) => any;
 };
 
 export type renderItemConfig = {
-	record: any;
-	actions: React.ReactNode[] | null;
-	recordSelection: RecordSelection;
-	checkable?: boolean;
+  record: any;
+  actions: React.ReactNode[] | null;
+  recordSelection: RecordSelection;
+  checkable?: boolean;
 };
 
-export interface StandardListProps {
-	data: { list: any[]; pagination?: any };
-	onSelectRow?: (recordArray: any[]) => void;
-	rowKey?: string;
-	checkable?: boolean;
-	selectedRows?: any[];
-	renderItem: (config: renderItemConfig) => React.ReactNode;
-	setActions?: (record: any) => React.ReactNode[] | null;
-	onChange?: (page: Page) => void;
-	loading?: boolean;
+export interface StandardListProps<T> extends OmittedListProps<T> {
+  data: { list: T[]; pagination?: PaginationConfig };
+  onSelectRow?: (recordArray: any[]) => void;
+  checkable?: boolean;
+  selectedRows?: any[];
+  renderItem: (config: renderItemConfig) => React.ReactNode;
+  setActions?: (record: any) => React.ReactNode[] | null;
+  onChange?: (page: Page) => void;
 }
 
 interface StandardListState {
-	selectedRowKeys: number[] | string[];
+  selectedRowKeys: (number | string)[];
 }
 
-class StandardList extends PureComponent<StandardListProps, StandardListState> {
-	static defaultProps = {
-		data: {},
-		loading: false
-	};
+class StandardList<T extends { id: number | string }> extends PureComponent<StandardListProps<T>, StandardListState> {
+  static defaultProps = {
+    data: { list: [], pagination: {} },
+    loading: false,
+    rowKey: 'id',
+  };
 
-	constructor(props: StandardListProps) {
-		super(props);
-		this.state = {
-			selectedRowKeys: []
-		};
-	}
+  state = {
+    selectedRowKeys: []
+  };
 
-	cleanSelectedKeys = () => {
-		this.handleSelectChange([]);
-	};
+  cleanSelectedKeys = () => {
+    this.handleSelectChange([]);
+  };
 
-	onCheckAllChange = () => {
-		const { data = {} as any } = this.props;
-		const { list = [] as any[] } = data;
-		const { selectedRowKeys } = this.state;
-		if (selectedRowKeys.length < list.length) {
-			this.handleSelectChange(list.map((item) => item.id));
-			return;
-		}
-		this.handleSelectChange([]);
-	};
+  onCheckAllChange = () => {
+    const { data } = this.props;
+    const { list = [] as T[] } = data;
+    const { selectedRowKeys } = this.state;
+    if (selectedRowKeys.length < list.length) {
+      this.handleSelectChange(list.map((item) => item.id));
+      return;
+    }
+    this.handleSelectChange([]);
+  };
 
-	handleSelectChange = (selectedRowKeys) => {
-		const { data = {} as any, onSelectRow } = this.props;
-		const { list = [] as any[] } = data;
-		this.setState({
-			selectedRowKeys
-		});
-		if (onSelectRow) {
-			onSelectRow(list.filter((item) => selectedRowKeys.includes(item.id)));
-		}
-	};
+  handleSelectChange = (selectedRowKeys) => {
+    const { data = {} as any, onSelectRow } = this.props;
+    const { list = [] as any[] } = data;
+    this.setState({
+      selectedRowKeys
+    });
+    if (onSelectRow) {
+      onSelectRow(list.filter((item) => selectedRowKeys.includes(item.id)));
+    }
+  };
 
-	handlePageChange = (current: number, pageSize: number) => {
-		console.log(current, pageSize);
-		const { onChange } = this.props;
-		callFunctionIfFunction(onChange)({
-			current,
-			pageSize
-		} as Page);
-	};
+  handlePageChange = (current: number, pageSize: number) => {
+    console.log(current, pageSize);
+    const { onChange } = this.props;
+    callFunctionIfFunction(onChange)({
+      current,
+      pageSize
+    } as Page);
+  };
 
-	handleShowSizeChange = (current, pageSize) => {
-		this.handlePageChange(current, pageSize);
-	};
+  handleShowSizeChange = (current: number, pageSize: number) => {
+    this.handlePageChange(current, pageSize);
+  };
 
-	render() {
-		const {
-			data = {} as any,
-			checkable = true,
-			renderItem,
-			selectedRows,
-			setActions,
-			onSelectRow,
-			onChange,
-			...rest
-		} = this.props;
-		const { list = [] as any[] } = data;
-		const { selectedRowKeys } = this.state;
+  render() {
+    const {
+      data,
+      checkable = true,
+      renderItem,
+      selectedRows,
+      setActions,
+      onSelectRow,
+      onChange,
+      pagination: extraPagination,
+      ...rest
+    } = this.props;
+    const { list, pagination } = data;
+    const { selectedRowKeys } = this.state;
 
-		let recordSelection: any = {
-			selectedRowKeys,
-			onSelectChange: this.handleSelectChange,
-			getCheckboxProps: (record) => ({
-				disabled: record.disabled
-			})
-		};
-		if (!checkable) {
-			recordSelection = {};
-		}
+    let recordSelection: any = {
+      selectedRowKeys,
+      onSelectChange: this.handleSelectChange,
+      getCheckboxProps: (record) => ({
+        disabled: record.disabled
+      })
+    };
+    if (!checkable) {
+      recordSelection = {};
+    }
 
-		let renderList = (
-			<List
-				rowKey="id"
-				grid={{ gutter: 24, lg: 3, md: 2, sm: 1, xs: 1 }}
-				{...rest}
-				dataSource={list}
-				renderItem={(record: any) => (
-					<List.Item style={{ position: 'relative' }}>
-						{checkable ? (
-							<Checkbox
-								value={record.id}
-								className={styles.checkBox}
-								style={{
-									position: 'absolute',
-									zIndex: 1,
-									top: 5,
-									right: 4
-								}}
-							/>
-						) : null}
-						{renderItem({
-							record,
-							actions: setActions ? setActions(record) : null,
-							recordSelection,
-							checkable
-						})}
-					</List.Item>
-				)}
-			/>
-		);
-		if (checkable) {
-			renderList = (
-				<Checkbox.Group style={{ width: '100%' }} onChange={this.handleSelectChange} value={selectedRowKeys}>
-					{renderList}
-				</Checkbox.Group>
-			);
-		}
+    let paginationProps: PaginationConfig | false = pagination ? {
+      ...pagination,
+      ...extraPagination,
+      onChange: this.handlePageChange,
+      onShowSizeChange: this.handleShowSizeChange,
+    } : false;
+    if (extraPagination === false) {
+      paginationProps = false;
+    }
 
-		return (
-			<div className={styles.standardTable}>
-				{checkable ? (
-					<div className={styles.tableAlert}>
-						<Alert
-							message={
-								<Fragment>
-									已选择 <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a> 项&nbsp;&nbsp;
+    let renderList = (
+      <List
+        grid={{ gutter: 24, lg: 3, md: 2, sm: 1, xs: 1 }}
+        {...rest}
+        pagination={paginationProps}
+        dataSource={list}
+        renderItem={(record: any) => (
+          <List.Item style={{ position: 'relative' }}>
+            {checkable ? (
+              <Checkbox
+                value={record.id}
+                className={styles.checkBox}
+                style={{
+                  position: 'absolute',
+                  zIndex: 1,
+                  top: 5,
+                  right: 4
+                }}
+              />
+            ) : null}
+            {renderItem({
+              record,
+              actions: setActions ? setActions(record) : null,
+              recordSelection,
+              checkable
+            })}
+          </List.Item>
+        )}
+      />
+    );
+    if (checkable) {
+      renderList = (
+        <Checkbox.Group style={{ width: '100%' }} onChange={this.handleSelectChange} value={selectedRowKeys}>
+          {renderList}
+        </Checkbox.Group>
+      );
+    }
+
+    return (
+      <div className={styles.standardTable}>
+        {checkable ? (
+          <div className={styles.tableAlert}>
+            <Alert
+              message={
+                <Fragment>
+                  已选择 <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a> 项&nbsp;&nbsp;
 									{selectedRowKeys.length ? (
-										<a onClick={this.cleanSelectedKeys} style={{ marginLeft: 24 }}>
-											清空
+                    <a onClick={this.cleanSelectedKeys} style={{ marginLeft: 24 }}>
+                      清空
 										</a>
-									) : (
-										<a onClick={this.onCheckAllChange} style={{ marginLeft: 24 }}>
-											全选
+                  ) : (
+                      <a onClick={this.onCheckAllChange} style={{ marginLeft: 24 }}>
+                        全选
 										</a>
-									)}
-								</Fragment>
-							}
-							type="info"
-							showIcon
-						/>
-					</div>
-				) : null}
-				{renderList}
-			</div>
-		);
-	}
+                    )}
+                </Fragment>
+              }
+              type="info"
+              showIcon
+            />
+          </div>
+        ) : null}
+        {renderList}
+      </div>
+    );
+  }
 }
 
 export default StandardList;
