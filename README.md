@@ -2,7 +2,7 @@
 
 <div align="center">
 
-基于 ant design 、 umi 、 dva 的增删改查页面组件
+基于 ant design 、 umi 、 dva 的增删改查页面组件。
 
 [![GitHub license](https://img.shields.io/github/license/theprimone/antd-curd.svg)](https://github.com/theprimone/antd-curd/blob/master/LICENSE)
 [![npm Version](https://img.shields.io/npm/v/antd-curd.svg)](https://www.npmjs.com/package/antd-curd)
