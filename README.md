@@ -36,6 +36,8 @@
 
 ## [QueryPanel](/src/components/QueryPanel/index.tsx) 查询面板
 
+![K1ousP.png](https://s2.ax1x.com/2019/10/21/K1ousP.png)
+
 基于 antd-form-mate 实现的查询面板组件，具体实现可参考 [QueryPanel/index.js](/src/components/QueryPanel/index.tsx) ，只需传入表单配置和 `onSearch` 方法即可使用。同时提供了重置表单后的 `onReset` 函数。参数定义可参考 [QueryPanel/index.d.ts](/src/components/QueryPanel/index.tsx) 。
 
 ## [CurdBox](/src/components/CurdBox/index.tsx)
@@ -129,9 +131,13 @@ handle**Click 事件（除 handleDeleteClick 事件外， handleDeleteClick 直�
 
 ## [Curd.CurdTable](/src/components/CurdTable/index.tsx)
 
+![K1oKqf.png](https://s2.ax1x.com/2019/10/21/K1oKqf.png)
+
 由 [CurdBox](#[CurdBox](/src/components/CurdBox/index.tsx)) 封装 [StandardTable]([StandardTable](/src/components/StandardTable/index.tsx)) 而成。
 
 ## [Curd.CurdList](/src/components/CurdList/index.tsx)
+
+![K1oldS.png](https://s2.ax1x.com/2019/10/21/K1oldS.png)
 
 由 [CurdBox](#[CurdBox](/src/components/CurdBox/index.tsx)) 封装 [StandardList](#[StandardList](/src/components/StandardList/index.tsx)) 而成。
 
