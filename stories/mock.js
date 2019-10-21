@@ -47,7 +47,7 @@ export const data = {
       habit: '吃东西、逛街',
       children: [
         {
-          id: 'szn',
+          id: 'szn_copy',
           avatar: 'http://www.snh48.com/images/member/mp_10146.jpg',
           name: '孙珍妮',
           nickname: '珍妮',
