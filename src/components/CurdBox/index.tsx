@@ -1,4 +1,5 @@
 import React, { PureComponent, Fragment } from 'react';
+import { message } from 'antd';
 import { FormProps } from 'antd/lib/form';
 import { PaginationConfig, SorterResult, TableCurrentDataSource } from 'antd/lib/table';
 import { PopconfirmProps } from 'antd/lib/popconfirm';
@@ -18,6 +19,7 @@ import { callFunctionIfFunction } from '../../utils';
 import Curd from '../../Curd';
 import { DetailFormModalProps } from '../DetailFormModal/index';
 import { DetailFormDrawerProps } from '../DetailFormDrawer/index';
+import { curdLocale } from '../../locale';
 
 export interface CustomDetailFormDrawerProps extends DetailFormDrawerProps {
 	drawerConfig: {
@@ -169,7 +171,7 @@ class CurdBox extends PureComponent<CurdBoxProps, CurdState> {
 		updateLoading: false,
 		deleteLoading: false,
 		createButtonName: '新建',
-		dispatch: () => {},
+		dispatch: () => { },
 		queryArgsConfig: [],
 		queryPanelProps: {},
 		containerType: 'table',
@@ -249,7 +251,10 @@ class CurdBox extends PureComponent<CurdBoxProps, CurdState> {
 		dispatch({
 			type: `${getModelName(this.props)}/delete`,
 			id,
-			onOk: () => this.reSearch('delete'),
+			onOk: () => {
+				message.success(curdLocale.deleteOk);
+				this.reSearch('delete');
+			},
 		});
 	};
 
@@ -261,15 +266,15 @@ class CurdBox extends PureComponent<CurdBoxProps, CurdState> {
 			deleteModel: this.deleteModel,
 			interceptors
 		};
-  };
-  
+	};
+
 	renderActions = (record: any) => {
 		const { actionsConfig } = this.props;
 		if (actionsConfig) {
 			const { confirmKeys, ...rest } = actionsConfig;
 			return setActions(record, this.setActionsMethod(), {
 				...rest,
-				confirmKeys: confirmKeys || [ 12 ]
+				confirmKeys: confirmKeys || [12]
 			});
 		}
 		return null;
@@ -278,12 +283,12 @@ class CurdBox extends PureComponent<CurdBoxProps, CurdState> {
 	setPopupModeAndRecord = () => {
 		const { popupVisible, record } = this.state;
 		if (popupVisible === DetailName) {
-			return [ DetailName, record ];
+			return [DetailName, record];
 		}
 		if (popupVisible === UpdateName) {
-			return [ UpdateName, record ];
+			return [UpdateName, record];
 		}
-		return [ CreateName, {} ];
+		return [CreateName, {}];
 	};
 
 	getPopupTitle = () => {
@@ -309,6 +314,7 @@ class CurdBox extends PureComponent<CurdBoxProps, CurdState> {
 			type: `${getModelName(this.props)}/create`,
 			payload: newFieldsValue,
 			onOk: () => {
+				message.success(curdLocale.createOk);
 				this.closePopup();
 				this.reSearch('create');
 			}
@@ -326,6 +332,7 @@ class CurdBox extends PureComponent<CurdBoxProps, CurdState> {
 			id: record.id,
 			payload: newFieldsValue,
 			onOk: () => {
+				message.success(curdLocale.updateOk);
 				this.closePopup();
 				if (reSearchAfterUpdate) {
 					this.reSearch('update');
@@ -359,7 +366,7 @@ class CurdBox extends PureComponent<CurdBoxProps, CurdState> {
 		// console.log('filtersArg', filtersArg);
 		// console.log('sorter', sorter);
 		const { interceptors = {}, __curd__ } = this.props;
-		const { handleFilterAndSort = () => {} } = interceptors;
+		const { handleFilterAndSort = () => { } } = interceptors;
 
 		const hasCustomFilterAndSorter: boolean = handleFilterAndSort && handleFilterAndSort(filtersArg, sorter, extra);
 
@@ -414,8 +421,8 @@ class CurdBox extends PureComponent<CurdBoxProps, CurdState> {
 		const { popupVisible } = this.state;
 		const { drawerConfig, modalConfig, ...restPopupProps } = popupProps as any;
 		const loading = createLoading || detailLoading || updateLoading;
-		const [ mode, record ] = this.setPopupModeAndRecord();
-		const showDetail = [ DetailName, UpdateName ].includes(mode);
+		const [mode, record] = this.setPopupModeAndRecord();
+		const showDetail = [DetailName, UpdateName].includes(mode);
 
 		const composePopupProps = {
 			...modalConfig,
