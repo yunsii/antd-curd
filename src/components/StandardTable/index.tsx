@@ -1,11 +1,21 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { PureComponent, Fragment } from 'react';
 import { Table, Alert } from 'antd';
-import { PaginationConfig, SorterResult, TableCurrentDataSource } from 'antd/lib/table';
+import {
+  TableProps,
+  ColumnProps,
+  PaginationConfig,
+} from 'antd/lib/table';
 import classNames from 'classnames';
 import styles from './index.less';
 
-function initTotalList(columns: any[]) {
+type OmittedTableProps<T> = Omit<TableProps<T>, 'dataSource'>;
+
+export interface StandardTableColumnProps<T> extends ColumnProps<T> {
+  needTotal?: boolean;
+}
+
+function initTotalList<T>(columns: StandardTableColumnProps<T>[]) {
   const totalList: any[] = [];
   columns.forEach(column => {
     if (column.needTotal) {
@@ -15,46 +25,43 @@ function initTotalList(columns: any[]) {
   return totalList;
 }
 
-export interface StandardTableProps {
-  columns: any;
+export interface StandardTableProps<T> extends OmittedTableProps<T> {
+  columns: StandardTableColumnProps<T>[];
   onSelectRow?: (row: any) => void;
-  data: any;
-  rowKey?: string;
+  data: {
+    list: T[];
+    pagination?: PaginationConfig;
+  };
   checkable?: boolean;
-  selectedRows?: any[];
-  rowClassName?: string;
-  onChange?: (
-    pagination: PaginationConfig,
-    filters: Record<keyof any, string[]>,
-    sorter: SorterResult<any>,
-    extra?: TableCurrentDataSource<any>
-  ) => void;
-  pagination?: PaginationConfig | false,
-  loading?: boolean;
+  selectedRows?: T[];
 }
 
 interface StandardTableState {
   selectedRowKeys: any[];
-  needTotalList: any;
+  needTotalList: any[];
 }
 
-class StandardTable extends PureComponent<StandardTableProps, StandardTableState> {
-  constructor(props) {
-    super(props);
-    const { columns } = props;
-    const needTotalList = initTotalList(columns);
+function initialState<T>(props: StandardTableProps<T>) {
+  const { columns } = props;
+  const needTotalList = initTotalList<T>(columns);
 
-    this.state = {
-      selectedRowKeys: [],
-      needTotalList,
-    };
+  return {
+    selectedRowKeys: [],
+    needTotalList,
+  };
+}
+
+class StandardTable<T> extends PureComponent<StandardTableProps<T>, StandardTableState> {
+  static defaultProps = {
+    rowKey: 'id',
+    checkable: true,
+    data: { list: [], pagination: {} },
   }
 
-  static getDerivedStateFromProps(nextProps) {
-    // clean state
+  static getDerivedStateFromProps<T>(nextProps: StandardTableProps<T>) {
     const { checkable } = nextProps;
-    if (checkable && nextProps.selectedRows.length === 0) {
-      const needTotalList = initTotalList(nextProps.columns);
+    if (checkable && nextProps.selectedRows && nextProps.selectedRows.length === 0) {
+      const needTotalList = initTotalList<T>(nextProps.columns);
       return {
         selectedRowKeys: [],
         needTotalList,
@@ -62,6 +69,8 @@ class StandardTable extends PureComponent<StandardTableProps, StandardTableState
     }
     return null;
   }
+
+  state = initialState(this.props);
 
   handleRowSelectChange = (selectedRowKeys, selectedRows) => {
     let { needTotalList } = this.state;
@@ -77,23 +86,16 @@ class StandardTable extends PureComponent<StandardTableProps, StandardTableState
     this.setState({ selectedRowKeys, needTotalList });
   };
 
-  handleTableChange = (pagination, filters, sorter) => {
-    const { onChange } = this.props;
-    if (onChange) {
-      onChange(pagination, filters, sorter);
-    }
-  };
-
   cleanSelectedKeys = () => {
     this.handleRowSelectChange([], []);
   };
 
   render() {
     const { selectedRowKeys, needTotalList } = this.state;
-    const { data = {}, rowKey = 'id', checkable = true, rowClassName, pagination: extraPagination, ...rest } = this.props;
+    const { data, checkable, rowClassName, pagination: extraPagination, ...rest } = this.props;
     const { list = [], pagination } = data;
 
-    let paginationProps = {
+    let paginationProps: PaginationConfig | false = {
       showSizeChanger: true,
       showQuickJumper: true,
       hideOnSinglePage: true,
@@ -144,12 +146,16 @@ class StandardTable extends PureComponent<StandardTableProps, StandardTableState
           </div>
         ) : null}
         <Table
-          rowClassName={classNames(styles.tableRow, rowClassName)}
-          rowKey={rowKey}
+          rowClassName={(record: T, index: number) => {
+            let extraRowClassname: string = '';
+            if (rowClassName) {
+              extraRowClassname = rowClassName(record, index);
+            }
+            return classNames(styles.tableRow, extraRowClassname);
+          }}
           rowSelection={rowSelection}
           dataSource={list}
           pagination={paginationProps}
-          onChange={this.handleTableChange}
           {...rest}
         />
       </div>

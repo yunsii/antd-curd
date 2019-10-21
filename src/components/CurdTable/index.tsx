@@ -1,20 +1,20 @@
 import React, { useContext, Fragment } from 'react';
-import StandardTable, { StandardTableProps } from '../StandardTable/index';
+import StandardTable, { StandardTableProps, StandardTableColumnProps } from '../StandardTable/index';
 import CurdBox, { CurdBoxProps } from '../CurdBox';
 import { addDivider } from '../../utils';
 import { injectChildren } from '../../utils';
 import DataContext from '../../DataContext';
 
-type NoDataStandardTableProps = Omit<StandardTableProps, 'data'>;
+type NoDataStandardTableProps<T> = Omit<StandardTableProps<T>, 'data'>;
 
-export interface CustomStandardTableProps extends NoDataStandardTableProps {
+export interface CustomStandardTableProps<T> extends NoDataStandardTableProps<T> {
 	__curdBox__?: CurdBox;
-	columns: any[];
+	columns: StandardTableColumnProps<T>[];
 	fetchLoading?: boolean;
 	children?: React.ReactChildren;
 }
 
-function CustomStandardTable(props: CustomStandardTableProps) {
+function CustomStandardTable<T>(props: CustomStandardTableProps<T>) {
 	const { __curdBox__, columns, fetchLoading, children, ...rest } = props;
 	const { data } = useContext(DataContext);
 	if (__curdBox__) {
@@ -37,7 +37,7 @@ function CustomStandardTable(props: CustomStandardTableProps) {
 			<Fragment>
 				<StandardTable
 					{...rest}
-					data={data}
+          data={data}
 					loading={fetchLoading}
 					columns={enhanceColumns()}
 					onChange={handleDataChange}
@@ -49,9 +49,9 @@ function CustomStandardTable(props: CustomStandardTableProps) {
 	return null;
 }
 
-export interface CurdTableProps extends CustomStandardTableProps, CurdBoxProps {}
+export interface CurdTableProps<T> extends CustomStandardTableProps<T>, CurdBoxProps {}
 
-export default function CurdTable(props: CurdTableProps) {
+export default function CurdTable<T>(props: CurdTableProps<T>) {
 	return (
 		<CurdBox {...props}>
 			<CustomStandardTable {...props} />
