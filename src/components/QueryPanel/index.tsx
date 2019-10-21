@@ -117,7 +117,7 @@ export default class QueryPanel extends PureComponent<QueryPanelProps, QueryPane
     } = this.props;
     if (!queryArgsConfig.length) return null;
     let colProps: any = {
-      lg: 6, sm: 12, xs: 24,
+      xs: 24, sm: 12, lg: 8, xxl: 6,
     };
     if (customColProps) {
       colProps = customColProps;
@@ -157,7 +157,7 @@ export default class QueryPanel extends PureComponent<QueryPanelProps, QueryPane
 
     return (
       <Form onSubmit={this.handleSubmit} layout="inline">
-        <Row type="flex" gutter={{ xs: 8, sm: 12, lg: 24, xl: 48 }} {...rowProps}>
+        <Row type="flex" gutter={8} {...rowProps}>
           {items.map(item => (
             <Col {...colProps} key={item.key}>
               {item}
