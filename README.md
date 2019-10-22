@@ -44,6 +44,17 @@
 
 基于 antd-form-mate 实现的查询面板组件，具体实现可参考 [QueryPanel/index.js](/src/components/QueryPanel/index.tsx) ，只需传入表单配置和 `onSearch` 方法即可使用。同时提供了重置表单后的 `onReset` 函数。参数定义可参考 [QueryPanel/index.d.ts](/src/components/QueryPanel/index.tsx) 。
 
+## [Curd](/src/Curd.tsx)
+
+**为包含在 `Curd` 中的子组件注入 `__curd__` 的实例属性**
+
+`state` 中保存了当前页面的查询参数：
+
+* `searchForm` 表单数据
+* `searchParams` 分页器，过滤器，排序器参数
+  
+还有一个 `handleSearch` 方法可供直接调起当前页面数据查询接口以供刷新数据使用。
+
 ## [CurdBox](/src/components/CurdBox/index.tsx)
 
 **为包含在 `CurdBox` 中的子组件注入 `__curdBox__` 的实例属性**
@@ -106,17 +117,6 @@
 #### 注意事项
 
 handle**Click 事件（除 handleDeleteClick 事件外， handleDeleteClick 直接中断）默认不会中断后续的弹窗事件，如果需要中断， `return true` 即可。
-
-## [Curd](/src/Curd.tsx)
-
-**为包含在 `Curd` 中的子组件注入 `__curd__` 的实例属性**
-
-`state` 中保存了当前页面的查询参数：
-
-* `searchForm` 表单数据
-* `searchParams` 分页器，过滤器，排序器参数
-  
-还有一个 `handleSearch` 方法可供直接调起当前页面数据查询接口以供刷新数据使用。
 
 
 ## [Curd.QueryPanel](/src/components/QueryPanel/index.tsx)
