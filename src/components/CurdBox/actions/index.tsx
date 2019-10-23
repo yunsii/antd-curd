@@ -10,18 +10,18 @@ import styles from './index.less';
 function isConfirmKeyAndItem(key: number, confirmKeys: (number | [number, (record: any) => string])[] = []) {
 	for (let i = 0; i < confirmKeys.length; i += 1) {
 		if (_isArray(confirmKeys[i]) && confirmKeys[i][0] === key) {
-			return [ true, confirmKeys[i] ];
+			return [true, confirmKeys[i]];
 		}
 		if (confirmKeys[i] === key) {
-			return [ true, confirmKeys[i] ];
+			return [true, confirmKeys[i]];
 		}
 	}
-	return [ false, null ];
+	return [false, null];
 }
 
 function setConfirmTitle(confirmKey, item, record) {
 	if (_isArray(confirmKey)) {
-		const [ , setTitle ] = confirmKey;
+		const [, setTitle] = confirmKey;
 		return setTitle(record);
 	}
 	return `确定${item.title}吗？`;
@@ -34,7 +34,7 @@ export type ActionType = {
 };
 
 export function sortAndFilterActionsAsc(record: any, actions: ActionType[], hideActions: any = []) {
-	return [ ...actions ]
+	return [...actions]
 		.filter((item) => {
 			if (_isFunction(hideActions)) {
 				const hideActionKeys = hideActions(record) || [];
@@ -100,7 +100,7 @@ export function initialActions(record: any, actionsMethod: ActionsMethod, action
 		...extraActions
 	];
 	const sortedActions = sortAndFilterActionsAsc(record, actions, hideActions);
-	return [ sortedActions.slice(0, showActionsCount), sortedActions.slice(showActionsCount) ];
+	return [sortedActions.slice(0, showActionsCount), sortedActions.slice(showActionsCount)];
 }
 
 const renderShowActions = (record: any) => (
@@ -117,7 +117,7 @@ const renderShowActions = (record: any) => (
 				</span>
 			);
 		}
-		const [ isConfirmKey, confirmKey ] = isConfirmKeyAndItem(item.key, confirmKeys);
+		const [isConfirmKey, confirmKey] = isConfirmKeyAndItem(item.key, confirmKeys);
 		if (isConfirmKey) {
 			return (
 				<span
@@ -195,7 +195,7 @@ export const renderActions = (record: any) => (
 						}}
 					>
 						{moreActions.map((item) => {
-							const [ isConfirmKey, confirmKey ] = isConfirmKeyAndItem(item.key, confirmKeys);
+							const [isConfirmKey, confirmKey] = isConfirmKeyAndItem(item.key, confirmKeys);
 							const isDisabled = disabledActionKeys.includes(item.key);
 							return (
 								<Menu.Item
@@ -235,10 +235,10 @@ export interface ActionsMethod {
 	fetchDetailOrNot: (record: any) => void;
 	handleVisible: (action: string, visible: boolean, record?: any) => void;
 	deleteModel: (id: any) => void;
-	interceptors: CurdBoxProps['interceptors'];
+	interceptors: CurdBoxProps<any>['interceptors'];
 }
 
-export function setActions(record: any, actionsMethod: ActionsMethod, actionsConfig: ActionsConfig) {
-	const [ actions, moreActions ] = initialActions(record, actionsMethod, actionsConfig);
+export function setActions<T>(record: any, actionsMethod: ActionsMethod, actionsConfig: ActionsConfig) {
+	const [actions, moreActions] = initialActions(record, actionsMethod, actionsConfig);
 	return renderActions(record)(actions, moreActions, actionsConfig);
 }
