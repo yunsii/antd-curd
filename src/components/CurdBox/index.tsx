@@ -4,7 +4,6 @@ import { FormProps } from 'antd/lib/form';
 import { PaginationConfig, SorterResult, TableCurrentDataSource } from 'antd/lib/table';
 import { PopconfirmProps } from 'antd/lib/popconfirm';
 import { ItemConfig } from 'antd-form-mate/dist/lib/form-mate';
-import _isObject from 'lodash/isObject';
 import _cloneDeep from 'lodash/cloneDeep';
 import { setActions, ActionType } from './actions/index';
 import { injectChildren } from '../../utils';
@@ -58,7 +57,7 @@ export type RenderItemConfig = {
 	checkable?: boolean;
 };
 
-async function updateFieldsValueByInterceptors(fieldsValue, interceptors: CurdBoxProps['interceptors'] = {}, mode) {
+async function updateFieldsValueByInterceptors<T>(fieldsValue, interceptors: CurdBoxProps<T>['interceptors'] = {}, mode) {
 	const { updateFieldsValue } = interceptors;
 	let newFieldsValue = _cloneDeep(fieldsValue);
 	if (updateFieldsValue) {
@@ -67,7 +66,7 @@ async function updateFieldsValueByInterceptors(fieldsValue, interceptors: CurdBo
 	return newFieldsValue;
 }
 
-function getModelName(props: CurdBoxProps) {
+function getModelName<T>(props: CurdBoxProps<T>) {
 	const { __curd__ } = props;
 	if (__curd__) {
 		return __curd__.props.modelName;
@@ -111,7 +110,7 @@ export interface ActionsConfig {
 	deleteActionTitle?: string;
 }
 
-export interface CurdBoxProps {
+export interface CurdBoxProps<T> {
 	/** popup title of create */
 	createTitle?: string;
 	/** popup title of detail */
@@ -153,7 +152,7 @@ export interface CurdBoxProps {
 	/** call model's fetch effect when componentDidMount */
 	autoFetch?: boolean;
 	reSearchAfterUpdate?: boolean;
-	__curd__?: Curd;
+	__curd__?: Curd<T>;
 }
 
 interface CurdState {
@@ -161,7 +160,7 @@ interface CurdState {
 	record: any;
 }
 
-class CurdBox extends PureComponent<CurdBoxProps, CurdState> {
+class CurdBox<T> extends PureComponent<CurdBoxProps<T>, CurdState> {
 	static defaultProps = {
 		createTitle: '新建对象',
 		detailTitle: '对象详情',
@@ -477,7 +476,7 @@ class CurdBox extends PureComponent<CurdBoxProps, CurdState> {
 		return (
 			<Fragment>
 				{operators ? (
-					<Operators curdBox={this} createButtonName={createButtonName}>
+					<Operators __curdBox__={this} createButtonName={createButtonName}>
 						{operators as any}
 					</Operators>
 				) : null}

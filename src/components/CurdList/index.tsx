@@ -7,14 +7,14 @@ import DataContext from '../../DataContext';
 type NoDataStandardTableProps<T> = Omit<StandardListProps<T>, 'data'>;
 
 export interface CustomStandardListProps<T> extends NoDataStandardTableProps<T> {
-	__curdBox__?: CurdBox;
+	__curdBox__?: CurdBox<T>;
 	fetchLoading?: boolean;
 	children?: React.ReactChildren;
 }
 
 function CustomStandardList<T>(props: CustomStandardListProps<T>) {
 	const { __curdBox__, fetchLoading, onSelectRow, rowKey, checkable, selectedRows, renderItem, children } = props;
-  const { data } = useContext(DataContext);
+	const { data } = useContext(DataContext);
 	if (__curdBox__) {
 		const { handleDataChange } = __curdBox__;
 		return (
@@ -37,7 +37,7 @@ function CustomStandardList<T>(props: CustomStandardListProps<T>) {
 	return null;
 }
 
-export interface CurdListProps<T> extends CustomStandardListProps<T>, CurdBoxProps {}
+export interface CurdListProps<T> extends CustomStandardListProps<T>, CurdBoxProps<T> { }
 
 export default function CurdList<T>(props: CurdListProps<T>) {
 	const { renderItem, ...rest } = props;
