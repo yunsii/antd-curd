@@ -149,7 +149,7 @@ class StandardTableDemo extends React.Component {
   }
 }
 
-class CurdTableDemo extends React.Component {
+class CurdTableDemo extends React.Component<any, any> {
   state = {
     selectedRows: [],
     checkable: true,
@@ -160,7 +160,7 @@ class CurdTableDemo extends React.Component {
     sortedInfo: null as any,
   };
 
-  curd: Curd;
+  __curd__: Curd<any>;
 
   columns = () => {
     let { sortedInfo, filteredInfo } = this.state;
@@ -207,9 +207,9 @@ class CurdTableDemo extends React.Component {
         columnKey: 'birthday',
       },
     });
-    if (this.curd) {
-      const { searchParams } = this.curd.state;
-      this.curd.setState({
+    if (this.__curd__) {
+      const { searchParams } = this.__curd__.state;
+      this.__curd__.setState({
         searchParams: {
           ...searchParams,
           sorter: "birthday_descend",
@@ -220,10 +220,10 @@ class CurdTableDemo extends React.Component {
 
   clearFilters = () => {
     this.setState({ filteredInfo: null });
-    if (this.curd) {
-      const { searchParams } = this.curd.state;
+    if (this.__curd__) {
+      const { searchParams } = this.__curd__.state;
       const { name, birthday, ...rest } = searchParams;
-      this.curd.setState({
+      this.__curd__.setState({
         searchParams: {
           ...rest,
         }
@@ -236,10 +236,10 @@ class CurdTableDemo extends React.Component {
       filteredInfo: null,
       sortedInfo: null,
     });
-    if (this.curd) {
-      const { searchParams } = this.curd.state;
+    if (this.__curd__) {
+      const { searchParams } = this.__curd__.state;
       const { page, limit } = searchParams;
-      this.curd.setState({
+      this.__curd__.setState({
         searchParams: {
           page,
           limit,
@@ -291,7 +291,7 @@ class CurdTableDemo extends React.Component {
             </Form.Item>
           </Form>
         </Card>
-        <Curd ref={(curd) => this.curd = curd} {...this.props} data={mockData}>
+        <Curd ref={(curd) => this.__curd__ = curd} {...this.props} data={mockData}>
           <CurdTable
             columns={this.columns()}
             selectedRows={selectedRows}
@@ -302,6 +302,7 @@ class CurdTableDemo extends React.Component {
             checkable={checkable}
             popupType={popupType as any}
             setFormItemsConfig={setFormItemsConfig as any}
+            showOperators={operators === false ? false : undefined}
             actionsConfig={{
               extraActions: [
                 {

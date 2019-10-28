@@ -9,7 +9,7 @@ import {
 import classNames from 'classnames';
 import styles from './index.less';
 
-type OmittedTableProps<T> = Omit<TableProps<T>, 'dataSource'>;
+type OmittedTableProps<T> = Omit<TableProps<T>, 'dataSource' | 'store' | 'checkboxPropsCache' | 'setCheckboxPropsCache'>;
 
 export interface StandardTableColumnProps<T> extends ColumnProps<T> {
   needTotal?: boolean;

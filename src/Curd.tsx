@@ -7,11 +7,11 @@ import { injectChildren } from './utils';
 import DataContext from './DataContext';
 import { searchFieldName } from './config';
 
-export interface CurdProps {
+export interface CurdProps<T> {
 	modelName: string;
-	data: { list: any[]; pagination?: any };
+	data: { list: T[]; pagination?: any };
 	dispatch: Function;
-	ref?: (__curd__: Curd) => void;
+	ref?: (__curd__: Curd<T>) => void;
 	children?: any;
 }
 
@@ -22,7 +22,7 @@ export interface CurdState {
 	searchParams: any;
 }
 
-class Curd extends PureComponent<CurdProps, CurdState> {
+class Curd<T> extends PureComponent<CurdProps<T>, CurdState> {
 	static defaultProps = {
 		modelName: '',
 		dispatch: () => { }

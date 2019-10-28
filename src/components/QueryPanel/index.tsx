@@ -22,7 +22,7 @@ const addAllowClearToItemsConfig = itemsConfig =>
     };
   });
 
-export declare interface QueryPanelProps {
+export interface QueryPanelProps<T> {
   queryArgsConfig: any[];
   onSearch?: (fieldsValue: any) => void;
   onReset?: () => void;
@@ -31,10 +31,10 @@ export declare interface QueryPanelProps {
   colProps?: ColProps;
   onValuesChange?: (changedValues: any, allValues: any) => void;
   updateSearchValue?: (fieldsValue: any) => any;
-  wrappedComponentRef?: (self: QueryPanel) => void;
+  wrappedComponentRef?: (self: QueryPanel<T>) => void;
   form?: WrappedFormUtils;
   reSearchAfterReset?: boolean;
-  __curd__?: Curd;
+  __curd__?: Curd<T>;
 };
 
 interface QueryPanelState {
@@ -49,7 +49,7 @@ interface QueryPanelState {
     }
   }
 }) as any)
-export default class QueryPanel extends PureComponent<QueryPanelProps, QueryPanelState> {
+export default class QueryPanel<T> extends PureComponent<QueryPanelProps<T>, QueryPanelState> {
   state = {
     expandForm: false,
   };

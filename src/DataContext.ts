@@ -1,11 +1,11 @@
 import React from 'react';
 
-export interface SharedData {
+export interface SharedData<T> {
 	modelName: string;
-	data: { list: any[]; pagination?: any };
+	data: { list: T[]; pagination?: any };
 }
 
-const DataContext = React.createContext<SharedData>({
+const DataContext = React.createContext<SharedData<any>>({
 	modelName: '',
 	data: {
 		list: []

@@ -7,7 +7,7 @@ import DataContext from '../../DataContext';
 type NoDataStandardTableProps<T> = Omit<StandardTableProps<T>, 'data'>;
 
 export interface CustomStandardTableProps<T> extends NoDataStandardTableProps<T> {
-  __curdBox__?: CurdBox;
+  __curdBox__?: CurdBox<T>;
   columns: StandardTableColumnProps<T>[];
   fetchLoading?: boolean;
 }
@@ -44,7 +44,7 @@ function CustomStandardTable<T>(props: CustomStandardTableProps<T>) {
   return null;
 }
 
-export interface CurdTableProps<T> extends CustomStandardTableProps<T>, CurdBoxProps { }
+export interface CurdTableProps<T> extends CustomStandardTableProps<T>, CurdBoxProps<T> { }
 
 export default function CurdTable<T>(props: CurdTableProps<T>) {
   return (
