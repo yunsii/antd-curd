@@ -1,21 +1,19 @@
 import React from 'react';
 import { Button } from 'antd';
-import { CreateName } from '../../../constants';
 import styles from './index.less';
-import CurdBox from '../index';
 
 export interface OperatorsProps {
-  curdBox: CurdBox;
-  createButtonName?: string | false;
-  children?: React.ReactChildren;
-} 
+  createButtonName?: string | false | null;
+  handleCreateClick: () => void;
+  children?: React.ReactChildren | JSX.Element;
+}
 
 export default function Operators(props: OperatorsProps) {
-  const { createButtonName, children, curdBox } = props;
+  const { createButtonName, children, handleCreateClick } = props;
   return (
     <div className={styles.tableListOperator}>
       {createButtonName ? (
-        <Button icon="plus" type="primary" onClick={() => curdBox.handleVisible(CreateName, true)}>
+        <Button icon="plus" type="primary" onClick={handleCreateClick}>
           {createButtonName}
         </Button>
       ) : null}
