@@ -46,7 +46,7 @@
     "@storybook/addons": "^5.1.10",
     "@storybook/react": "^5.1.10",
     "@types/jest": "^24.0.16",
-    "@types/lodash": "^4.14.138",
+    "@types/lodash": "^4.14.144",
     "@types/storybook__react": "^4.0.2",
     "awesome-typescript-loader": "^5.2.1",
     "babel-loader": "^8.0.6",
