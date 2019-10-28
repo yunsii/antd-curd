@@ -11,7 +11,7 @@ export interface CurdProps {
 	modelName: string;
 	data: { list: any[]; pagination?: any };
 	dispatch: Function;
-	onRef?: (__curd__: Curd) => void;
+	ref?: (__curd__: Curd) => void;
 	children?: any;
 }
 
@@ -55,7 +55,7 @@ class Curd extends PureComponent<CurdProps, CurdState> {
 		});
 	}
 
-	handleSearch = (type?: 'create' | 'update' | 'delete') => {
+	public handleSearch = (type?: 'create' | 'update' | 'delete') => {
 		const { data: { list } } = this.props;
 		const { searchParams } = this.state;
 		const currentPage = searchParams[searchFieldName.page];
@@ -80,9 +80,9 @@ class Curd extends PureComponent<CurdProps, CurdState> {
 	};
 
 	handleRef = () => {
-		const { onRef } = this.props;
-		if (onRef) {
-			onRef(this);
+		const { ref } = this.props;
+		if (ref) {
+			ref(this);
 		}
 	};
 
