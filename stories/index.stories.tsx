@@ -291,7 +291,7 @@ class CurdTableDemo extends React.Component {
             </Form.Item>
           </Form>
         </Card>
-        <Curd onRef={(curd) => this.curd = curd} {...this.props} data={mockData}>
+        <Curd ref={(curd) => this.curd = curd} {...this.props} data={mockData}>
           <CurdTable
             columns={this.columns()}
             selectedRows={selectedRows}
@@ -330,7 +330,6 @@ class CurdTableDemo extends React.Component {
                 }
               }
             }}
-            operators={operators}
             interceptors={{
               handleFilterAndSort: (filters, sorter) => {
                 this.setState({
