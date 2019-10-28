@@ -181,7 +181,7 @@ class CurdBox extends PureComponent<CurdBoxProps, CurdState> {
     popupProps: {},
     setFormItemsConfig: () => [],
     interceptors: {},
-    operators: {},
+    operators: [],
     autoFetch: true,
     reSearchAfterUpdate: false,
     __curd__: null
