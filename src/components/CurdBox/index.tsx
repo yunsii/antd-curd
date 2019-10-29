@@ -148,7 +148,7 @@ export interface CurdBoxProps<T> {
   detail?: {};
   actionsConfig?: ActionsConfig | false | null;
   showOperators?: boolean;
-  extraOperators?: React.ReactElement;
+  extraOperators?: JSX.Element[];
   dispatch?: any;
   /** call model's fetch effect when componentDidMount */
   autoFetch?: boolean;

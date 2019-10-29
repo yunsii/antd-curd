@@ -5,7 +5,7 @@ import styles from './index.less';
 export interface OperatorsProps {
   createButtonName?: string | false | null;
   handleCreateClick: () => void;
-  children?: React.ReactChildren | JSX.Element;
+  children?: JSX.Element[];
 }
 
 export default function Operators(props: OperatorsProps) {
