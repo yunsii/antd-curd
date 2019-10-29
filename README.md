@@ -53,7 +53,7 @@
 * `searchForm` 表单数据
 * `searchParams` 分页器，过滤器，排序器参数
   
-还有一个 `handleSearch` 方法可供直接调起当前页面数据查询接口以供刷新数据使用。
+还有一个 `handleSearch` 方法可供直接（ ref ）调起当前页面数据查询接口以供刷新数据使用。
 
 ## [CurdBox](/src/components/CurdBox/index.tsx)
 
@@ -61,7 +61,7 @@
 
 通过 `__curd__` 实例属性为 `Curd` 组件更新 `searchParams` 。
 
-增删改查容器，为子组件提供相关详情的弹窗和数据操作相关的 Actions 。
+增删改查容器，为子组件提供对象相关详情的展示和编辑弹窗，以及对象操作相关的增删改等操作（ Actions ）。
 
 ### API
 
@@ -83,7 +83,8 @@
 | `interceptors` | 拦截器 | [interceptors](#interceptors) | - |
 | `detail` | model 详情 | `any` | - |
 | `actionsConfig` | 表格配置 | `[actionsConfig](#actionsConfig) \| false \| null` | - |
-| `operators` | 类似新增按钮的功能，会注入 Curd 的组件实例（可访问控制该页面组件的所有属性）用于扩展功能，如重新搜索等 | `React.ReactNode[]` | - |
+| `showOperators` | 是否展示操作栏 | `boolean` | - |
+| `extraOperators` | 扩展类似新增按钮的操作栏 | `JSX.Element[]` | - |
 | `dipatch` | dva 注入的 dispatch 函数 | `Function` | - |
 | `autoFetch` | 渲染后是否自动发起请求，如果需要配置额外的查询参数，可置为 false 手动自定义发起初始化请求 | `boolean` | `true` |
 | `reSearchAfterUpdate` | 更新 model 是否自动刷新列表 | `boolean` | `false` |
@@ -116,7 +117,7 @@
 
 #### 注意事项
 
-handle**Click 事件（除 handleDeleteClick 事件外， handleDeleteClick 直接中断）默认不会中断后续的弹窗事件，如果需要中断， `return true` 即可。
+`handle**Click` 事件（除 `handleDeleteClick` 事件外， `handleDeleteClick` 直接中断）默认不会中断后续的弹窗事件，如果需要中断， `return true` 即可。
 
 
 ## [Curd.QueryPanel](/src/components/QueryPanel/index.tsx)
