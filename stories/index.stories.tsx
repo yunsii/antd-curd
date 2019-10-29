@@ -153,7 +153,7 @@ class CurdTableDemo extends React.Component<any, any> {
   state = {
     selectedRows: [],
     checkable: true,
-    operators: true,
+    showOperators: true,
     popupType: 'drawer',
 
     filteredInfo: null as any,
@@ -249,7 +249,7 @@ class CurdTableDemo extends React.Component<any, any> {
   };
 
   render() {
-    const { selectedRows, checkable, operators, popupType } = this.state;
+    const { selectedRows, checkable, showOperators, popupType } = this.state;
     return (
       <React.Fragment>
         <Card>
@@ -266,10 +266,10 @@ class CurdTableDemo extends React.Component<any, any> {
             </Form.Item>
             <Form.Item label="操作栏" >
               <Switch
-                checked={operators}
+                checked={showOperators}
                 onChange={() => {
                   this.setState({
-                    operators: !operators,
+                    showOperators: !showOperators,
                   })
                 }}
               />
@@ -291,7 +291,7 @@ class CurdTableDemo extends React.Component<any, any> {
             </Form.Item>
           </Form>
         </Card>
-        <Curd ref={(curd) => this.__curd__ = curd} {...this.props} data={mockData}>
+        <Curd ref={(curd: any) => { this.__curd__ = curd }} {...this.props} data={mockData}>
           <CurdTable
             columns={this.columns()}
             selectedRows={selectedRows}
@@ -302,7 +302,16 @@ class CurdTableDemo extends React.Component<any, any> {
             checkable={checkable}
             popupType={popupType as any}
             setFormItemsConfig={setFormItemsConfig as any}
-            showOperators={operators === false ? false : undefined}
+            showOperators={showOperators}
+            extraOperators={[
+              <Button>额外操作</Button>,
+              <Radio.Group defaultValue="a" buttonStyle="solid">
+                <Radio.Button value="a">Hangzhou</Radio.Button>
+                <Radio.Button value="b">Shanghai</Radio.Button>
+                <Radio.Button value="c">Beijing</Radio.Button>
+                <Radio.Button value="d">Chengdu</Radio.Button>
+              </Radio.Group>,
+            ]}
             actionsConfig={{
               extraActions: [
                 {
