@@ -27,7 +27,7 @@ function initTotalList<T>(columns: StandardTableColumnProps<T>[]) {
 
 export interface StandardTableProps<T> extends OmittedTableProps<T> {
   columns: StandardTableColumnProps<T>[];
-  onSelectRow?: (row: any) => void;
+  onSelectRow: (rows: T[]) => void;
   data: {
     list: T[];
     pagination?: PaginationConfig;
@@ -36,9 +36,9 @@ export interface StandardTableProps<T> extends OmittedTableProps<T> {
   selectedRows?: T[];
 }
 
-interface StandardTableState {
-  selectedRowKeys: any[];
-  needTotalList: any[];
+interface StandardTableState<T> {
+  selectedRowKeys: string[] | number[];
+  needTotalList: StandardTableColumnProps<T> & { total: number }[];
 }
 
 function initialState<T>(props: StandardTableProps<T>) {
@@ -51,11 +51,12 @@ function initialState<T>(props: StandardTableProps<T>) {
   };
 }
 
-class StandardTable<T> extends PureComponent<StandardTableProps<T>, StandardTableState> {
+class StandardTable<T> extends PureComponent<StandardTableProps<T>, StandardTableState<T>> {
   static defaultProps = {
     rowKey: 'id',
     checkable: true,
     data: { list: [], pagination: {} },
+    onSelectRow: () => { },
   }
 
   static getDerivedStateFromProps<T>(nextProps: StandardTableProps<T>) {
@@ -72,17 +73,14 @@ class StandardTable<T> extends PureComponent<StandardTableProps<T>, StandardTabl
 
   state = initialState(this.props);
 
-  handleRowSelectChange = (selectedRowKeys, selectedRows) => {
+  handleRowSelectChange = (selectedRowKeys: string[] | number[], selectedRows: T[]) => {
+    const { onSelectRow } = this.props;
     let { needTotalList } = this.state;
     needTotalList = needTotalList.map(item => ({
       ...item,
       total: selectedRows.reduce((sum, val) => sum + parseFloat(val[item.dataIndex]), 0),
     }));
-    const { onSelectRow } = this.props;
-    if (onSelectRow) {
-      onSelectRow(selectedRows);
-    }
-
+    onSelectRow(selectedRows);
     this.setState({ selectedRowKeys, needTotalList });
   };
 
