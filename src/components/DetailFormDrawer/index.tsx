@@ -1,5 +1,6 @@
 import React from 'react';
 import { Spin, Button, Drawer, Form } from 'antd';
+import _debounce from 'lodash/debounce';
 import { DrawerProps } from 'antd/lib/drawer';
 import { FormProps } from 'antd/lib/form';
 import { ItemConfig } from 'antd-form-mate/dist/lib/form-mate';
@@ -17,7 +18,8 @@ export interface DetailFormDrawerProps {
     wrapperCol?: any;
   };
   loading?: boolean;
-  form: any;
+  form: FormProps["form"];
+  getFormInstance?: (form: FormProps["form"]) => void;
 }
 
 function DetailFormDrawer(props: DetailFormDrawerProps) {
@@ -30,16 +32,20 @@ function DetailFormDrawer(props: DetailFormDrawerProps) {
     setItemsConfig,
     itemsLayout,
     loading = false,
+    getFormInstance = () => { },
   } = props;
+  getFormInstance(form);
+
   const itemsConfig = setItemsConfig(detail, mode, form);
 
-  const okHandle = () => {
+  const okHandle = _debounce(() => {
+    console.log('DetailFormDrawer _debounce onOk');
     form.validateFields((err, fieldsValue) => {
       if (err) return;
       // form.resetFields();
       handleOk(fieldsValue);
     });
-  };
+  }, 600);
 
   return (
     <Drawer destroyOnClose width={560} {...drawerConfig}>

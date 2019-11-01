@@ -1,6 +1,7 @@
 /* eslint-disable no-use-before-define */
 import React, { Fragment } from 'react';
 import { Modal, Form, Row, Col, Spin } from 'antd';
+import _debounce from 'lodash/debounce';
 import { ModalProps } from 'antd/lib/modal';
 import { FormProps, } from 'antd/lib/form';
 import { createFormItems } from '../../FormMate';
@@ -22,6 +23,7 @@ export interface DetailFormModalProps {
   children?: JSX.Element;
   cols?: number;
   form: FormProps["form"];
+  getFormInstance?: (form: FormProps["form"]) => void;
 }
 
 function DetailFormModal(props: DetailFormModalProps) {
@@ -37,15 +39,19 @@ function DetailFormModal(props: DetailFormModalProps) {
     itemsWrapperClassName,
     loading = false,
     form = {} as any,
+    getFormInstance = () => { },
   } = props;
+  getFormInstance(form);
 
-  const onOk = () => {
+
+  const onOk = _debounce(() => {
+    console.log('DetailFormModal _debounce onOk');
     form.validateFields((err, fieldsValue) => {
       if (err) return;
       // form.resetFields();
       handleOk(fieldsValue);
     });
-  };
+  }, 600);
   const itemsConfig = setItemsConfig(detail, mode, form);
 
   const colsItems = cols === 1 ? (
