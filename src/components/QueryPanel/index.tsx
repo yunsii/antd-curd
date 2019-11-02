@@ -9,6 +9,7 @@ import styles from './index.less';
 import { createFormItems } from '../../FormMate';
 import Curd from '../../Curd';
 import { queryPanelText } from '../../config';
+import { searchFieldName } from '../../config';
 
 const addAllowClearToItemsConfig = itemsConfig =>
   itemsConfig.map(item => {
@@ -58,11 +59,15 @@ export default class QueryPanel<T> extends PureComponent<QueryPanelProps<T>, Que
     const { __curd__, updateSearchValue } = this.props;
     if (__curd__) {
       let newSearchValue = { ...fieldsValue };
-      if (updateSearchValue) {
-        newSearchValue = updateSearchValue(newSearchValue);
-      }
+      if (updateSearchValue) { newSearchValue = updateSearchValue(newSearchValue) }
+      const { searchParams } = __curd__.state;
+
       __curd__.setState({
         searchForm: { ...newSearchValue },
+        searchParams: {
+          ...searchParams,
+          [searchFieldName.page]: 1,
+        },
       }, () => {
         __curd__.handleSearch();
       })
@@ -93,9 +98,7 @@ export default class QueryPanel<T> extends PureComponent<QueryPanelProps<T>, Que
   };
 
   handleSubmit = event => {
-    if (event) {
-      event.preventDefault();
-    }
+    if (event) { event.preventDefault(); }
     const { form, onSearch } = this.props;
     form && form.validateFields((err, fieldsValue) => {
       if (err) return;
