@@ -7,12 +7,10 @@ import { injectChildren } from './utils';
 import DataContext from './DataContext';
 import { searchFieldName } from './config';
 
-export interface CurdProps<T> {
+export interface CurdProps<T> extends React.Props<T> {
 	modelName: string;
 	data: { list: T[]; pagination?: any };
 	dispatch: Function;
-	ref?: (__curd__: Curd<T>) => void;
-	children?: any;
 }
 
 export interface CurdState {
@@ -79,16 +77,8 @@ class Curd<T> extends PureComponent<CurdProps<T>, CurdState> {
 		return injectChildren(children, { __curd__: this });
 	};
 
-	handleRef = () => {
-		const { ref } = this.props;
-		if (ref) {
-			ref(this);
-		}
-	};
-
 	render() {
 		const { modelName, data } = this.props;
-		this.handleRef();
 		return (
 			<DataContext.Provider value={{ modelName, data }}>
 				<Card bordered={false}>{this.renderChildren()}</Card>
