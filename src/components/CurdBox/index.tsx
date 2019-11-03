@@ -44,19 +44,6 @@ export interface CustomDetailFormModalProps extends DetailFormModalProps {
 
 const getValue = (obj) => Object.keys(obj).map((key) => obj[key]).join(',');
 
-export type RecordSelection = {
-  selectedRowKeys: number[];
-  onSelectChange: (selectedRowKeys: any[]) => void;
-  getCheckboxProps: (record: any) => any;
-};
-
-export type RenderItemConfig = {
-  record: any;
-  actions: React.ReactNode[] | null;
-  recordSelection: RecordSelection;
-  checkable?: boolean;
-};
-
 async function updateFieldsValueByInterceptors<T>(fieldsValue, interceptors: CurdBoxProps<T>['interceptors'] = {}, mode) {
   const { updateFieldsValue } = interceptors;
   let newFieldsValue = _cloneDeep(fieldsValue);
@@ -97,14 +84,14 @@ function defaultHandleFilterAndSort(
   return { ...result };
 }
 
-export interface ActionsConfig {
+export interface ActionsConfig<T> {
   showActionsCount?: number;
-  extraActions?: ActionType[];
+  extraActions?: ActionType<T>[];
   /** number[] or [number, setTitle()][] */
-  confirmKeys?: (number | [number, (record?: any) => string])[];
+  confirmKeys?: (number | [number, (record?: T) => string])[];
   confirmProps?: PopconfirmProps;
-  hideActions?: number[] | ((record?: any) => void | number[]);
-  disabledActions?: (record?: any) => void | number[];
+  hideActions?: number[] | ((record?: T) => void | number[]);
+  disabledActions?: (record?: T) => void | number[];
   detailActionTitle?: string;
   updateActionTitle?: string;
   deleteActionTitle?: string;
@@ -130,14 +117,14 @@ export interface CurdBoxProps<T> {
   afterPopupClose?: () => void;
   interceptors?: {
     /** update form values after click ok */
-    updateFieldsValue?: (fieldsValue: any, mode?: 'create' | 'update') => any;
+    updateFieldsValue?: (fieldsValue: T, mode?: 'create' | 'update') => T;
     /** callback on click create button, will break default behavior if return value is true */
     handleCreateClick?: () => boolean | undefined;
     /** callback on click detail button, will break default behavior if return value is true */
-    handleDetailClick?: (record: any) => boolean | undefined;
+    handleDetailClick?: (record: T) => boolean | undefined;
     /** callback on click update button, will break default behavior if return value is true */
-    handleUpdateClick?: (record: any) => boolean | undefined;
-    handleDeleteClick?: (record: any) => void;
+    handleUpdateClick?: (record: T) => boolean | undefined;
+    handleDeleteClick?: (record: T) => void;
     /** custom how to generate params to query when change of filter or sorter */
     handleFilterAndSort?: (
       filtersArg: Record<keyof any, string[]>,
@@ -146,7 +133,7 @@ export interface CurdBoxProps<T> {
     ) => any;
   };
   detail?: {};
-  actionsConfig?: ActionsConfig | false | null;
+  actionsConfig?: ActionsConfig<T> | false | null;
   showOperators?: boolean;
   extraOperators?: JSX.Element[];
   dispatch?: any;
@@ -156,12 +143,12 @@ export interface CurdBoxProps<T> {
   __curd__?: Curd<T>;
 }
 
-interface CurdState {
+interface CurdState<T> {
   popupVisible: string | null;
-  record: any;
+  record: T;
 }
 
-class CurdBox<T> extends PureComponent<CurdBoxProps<T>, CurdState> {
+class CurdBox<T extends { id: number | string }> extends PureComponent<CurdBoxProps<T>, CurdState<T>> {
   static defaultProps = {
     createTitle: '新建对象',
     detailTitle: '对象详情',
@@ -192,7 +179,7 @@ class CurdBox<T> extends PureComponent<CurdBoxProps<T>, CurdState> {
 
   state = {
     popupVisible: null,
-    record: {} as any
+    record: {} as T,
   };
 
   componentDidMount() {
@@ -208,7 +195,7 @@ class CurdBox<T> extends PureComponent<CurdBoxProps<T>, CurdState> {
     return DetailName in this.props && 'detailLoading' in this.props;
   };
 
-  fetchDetail = (record) => {
+  fetchDetail = (record: T) => {
     const { dispatch } = this.props;
     dispatch({
       type: `${getModelName(this.props)}/detail`,
@@ -216,13 +203,13 @@ class CurdBox<T> extends PureComponent<CurdBoxProps<T>, CurdState> {
     });
   };
 
-  fetchDetailOrNot = (record) => {
+  fetchDetailOrNot = (record: T) => {
     if (this.willFetchDetail()) {
       this.fetchDetail(record);
     }
   };
 
-  handleVisible = (action, visible, record?: any) => {
+  handleVisible = (action, visible, record?: T) => {
     const { interceptors = {} } = this.props;
     const { handleCreateClick } = interceptors;
     if (handleCreateClick && action === CreateName) {
@@ -234,7 +221,7 @@ class CurdBox<T> extends PureComponent<CurdBoxProps<T>, CurdState> {
     });
     if (visible) {
       this.setState({
-        record: record || {}
+        record: record || {} as T,
       });
     }
   };
@@ -246,7 +233,7 @@ class CurdBox<T> extends PureComponent<CurdBoxProps<T>, CurdState> {
     }
   };
 
-  deleteModel = (id) => {
+  deleteModel = (id: T['id']) => {
     const { dispatch } = this.props;
     dispatch({
       type: `${getModelName(this.props)}/delete`,
@@ -268,7 +255,7 @@ class CurdBox<T> extends PureComponent<CurdBoxProps<T>, CurdState> {
     };
   };
 
-  renderActions = (record: any) => {
+  renderActions = (record: T) => {
     const { actionsConfig } = this.props;
     if (actionsConfig) {
       const { confirmKeys, ...rest } = actionsConfig;
@@ -280,7 +267,7 @@ class CurdBox<T> extends PureComponent<CurdBoxProps<T>, CurdState> {
     return null;
   };
 
-  setPopupModeAndRecord = () => {
+  setPopupModeAndRecord: () => [string, T] = () => {
     const { popupVisible, record } = this.state;
     if (popupVisible === DetailName) {
       return [DetailName, record];
@@ -288,7 +275,7 @@ class CurdBox<T> extends PureComponent<CurdBoxProps<T>, CurdState> {
     if (popupVisible === UpdateName) {
       return [UpdateName, record];
     }
-    return [CreateName, {}];
+    return [CreateName, {} as T];
   };
 
   getPopupTitle = () => {

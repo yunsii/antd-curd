@@ -6,13 +6,13 @@ import DataContext from '../../DataContext';
 
 type NoDataStandardTableProps<T> = Omit<StandardTableProps<T>, 'data'>;
 
-export interface CustomStandardTableProps<T> extends NoDataStandardTableProps<T> {
+export interface CustomStandardTableProps<T extends { id: number | string }> extends NoDataStandardTableProps<T> {
   __curdBox__?: CurdBox<T>;
   columns: StandardTableColumnProps<T>[];
   fetchLoading?: boolean;
 }
 
-function CustomStandardTable<T>(props: CustomStandardTableProps<T>) {
+function CustomStandardTable<T extends { id: number | string }>(props: CustomStandardTableProps<T>) {
   const { __curdBox__, columns, fetchLoading, ...rest } = props;
   const { data } = useContext(DataContext);
   if (__curdBox__) {
@@ -25,7 +25,7 @@ function CustomStandardTable<T>(props: CustomStandardTableProps<T>) {
         ...columns,
         {
           title: '操作',
-          render: (value, record) => {
+          render: (value, record: T) => {
             return addDivider(__curdBox__.renderActions(record));
           }
         }
@@ -44,9 +44,9 @@ function CustomStandardTable<T>(props: CustomStandardTableProps<T>) {
   return null;
 }
 
-export interface CurdTableProps<T> extends CustomStandardTableProps<T>, CurdBoxProps<T> { }
+export interface CurdTableProps<T extends { id: number | string }> extends CustomStandardTableProps<T>, CurdBoxProps<T> { }
 
-export default function CurdTable<T>(props: CurdTableProps<T>) {
+export default function CurdTable<T extends { id: number | string }>(props: CurdTableProps<T>) {
   return (
     <CurdBox {...props}>
       <CustomStandardTable {...props} />
