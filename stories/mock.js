@@ -138,13 +138,49 @@ const list = [
     speciality: '钢琴、吉他',
     habit: '旅游、宅',
   },
+  {
+    id: 'szn9',
+    avatar: 'http://www.snh48.com/images/member/mp_10146.jpg',
+    name: '孙珍妮',
+    nickname: '珍妮',
+    birthday: '05.05',
+    speciality: '唱歌、吉他',
+    habit: '吃东西、逛街',
+  },
+  {
+    id: 'cmj10',
+    avatar: 'http://www.bej48.com/images/member/zp_20001.jpg',
+    name: '陈美君',
+    nickname: 'MIMI',
+    birthday: '01.15',
+    speciality: '钢琴、吉他',
+    habit: '旅游、宅',
+  },
+  {
+    id: 'szn11',
+    avatar: 'http://www.snh48.com/images/member/mp_10146.jpg',
+    name: '孙珍妮',
+    nickname: '珍妮',
+    birthday: '05.05',
+    speciality: '唱歌、吉他',
+    habit: '吃东西、逛街',
+  },
+  {
+    id: 'cmj12',
+    avatar: 'http://www.bej48.com/images/member/zp_20001.jpg',
+    name: '陈美君',
+    nickname: 'MIMI',
+    birthday: '01.15',
+    speciality: '钢琴、吉他',
+    habit: '旅游、宅',
+  },
 ]
 
 export const data = {
   list,
   pagination: {
-    current: 1,
-    pageSize: list.length,
+    current: Math.floor(list.length / 10),
+    pageSize: 10,
     total: list.length,
   }
 }

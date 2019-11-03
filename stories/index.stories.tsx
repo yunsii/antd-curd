@@ -371,7 +371,6 @@ class CurdTableDemo extends React.Component<any, any> {
                     list: handleDelete(record, list),
                     pagination: {
                       ...pagination,
-                      pageSize: list.length - 1,
                       total: list.length - 1,
                     },
                   }
