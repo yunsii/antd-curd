@@ -10,7 +10,17 @@ import './antd-form-mate';
 import renderCard from './CustomCard';
 import CurdListDemo from './CurdListDemo';
 import setFormItemsConfig from './map';
-import { columns, data as mockData } from './mock';
+import { columns, data } from './mock';
+
+function handleDelete(record, list: any[]) {
+  const { parent_id, id } = record;
+  if (parent_id) {
+    const targetIndex = list.findIndex(item => item.id === parent_id);
+    delete list[targetIndex].children;
+    return list;
+  }
+  return list.filter(item => item.id !== id);
+}
 
 const { QueryPanel, CurdTable } = Curd;
 const { Group: RadioGroup } = Radio;
@@ -100,10 +110,11 @@ class StandardTableDemo extends React.Component {
     selectedRows: [],
     checkable: true,
     pagination: true,
+    mockData: data,
   }
 
   render() {
-    const { selectedRows, checkable, pagination } = this.state;
+    const { selectedRows, checkable, pagination, mockData } = this.state;
     console.log(pagination)
     return (
       <React.Fragment>
@@ -155,6 +166,7 @@ class CurdTableDemo extends React.Component<any, any> {
     checkable: true,
     showOperators: true,
     popupType: 'drawer',
+    mockData: data,
 
     filteredInfo: null as any,
     sortedInfo: null as any,
@@ -249,7 +261,7 @@ class CurdTableDemo extends React.Component<any, any> {
   };
 
   render() {
-    const { selectedRows, checkable, showOperators, popupType } = this.state;
+    const { selectedRows, checkable, showOperators, popupType, mockData } = this.state;
     return (
       <React.Fragment>
         <Card>
@@ -304,8 +316,8 @@ class CurdTableDemo extends React.Component<any, any> {
             setFormItemsConfig={setFormItemsConfig as any}
             showOperators={showOperators}
             extraOperators={[
-              <Button>额外操作</Button>,
-              <Radio.Group defaultValue="a" buttonStyle="solid">
+              <Button key='reset' onClick={() => { this.setState({ mockData: data }) }}>数据重置</Button>,
+              <Radio.Group key='demo' defaultValue="a" buttonStyle="solid">
                 <Radio.Button value="a">Hangzhou</Radio.Button>
                 <Radio.Button value="b">Shanghai</Radio.Button>
                 <Radio.Button value="c">Beijing</Radio.Button>
@@ -351,6 +363,20 @@ class CurdTableDemo extends React.Component<any, any> {
                 console.log(fieldsValue);
                 return fieldsValue;
               },
+              handleDeleteClick: (record) => {
+                console.log(record);
+                const { list, pagination } = mockData;
+                this.setState({
+                  mockData: {
+                    list: handleDelete(record, list),
+                    pagination: {
+                      ...pagination,
+                      pageSize: list.length - 1,
+                      total: list.length - 1,
+                    },
+                  }
+                })
+              }
             }}
           />
         </Curd>
@@ -360,7 +386,12 @@ class CurdTableDemo extends React.Component<any, any> {
 }
 
 class StandardListDemo extends React.Component {
+  state = {
+    mockData: data,
+  }
+
   render() {
+    const { mockData } = this.state;
     return (
       <StandardList
         data={mockData}
