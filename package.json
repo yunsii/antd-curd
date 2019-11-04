@@ -1,6 +1,6 @@
 {
   "name": "antd-curd",
-  "description": "基于 ant design 、 umi 、 dva 的增删改查页面组件",
+  "description": "基于 ant design 、 dva 的增删改查页面组件",
   "version": "0.3.2",
   "main": "./dist/index.js",
   "dependencies": {
