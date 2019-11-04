@@ -3,10 +3,10 @@ import { storiesOf } from '@storybook/react';
 // import { action } from '@storybook/addon-actions';
 import { Button, Card, Switch, Form, Radio, message } from 'antd';
 // import { WrappedFormUtils } from 'antd/lib/form/Form';
+import './antd-form-mate';
 import { Curd } from '../src';
 import StandardTable from '../src/components/StandardTable';
 import StandardList from '../src/components/StandardList';
-import './antd-form-mate';
 import renderCard from './CustomCard';
 import CurdListDemo from './CurdListDemo';
 import setFormItemsConfig from './map';
@@ -313,6 +313,11 @@ class CurdTableDemo extends React.Component<any, any> {
             }}
             checkable={checkable}
             popupType={popupType as any}
+            popupProps={{
+              getFormInstance: (form) => {
+                console.log(form);
+              }
+            }}
             setFormItemsConfig={setFormItemsConfig as any}
             showOperators={showOperators}
             extraOperators={[
