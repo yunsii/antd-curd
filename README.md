@@ -32,11 +32,11 @@
 
 ## [DetailFormDrawer](/src/components/DetailFormDrawer/index.tsx) 详情抽屉
 
-基于 [antd-form-mate](https://github.com/theprimone/antd-form-mate) 实现的详情表单抽屉，参数定义可参见 [DetailFormDrawer/index.d.ts](/src/components/DetailFormDrawer/index.d.ts) 。
+基于 [antd-form-mate](https://github.com/theprimone/antd-form-mate) 实现的详情表单抽屉，参数定义可参见 [DetailFormDrawer/index.d.ts](/src/components/DetailFormDrawer/index.tsx#L9) 。
 
 ## [DetailFormModal](/src/components/DetailFormModal/index.tsx) 详情模态框
 
-基于 [antd-form-mate](https://github.com/theprimone/antd-form-mate) 实现的详情模态框，参数定义可参见 [DetailFormModal/index.tsx](/src/components/DetailFormModal/index.tsx) 。
+基于 [antd-form-mate](https://github.com/theprimone/antd-form-mate) 实现的详情模态框，参数定义可参见 [DetailFormModal/index.tsx](/src/components/DetailFormModal/index.tsx#L23) 。
 
 ## [QueryPanel](/src/components/QueryPanel/index.tsx) 查询面板
 
@@ -77,7 +77,7 @@
 | `deleteLoading` | 删除 model loading | `boolean` | - |
 | `createButtonName` | 新建按钮名称，为空时隐藏按钮 | `string \| false` | `'新建'` |
 | `popupType` | 弹窗类型 | `'modal' \| 'drawer'` | - |
-| `popupProps` | 弹窗配置，根据 `popupType` 配置 | [CustomDetailFormDrawerProps](/src/components/CurdBox/index.tsx) \| [CustomDetailFormModalProps](/src/components/CurdBox/index.tsx) | - |
+| `popupProps` | 弹窗配置，根据 `popupType` 配置 | [CustomDetailFormDrawerProps](/src/components/CurdBox/index.tsx#L9) \| [CustomDetailFormModalProps](/src/components/CurdBox/index.tsx#L23) | - |
 | `setFormItemsConfig` | 配置表单数据 | `(detail: {}, mode: 'create' \| 'detail' \| 'update', form) => any[]` | - |
 | `afterPopupClose` | 关闭弹窗后回调函数 | `() => void` | - |
 | `interceptors` | 拦截器 | [interceptors](#interceptors) | - |
