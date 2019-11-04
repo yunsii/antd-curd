@@ -2,8 +2,9 @@
 import React, { Fragment } from 'react';
 import { Modal, Form, Row, Col, Spin } from 'antd';
 import _debounce from 'lodash/debounce';
+import { ColProps } from "antd/lib/col";
 import { ModalProps } from 'antd/lib/modal';
-import { FormProps, } from 'antd/lib/form';
+import { WrappedFormUtils } from 'antd/lib/form/Form';
 import { createFormItems } from '../../FormMate';
 import { ItemConfig } from 'antd-form-mate/dist/lib/form-mate';
 import { injectChildren } from '../../utils';
@@ -11,19 +12,19 @@ import { injectChildren } from '../../utils';
 export interface DetailFormModalProps {
   modalConfig: ModalProps;
   loading?: boolean;
-  setItemsConfig: (detail: any, mode: string, form: FormProps['form']) => ItemConfig[];
+  setItemsConfig: (detail: any, mode: string, form: WrappedFormUtils) => ItemConfig[];
   detail?: any;
   mode?: string;
   itemsLayout?: {
-    labelCol?: any;
-    wrapperCol?: any;
+    labelCol?: ColProps;
+    wrapperCol?: ColProps;
   };
   itemsWrapperStyle?: React.CSSProperties;
   itemsWrapperClassName?: string;
   children?: JSX.Element;
-  cols?: number;
-  form: FormProps["form"];
-  getFormInstance?: (form: FormProps["form"]) => void;
+  cols?: 1 | 2 | 3 | 4 | 6 | 8 | 12 | 24;
+  form?: WrappedFormUtils;
+  getFormInstance?: (form: WrappedFormUtils) => void;
 }
 
 function DetailFormModal(props: DetailFormModalProps) {
@@ -82,4 +83,4 @@ function DetailFormModal(props: DetailFormModalProps) {
   );
 }
 
-export default Form.create()(DetailFormModal as any);
+export default Form.create()(DetailFormModal);
