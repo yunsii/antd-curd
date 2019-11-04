@@ -12,8 +12,7 @@ import { injectChildren } from '../../utils';
 export interface DetailFormModalProps {
   modalConfig: ModalProps;
   loading?: boolean;
-  setItemsConfig: (detail: any, mode: string, form: WrappedFormUtils) => ItemConfig[];
-  detail?: any;
+  setItemsConfig: (form: WrappedFormUtils) => ItemConfig[];
   mode?: string;
   itemsLayout?: {
     labelCol?: ColProps;
@@ -33,7 +32,6 @@ function DetailFormModal(props: DetailFormModalProps) {
     cols = 1,
     children,
     setItemsConfig,
-    detail = {},
     mode = '',
     itemsLayout,
     itemsWrapperStyle = {} as any,
@@ -53,7 +51,7 @@ function DetailFormModal(props: DetailFormModalProps) {
       handleOk(fieldsValue);
     });
   }, 600);
-  const itemsConfig = setItemsConfig(detail, mode, form);
+  const itemsConfig = setItemsConfig(form);
 
   const colsItems = cols === 1 ? (
     createFormItems(form)(itemsConfig, itemsLayout)

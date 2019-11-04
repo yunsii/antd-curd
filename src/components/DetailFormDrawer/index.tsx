@@ -11,9 +11,7 @@ import { detailFormDrawerText } from '../../config';
 export interface DetailFormDrawerProps {
   drawerConfig: DrawerProps;
   onOk?: Function;
-  setItemsConfig: (detail: any, mode: string, form: WrappedFormUtils) => ItemConfig[];
-  detail?: any;
-  mode?: string;
+  setItemsConfig: (form: WrappedFormUtils) => ItemConfig[];
   itemsLayout?: {
     labelCol?: ColProps;
     wrapperCol?: ColProps;
@@ -28,8 +26,6 @@ function DetailFormDrawer(props: DetailFormDrawerProps) {
     drawerConfig,
     onOk: handleOk = () => { },
     form = {} as any,
-    detail = {},
-    mode = '',
     setItemsConfig,
     itemsLayout,
     loading = false,
@@ -37,7 +33,7 @@ function DetailFormDrawer(props: DetailFormDrawerProps) {
   } = props;
   getFormInstance(form);
 
-  const itemsConfig = setItemsConfig(detail, mode, form);
+  const itemsConfig = setItemsConfig(form);
 
   const okHandle = _debounce(() => {
     console.log('DetailFormDrawer _debounce onOk');
