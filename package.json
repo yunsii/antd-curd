@@ -5,7 +5,7 @@
   "main": "./dist/index.js",
   "dependencies": {
     "antd": "^3.23.6",
-    "antd-form-mate": "^0.3.11",
+    "antd-form-mate": "^0.5.7",
     "dva-base-models": "^1.2.0",
     "lodash": "^4.17.15",
     "react": "^16.8.6",
