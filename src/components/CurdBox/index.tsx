@@ -3,6 +3,7 @@ import { message } from 'antd';
 import { FormProps } from 'antd/lib/form';
 import { PaginationConfig, SorterResult, TableCurrentDataSource } from 'antd/lib/table';
 import { PopconfirmProps } from 'antd/lib/popconfirm';
+import { WrappedFormUtils } from 'antd/lib/form/Form';
 import { ItemConfig } from 'antd-form-mate/dist/lib/form-mate';
 import _cloneDeep from 'lodash/cloneDeep';
 import { setActions, ActionType } from './actions/index';
@@ -41,6 +42,8 @@ export interface CustomDetailFormModalProps extends DetailFormModalProps {
   itemsConfig: never;
   loading?: never;
 }
+
+export type PopupMode = 'create' | 'detail' | 'update'
 
 const getValue = (obj) => Object.keys(obj).map((key) => obj[key]).join(',');
 
@@ -113,7 +116,7 @@ export interface CurdBoxProps<T> {
   createButtonName?: string | false | null;
   popupType?: 'modal' | 'drawer' | false | null;
   popupProps?: CustomDetailFormDrawerProps | CustomDetailFormModalProps;
-  setFormItemsConfig?: (detail: {}, mode: 'create' | 'detail' | 'update', form?: FormProps['form']) => ItemConfig[];
+  setFormItemsConfig: (detail: any, mode: PopupMode, form?: FormProps['form']) => ItemConfig[];
   afterPopupClose?: () => void;
   interceptors?: {
     /** update form values after click ok */
@@ -144,7 +147,7 @@ export interface CurdBoxProps<T> {
 }
 
 interface CurdState<T> {
-  popupVisible: string | null;
+  popupVisible: 'create' | 'detail' | 'update' | null;
   record: T;
 }
 
@@ -171,6 +174,7 @@ class CurdBox<T extends { id: number | string }> extends PureComponent<CurdBoxPr
     showOperators: true,
     autoFetch: true,
     reSearchAfterUpdate: false,
+    afterPopupClose: () => { },
     __curd__: null
   };
 
@@ -209,7 +213,7 @@ class CurdBox<T extends { id: number | string }> extends PureComponent<CurdBoxPr
     }
   };
 
-  handleVisible = (action, visible, record?: T) => {
+  handleVisible = (action: PopupMode, visible, record?: T) => {
     const { interceptors = {} } = this.props;
     const { handleCreateClick } = interceptors;
     if (handleCreateClick && action === CreateName) {
@@ -267,7 +271,7 @@ class CurdBox<T extends { id: number | string }> extends PureComponent<CurdBoxPr
     return null;
   };
 
-  setPopupModeAndRecord: () => [string, T] = () => {
+  setPopupModeAndRecord: () => [PopupMode, T] = () => {
     const { popupVisible, record } = this.state;
     if (popupVisible === DetailName) {
       return [DetailName, record];
@@ -406,11 +410,12 @@ class CurdBox<T extends { id: number | string }> extends PureComponent<CurdBoxPr
       popupProps,
       afterPopupClose
     } = this.props;
-    const { popupVisible } = this.state;
     const { drawerConfig, modalConfig, ...restPopupProps } = popupProps as any;
     const loading = createLoading || detailLoading || updateLoading;
+    const { popupVisible } = this.state;
     const [mode, record] = this.setPopupModeAndRecord();
-    const showDetail = [DetailName, UpdateName].includes(mode);
+    const isDetailMode = [DetailName, UpdateName].includes(mode);
+    const displayDetail = this.willFetchDetail() && isDetailMode ? detail : record;
 
     const composePopupProps = {
       ...modalConfig,
@@ -427,17 +432,13 @@ class CurdBox<T extends { id: number | string }> extends PureComponent<CurdBoxPr
           drawerConfig={{
             ...composePopupProps,
             afterVisibleChange: (visible) => {
-              if (!visible) {
-                callFunctionIfFunction(afterPopupClose)();
-              }
+              if (!visible) { callFunctionIfFunction(afterPopupClose)() }
             }
           }}
           {...restPopupProps}
           loading={loading}
           onOk={this.handleOk}
-          setItemsConfig={setFormItemsConfig}
-          detail={this.willFetchDetail() && showDetail ? detail : record}
-          mode={mode}
+          setItemsConfig={(form: WrappedFormUtils) => setFormItemsConfig(displayDetail, mode, form)}
         />
       );
     } else if (popupType === 'modal') {
@@ -450,8 +451,7 @@ class CurdBox<T extends { id: number | string }> extends PureComponent<CurdBoxPr
           }}
           {...restPopupProps}
           loading={loading}
-          setItemsConfig={setFormItemsConfig}
-          detail={this.willFetchDetail() && showDetail ? detail : record}
+          setItemsConfig={(form: WrappedFormUtils) => setFormItemsConfig(displayDetail, mode, form)}
           mode={mode}
         />
       );
