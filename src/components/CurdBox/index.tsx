@@ -21,27 +21,8 @@ import { DetailFormModalProps } from '../DetailFormModal/index';
 import { DetailFormDrawerProps } from '../DetailFormDrawer/index';
 import { curdLocale } from '../../locale';
 
-export interface CustomDetailFormDrawerProps extends DetailFormDrawerProps {
-  drawerConfig: {
-    title?: never;
-    visible?: never;
-    onClose?: never;
-  };
-  onOk?: never;
-  itemsConfig: never;
-  loading?: never;
-}
-
-export interface CustomDetailFormModalProps extends DetailFormModalProps {
-  modalConfig: {
-    title?: never;
-    visible?: never;
-    onClose?: never;
-    onOk?: never;
-  };
-  itemsConfig: never;
-  loading?: never;
-}
+export type CustomDetailFormDrawerProps = Omit<DetailFormDrawerProps, 'setItemsConfig' | 'loading' | 'form' | 'onOk'>
+export type CustomDetailFormModalProps = Omit<DetailFormModalProps, 'setItemsConfig' | 'loading' | 'form'>
 
 export type PopupMode = 'create' | 'detail' | 'update'
 

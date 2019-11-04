@@ -1,29 +1,19 @@
 import React from 'react';
 import { Spin, Button, Drawer, Form } from 'antd';
 import _debounce from 'lodash/debounce';
-import { ColProps } from "antd/lib/col";
 import { DrawerProps } from 'antd/lib/drawer';
-import { WrappedFormUtils } from 'antd/lib/form/Form';
-import { ItemConfig } from 'antd-form-mate/dist/lib/form-mate';
 import { createFormItems } from '../../FormMate';
 import { detailFormDrawerText } from '../../config';
+import { PopupProps } from '../DetailFormModal';
 
-export interface DetailFormDrawerProps {
-  drawerConfig: DrawerProps;
+export interface DetailFormDrawerProps extends PopupProps {
+  drawerConfig?: DrawerProps;
   onOk?: Function;
-  setItemsConfig: (form: WrappedFormUtils) => ItemConfig[];
-  itemsLayout?: {
-    labelCol?: ColProps;
-    wrapperCol?: ColProps;
-  };
-  loading?: boolean;
-  form?: WrappedFormUtils;
-  getFormInstance?: (form: WrappedFormUtils) => void;
 }
 
 function DetailFormDrawer(props: DetailFormDrawerProps) {
   const {
-    drawerConfig,
+    drawerConfig = {},
     onOk: handleOk = () => { },
     form = {} as any,
     setItemsConfig,

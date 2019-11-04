@@ -9,26 +9,29 @@ import { createFormItems } from '../../FormMate';
 import { ItemConfig } from 'antd-form-mate/dist/lib/form-mate';
 import { injectChildren } from '../../utils';
 
-export interface DetailFormModalProps {
-  modalConfig: ModalProps;
+export interface PopupProps {
   loading?: boolean;
   setItemsConfig: (form: WrappedFormUtils) => ItemConfig[];
-  mode?: string;
   itemsLayout?: {
     labelCol?: ColProps;
     wrapperCol?: ColProps;
   };
-  itemsWrapperStyle?: React.CSSProperties;
-  itemsWrapperClassName?: string;
-  children?: JSX.Element;
-  cols?: 1 | 2 | 3 | 4 | 6 | 8 | 12 | 24;
   form?: WrappedFormUtils;
   getFormInstance?: (form: WrappedFormUtils) => void;
 }
 
+export interface DetailFormModalProps extends PopupProps {
+  modalConfig?: ModalProps;
+  mode?: string;
+  itemsWrapperStyle?: React.CSSProperties;
+  itemsWrapperClassName?: string;
+  cols?: 1 | 2 | 3 | 4 | 6 | 8 | 12 | 24;
+  children?: JSX.Element;
+}
+
 function DetailFormModal(props: DetailFormModalProps) {
   const {
-    modalConfig: { onOk: handleOk = () => { }, ...restModalConfig },
+    modalConfig,
     cols = 1,
     children,
     setItemsConfig,
@@ -40,6 +43,7 @@ function DetailFormModal(props: DetailFormModalProps) {
     form = {} as any,
     getFormInstance = () => { },
   } = props;
+  const { onOk: handleOk = () => { }, ...restModalConfig } = modalConfig || {};
   getFormInstance(form);
 
 
