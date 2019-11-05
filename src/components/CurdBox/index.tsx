@@ -98,7 +98,7 @@ export interface CurdBoxProps<T> {
   popupType?: 'modal' | 'drawer' | false | null;
   popupProps?: CustomDetailFormDrawerProps | CustomDetailFormModalProps;
   setFormItemsConfig: (detail: any, mode: PopupMode, form?: FormProps['form']) => ItemConfig[];
-  afterPopupClose?: () => void;
+  afterPopupClose?: (mode: PopupMode) => void;
   interceptors?: {
     /** update form values after click ok */
     updateFieldsValue?: (fieldsValue: T, mode?: 'create' | 'update') => T;
@@ -359,6 +359,17 @@ class CurdBox<T extends { id: number | string }> extends PureComponent<CurdBoxPr
     }
   };
 
+  handlePopupClose = (mode: PopupMode) => {
+    const { dispatch, afterPopupClose } = this.props;
+    if (mode === 'detail' || mode === 'update') {
+      dispatch({
+        type: `${getModelName(this.props)}/_saveDetail`,
+        payload: {},
+      });
+    }
+    callFunctionIfFunction(afterPopupClose)(mode);
+  }
+
   renderContainer = () => {
     const {
       actionsConfig,
@@ -389,7 +400,6 @@ class CurdBox<T extends { id: number | string }> extends PureComponent<CurdBoxPr
       setFormItemsConfig,
       popupType,
       popupProps,
-      afterPopupClose
     } = this.props;
     const { drawerConfig, modalConfig, ...restPopupProps } = popupProps as any;
     const loading = createLoading || detailLoading || updateLoading;
@@ -413,8 +423,8 @@ class CurdBox<T extends { id: number | string }> extends PureComponent<CurdBoxPr
           drawerConfig={{
             ...composePopupProps,
             afterVisibleChange: (visible) => {
-              if (!visible) { callFunctionIfFunction(afterPopupClose)() }
-            }
+              if (!visible) { this.handlePopupClose(mode) }
+            },
           }}
           {...restPopupProps}
           loading={loading}
@@ -428,7 +438,7 @@ class CurdBox<T extends { id: number | string }> extends PureComponent<CurdBoxPr
           modalConfig={{
             ...composePopupProps,
             onOk: this.handleOk,
-            afterClose: afterPopupClose
+            afterClose: () => this.handlePopupClose(mode),
           }}
           {...restPopupProps}
           loading={loading}
