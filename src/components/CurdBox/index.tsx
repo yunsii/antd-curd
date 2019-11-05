@@ -128,7 +128,8 @@ export interface CurdBoxProps<T> {
 }
 
 interface CurdState<T> {
-  popupVisible: 'create' | 'detail' | 'update' | null;
+  mode: PopupMode;
+  popupVisible: boolean;
   record: T;
 }
 
@@ -163,7 +164,8 @@ class CurdBox<T extends { id: number | string }> extends PureComponent<CurdBoxPr
   static StandardList = StandardList;
 
   state = {
-    popupVisible: null,
+    mode: 'create' as PopupMode,
+    popupVisible: false,
     record: {} as T,
   };
 
@@ -202,7 +204,8 @@ class CurdBox<T extends { id: number | string }> extends PureComponent<CurdBoxPr
       if (isBreak) return;
     }
     this.setState({
-      popupVisible: action
+      mode: action,
+      popupVisible: true,
     });
     if (visible) {
       this.setState({
@@ -252,30 +255,19 @@ class CurdBox<T extends { id: number | string }> extends PureComponent<CurdBoxPr
     return null;
   };
 
-  setPopupModeAndRecord: () => [PopupMode, T] = () => {
-    const { popupVisible, record } = this.state;
-    if (popupVisible === DetailName) {
-      return [DetailName, record];
-    }
-    if (popupVisible === UpdateName) {
-      return [UpdateName, record];
-    }
-    return [CreateName, {} as T];
-  };
-
   getPopupTitle = () => {
     const { createTitle, detailTitle, updateTitle } = this.props;
-    const { popupVisible } = this.state;
-    if (popupVisible === DetailName) {
+    const { mode } = this.state;
+    if (mode === DetailName) {
       return detailTitle;
     }
-    if (popupVisible === UpdateName) {
+    if (mode === UpdateName) {
       return updateTitle;
     }
     return createTitle;
   };
 
-  closePopup = () => this.setState({ popupVisible: null });
+  closePopup = () => this.setState({ popupVisible: false });
 
   handleCreateOk = async (fieldsValue) => {
     console.log('handleCreateOk', fieldsValue);
@@ -314,12 +306,12 @@ class CurdBox<T extends { id: number | string }> extends PureComponent<CurdBoxPr
   };
 
   handleOk = (fieldsValue) => {
-    const { popupVisible } = this.state;
-    if (popupVisible === DetailName) {
+    const { mode } = this.state;
+    if (mode === DetailName) {
       this.closePopup();
       return;
     }
-    if (popupVisible === UpdateName) {
+    if (mode === UpdateName) {
       this.handleUpdateOk(fieldsValue);
       return;
     }
@@ -359,8 +351,10 @@ class CurdBox<T extends { id: number | string }> extends PureComponent<CurdBoxPr
     }
   };
 
-  handlePopupClose = (mode: PopupMode) => {
+  handlePopupClose = () => {
     const { dispatch, afterPopupClose } = this.props;
+    const { mode } = this.state;
+    console.log('handlePopupClose', mode)
     if (mode === 'detail' || mode === 'update') {
       dispatch({
         type: `${getModelName(this.props)}/_saveDetail`,
@@ -403,8 +397,7 @@ class CurdBox<T extends { id: number | string }> extends PureComponent<CurdBoxPr
     } = this.props;
     const { drawerConfig, modalConfig, ...restPopupProps } = popupProps as any;
     const loading = createLoading || detailLoading || updateLoading;
-    const { popupVisible } = this.state;
-    const [mode, record] = this.setPopupModeAndRecord();
+    const { mode, popupVisible, record } = this.state;
     const isDetailMode = [DetailName, UpdateName].includes(mode);
     const displayDetail = this.willFetchDetail() && isDetailMode ? detail : record;
 
@@ -412,7 +405,7 @@ class CurdBox<T extends { id: number | string }> extends PureComponent<CurdBoxPr
       ...modalConfig,
       ...drawerConfig,
       title: this.getPopupTitle(),
-      visible: !!popupVisible,
+      visible: popupVisible,
       onCancel: this.closePopup,
       onClose: this.closePopup
     };
@@ -423,7 +416,7 @@ class CurdBox<T extends { id: number | string }> extends PureComponent<CurdBoxPr
           drawerConfig={{
             ...composePopupProps,
             afterVisibleChange: (visible) => {
-              if (!visible) { this.handlePopupClose(mode) }
+              if (!visible) { this.handlePopupClose() }
             },
           }}
           {...restPopupProps}
@@ -438,7 +431,7 @@ class CurdBox<T extends { id: number | string }> extends PureComponent<CurdBoxPr
           modalConfig={{
             ...composePopupProps,
             onOk: this.handleOk,
-            afterClose: () => this.handlePopupClose(mode),
+            afterClose: this.handlePopupClose,
           }}
           {...restPopupProps}
           loading={loading}
