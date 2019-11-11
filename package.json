@@ -6,7 +6,6 @@
   "dependencies": {
     "antd": "^3.23.6",
     "antd-form-mate": "^0.5.7",
-    "dva-base-models": "^1.2.0",
     "lodash": "^4.17.15",
     "react": "^16.8.6",
     "react-dom": "^16.8.6"
