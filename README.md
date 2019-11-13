@@ -12,6 +12,21 @@
 
 </div>
 
+## 结合 dva 的使用
+
+组件内部调用以下 `effect` 函数:
+
+* `fetch`  获取数据列表
+* `detail`  获取对象详情
+* `create`  创建对象
+* `delete`  删除对象
+
+以下 `reducer` 函数：
+
+* `_saveDetail`  关闭弹窗时，清空对象详情
+
+基于此封装了 [dva-base-models](https://github.com/theprimone/dva-base-models)，配置相关请求函数即可使用。参考 [Demo](https://github.com/theprimone/ant-design-pro-v2-plus/blob/master/src/pages/Enhance/models/curdPage.ts) 。
+
 ## [StandardTable](/src/components/StandardTable/index.tsx)
 
 基于 ant-deisgn-pro-v2 中的 [StandardTable](https://github.com/ant-design/ant-design-pro/blob/v2/src/components/StandardTable/index.js) 组件。
