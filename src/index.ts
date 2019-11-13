@@ -3,6 +3,7 @@ import {
   setDetailFormDrawerText,
   setFormatSorter,
   setSearchFieldName,
+  setDebounceWait,
 } from './config';
 
 export const config = {
@@ -11,6 +12,7 @@ export const config = {
   /** only set how to format sorter, not set container's handleFilterAndSort */
   setFormatSorter,
   setSearchFieldName,
+  setDebounceWait,
 }
 
 export { default as Curd } from './Curd';
