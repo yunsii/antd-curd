@@ -4,6 +4,7 @@ import { Modal, Form, Row, Col, Spin } from 'antd';
 import _debounce from 'lodash/debounce';
 import { ColProps } from "antd/lib/col";
 import { ModalProps } from 'antd/lib/modal';
+import { FormComponentProps } from 'antd/lib/form';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 import { debounceWait } from '../../config';
 import { createFormItems } from '../../FormMate';
@@ -14,14 +15,13 @@ export interface CustomModalProps extends Omit<ModalProps, 'onOk'> {
   onOk: (fieldsValue: any) => void;
 }
 
-export interface PopupProps {
+export interface PopupProps extends FormComponentProps {
   loading?: boolean;
   setItemsConfig: (form: WrappedFormUtils) => ItemConfig[];
   itemsLayout?: {
     labelCol?: ColProps;
     wrapperCol?: ColProps;
   };
-  form?: WrappedFormUtils;
   getFormInstance?: (form: WrappedFormUtils) => void;
 }
 
@@ -90,4 +90,4 @@ function DetailFormModal(props: DetailFormModalProps) {
   );
 }
 
-export default Form.create()(DetailFormModal);
+export default Form.create<DetailFormModalProps>()(DetailFormModal);

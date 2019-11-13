@@ -63,4 +63,4 @@ function DetailFormDrawer(props: DetailFormDrawerProps) {
   );
 };
 
-export default Form.create()(DetailFormDrawer);
+export default Form.create<DetailFormDrawerProps>()(DetailFormDrawer);
