@@ -2,8 +2,9 @@ import React from 'react';
 import { Spin, Button, Drawer, Form } from 'antd';
 import _debounce from 'lodash/debounce';
 import { DrawerProps } from 'antd/lib/drawer';
+import { WrappedFormUtils } from 'antd/lib/form/Form';
 import { createFormItems } from '../../FormMate';
-import { detailFormDrawerText } from '../../config';
+import { detailFormDrawerText, debounceWait } from '../../config';
 import { PopupProps } from '../DetailFormModal';
 
 export interface DetailFormDrawerProps extends PopupProps {
@@ -15,7 +16,7 @@ function DetailFormDrawer(props: DetailFormDrawerProps) {
   const {
     drawerConfig = {},
     onOk: handleOk = () => { },
-    form = {} as any,
+    form = {} as WrappedFormUtils,
     setItemsConfig,
     itemsLayout,
     loading = false,
@@ -27,12 +28,12 @@ function DetailFormDrawer(props: DetailFormDrawerProps) {
 
   const okHandle = _debounce(() => {
     console.log('DetailFormDrawer _debounce onOk');
-    form.validateFields((err, fieldsValue) => {
+    form.validateFieldsAndScroll((err?: any, fieldsValue?: any) => {
       if (err) return;
       // form.resetFields();
       handleOk(fieldsValue);
     });
-  }, 600);
+  }, debounceWait);
 
   return (
     <Drawer destroyOnClose width={560} {...drawerConfig}>

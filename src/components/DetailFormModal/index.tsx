@@ -5,9 +5,14 @@ import _debounce from 'lodash/debounce';
 import { ColProps } from "antd/lib/col";
 import { ModalProps } from 'antd/lib/modal';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
+import { debounceWait } from '../../config';
 import { createFormItems } from '../../FormMate';
 import { ItemConfig } from 'antd-form-mate/dist/lib/form-mate';
 import { injectChildren } from '../../utils';
+
+export interface CustomModalProps extends Omit<ModalProps, 'onOk'> {
+  onOk: (fieldsValue: any) => void;
+}
 
 export interface PopupProps {
   loading?: boolean;
@@ -21,7 +26,7 @@ export interface PopupProps {
 }
 
 export interface DetailFormModalProps extends PopupProps {
-  modalConfig?: ModalProps;
+  modalConfig?: CustomModalProps;
   mode?: string;
   itemsWrapperStyle?: React.CSSProperties;
   itemsWrapperClassName?: string;
@@ -40,22 +45,22 @@ function DetailFormModal(props: DetailFormModalProps) {
     itemsWrapperStyle = {} as any,
     itemsWrapperClassName,
     loading = false,
-    form = {} as any,
+    form = {} as WrappedFormUtils,
     getFormInstance = () => { },
   } = props;
   const { onOk: handleOk = () => { }, ...restModalConfig } = modalConfig || {};
   getFormInstance(form);
+  const itemsConfig = setItemsConfig(form);
 
 
   const onOk = _debounce(() => {
     console.log('DetailFormModal _debounce onOk');
-    form.validateFields((err, fieldsValue) => {
+    form.validateFieldsAndScroll((err?: any, fieldsValue?: any) => {
       if (err) return;
       // form.resetFields();
       handleOk(fieldsValue);
     });
-  }, 600);
-  const itemsConfig = setItemsConfig(form);
+  }, debounceWait);
 
   const colsItems = cols === 1 ? (
     createFormItems(form)(itemsConfig, itemsLayout)
