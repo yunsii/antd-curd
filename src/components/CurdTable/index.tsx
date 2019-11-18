@@ -43,10 +43,10 @@ function CustomStandardTable<T extends { id: number | string }>(props: CustomSta
   }
   return null;
 }
+const CurdTable = withCurdBox(CustomStandardTable);
 
 export interface CurdTableProps<T extends { id: number | string }> extends CustomStandardTableProps<T>, CurdBoxProps<T> { }
 
 export default function <T extends { id: number | string }>(props: CurdTableProps<T>) {
-  const CurdTable = withCurdBox(CustomStandardTable);
   return <CurdTable {...props} />;
 }

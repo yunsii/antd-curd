@@ -31,10 +31,10 @@ function CustomStandardList<T extends { id: number | string }>(props: CustomStan
   }
   return null;
 }
+const CurdList = withCurdBox(CustomStandardList);
 
 export interface CurdListProps<T extends { id: number | string }> extends CustomStandardListProps<T>, CurdBoxProps<T> { }
 
 export default function <T extends { id: number | string }>(props: CurdListProps<T>) {
-  const CurdList = withCurdBox(CustomStandardList);
   return <CurdList {...props} />
 }
