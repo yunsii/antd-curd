@@ -174,7 +174,7 @@ class CurdBox<T extends { id: number | string }> extends PureComponent<CurdBoxPr
     const { dispatch, autoFetch } = this.props;
     if (autoFetch) {
       dispatch({
-        type: `${getModelName(this.props)}/fetch`
+        type: `${getModelName(this.props)}/fetch`,
       });
     }
   }
