@@ -70,6 +70,15 @@
   
 还有一个 `handleSearch` 方法可供直接（ ref ）调起当前页面数据查询接口以供刷新数据使用。
 
+### API
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `modelName` | dva 中 model 的名称空间 | `string` | - |
+| `data` | 对象分页数据 | `{ list: T[]; pagination?: any }` | - |
+| `dipatch` | dva 注入的 dispatch 函数 | `Function` | - |
+| `wrapper` | 组件被包裹的容器，默认为无边框 `Card` | `React.ComponentClass \| null` | - |
+
 ## [CurdBox](/src/components/CurdBox/index.tsx)
 
 **为包含在 `CurdBox` 中的子组件注入 `__curdBox__` 的实例属性**
