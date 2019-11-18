@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import StandardTable, { StandardTableProps, StandardTableColumnProps } from '../StandardTable/index';
-import CurdBox, { CurdBoxProps } from '../CurdBox';
+import CurdBox, { withCurdBox, CurdBoxProps } from '../CurdBox';
 import { addDivider } from '../../utils';
 import DataContext from '../../DataContext';
 
@@ -46,10 +46,7 @@ function CustomStandardTable<T extends { id: number | string }>(props: CustomSta
 
 export interface CurdTableProps<T extends { id: number | string }> extends CustomStandardTableProps<T>, CurdBoxProps<T> { }
 
-export default function CurdTable<T extends { id: number | string }>(props: CurdTableProps<T>) {
-  return (
-    <CurdBox {...props}>
-      <CustomStandardTable {...props} />
-    </CurdBox>
-  );
+export default function <T extends { id: number | string }>(props: CurdTableProps<T>) {
+  const CurdTable = withCurdBox(CustomStandardTable);
+  return <CurdTable {...props} />;
 }
