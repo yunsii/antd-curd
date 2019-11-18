@@ -7,10 +7,20 @@ import { injectChildren } from './utils';
 import DataContext from './DataContext';
 import { searchFieldName } from './config';
 
+function DefaultWrapper(props: React.PropsWithChildren<any>) {
+	const { children } = props;
+	return (
+		<Card bordered={false}>
+			{children}
+		</Card>
+	)
+}
+
 export interface CurdProps<T> extends React.Props<T> {
 	modelName: string;
 	data: { list: T[]; pagination?: any };
 	dispatch: Function;
+	wrapper?: React.ComponentClass | null;
 }
 
 export interface CurdState {
@@ -23,7 +33,8 @@ export interface CurdState {
 class Curd<T> extends PureComponent<CurdProps<T>, CurdState> {
 	static defaultProps = {
 		modelName: '',
-		dispatch: () => { }
+		wrapper: DefaultWrapper,
+		dispatch: () => { },
 	};
 
 	static QueryPanel = QueryPanel;
@@ -78,10 +89,10 @@ class Curd<T> extends PureComponent<CurdProps<T>, CurdState> {
 	};
 
 	render() {
-		const { modelName, data } = this.props;
+		const { modelName, data, wrapper } = this.props;
 		return (
-			<DataContext.Provider value={{ modelName, data }}>
-				<Card bordered={false}>{this.renderChildren()}</Card>
+			<DataContext.Provider value={{ modelName, data, __curd__: this }}>
+				{wrapper ? React.createElement(wrapper, null, this.renderChildren()) : this.renderChildren()}
 			</DataContext.Provider>
 		);
 	}
