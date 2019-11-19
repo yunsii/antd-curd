@@ -471,8 +471,8 @@ export function withCurdBox(WrappedComponent: React.ComponentClass | React.FC | 
     const { __curd__ } = useContext(DataContext);
     if (!WrappedComponent) { return null; }
     return (
-      <CurdBox __curd__={__curd__} {...props}>
-        <WrappedComponent __curd__={__curd__} {...props} />
+      <CurdBox {...props} __curd__={__curd__} >
+        <WrappedComponent {...props} __curd__={__curd__} />
       </CurdBox>
     )
   }
