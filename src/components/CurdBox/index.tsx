@@ -1,4 +1,4 @@
-import React, { PureComponent, Fragment } from 'react';
+import React, { PureComponent, Fragment, useContext } from 'react';
 import { message } from 'antd';
 import { FormProps } from 'antd/lib/form';
 import { PaginationConfig, SorterResult, TableCurrentDataSource } from 'antd/lib/table';
@@ -19,6 +19,7 @@ import { callFunctionIfFunction } from '../../utils';
 import Curd from '../../Curd';
 import { DetailFormModalProps } from '../DetailFormModal/index';
 import { DetailFormDrawerProps } from '../DetailFormDrawer/index';
+import DataContext from '../../DataContext';
 import { curdLocale } from '../../locale';
 
 export type CustomDetailFormDrawerProps = Omit<DetailFormDrawerProps, 'setItemsConfig' | 'loading' | 'form' | 'onOk'>
@@ -173,7 +174,7 @@ class CurdBox<T extends { id: number | string }> extends PureComponent<CurdBoxPr
     const { dispatch, autoFetch } = this.props;
     if (autoFetch) {
       dispatch({
-        type: `${getModelName(this.props)}/fetch`
+        type: `${getModelName(this.props)}/fetch`,
       });
     }
   }
@@ -385,7 +386,7 @@ class CurdBox<T extends { id: number | string }> extends PureComponent<CurdBoxPr
   };
 
   renderPopup = () => {
-    let result;
+    let result: React.ReactNode;
     const {
       detail,
       createLoading,
@@ -464,3 +465,15 @@ class CurdBox<T extends { id: number | string }> extends PureComponent<CurdBoxPr
 }
 
 export default CurdBox;
+
+export function withCurdBox(WrappedComponent: React.ComponentClass | React.FC | null) {
+  return (props: any) => {
+    const { __curd__ } = useContext(DataContext);
+    if (!WrappedComponent) { return null; }
+    return (
+      <CurdBox {...props} __curd__={__curd__} >
+        <WrappedComponent {...props} __curd__={__curd__} />
+      </CurdBox>
+    )
+  }
+}

@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import StandardList, { StandardListProps } from '../StandardList/index';
-import CurdBox, { CurdBoxProps } from '../CurdBox';
+import CurdBox, { withCurdBox, CurdBoxProps } from '../CurdBox';
 import DataContext from '../../DataContext';
 
 type NoDataStandardTableProps<T> = Omit<StandardListProps<T>, 'data'>;
@@ -31,14 +31,10 @@ function CustomStandardList<T extends { id: number | string }>(props: CustomStan
   }
   return null;
 }
+const CurdList = withCurdBox(CustomStandardList);
 
 export interface CurdListProps<T extends { id: number | string }> extends CustomStandardListProps<T>, CurdBoxProps<T> { }
 
-export default function CurdList<T extends { id: number | string }>(props: CurdListProps<T>) {
-  const { renderItem, ...rest } = props;
-  return (
-    <CurdBox {...rest}>
-      <CustomStandardList {...props} />
-    </CurdBox>
-  );
+export default function <T extends { id: number | string }>(props: CurdListProps<T>) {
+  return <CurdList {...props} />
 }

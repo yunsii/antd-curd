@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { PureComponent } from 'react';
+import React, { PureComponent, useContext } from 'react';
 import { Row, Col, Form, Icon, Button } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 import { RowProps } from 'antd/lib/row';
@@ -10,6 +10,7 @@ import { createFormItems } from '../../FormMate';
 import Curd from '../../Curd';
 import { queryPanelText } from '../../config';
 import { searchFieldName } from '../../config';
+import DataContext from '../../DataContext';
 
 const addAllowClearToItemsConfig = itemsConfig =>
   itemsConfig.map(item => {
@@ -50,7 +51,7 @@ interface QueryPanelState {
     }
   }
 }) as any)
-export default class QueryPanel<T> extends PureComponent<QueryPanelProps<T>, QueryPanelState> {
+class QueryPanel<T> extends PureComponent<QueryPanelProps<T>, QueryPanelState> {
   state = {
     expandForm: false,
   };
@@ -174,4 +175,9 @@ export default class QueryPanel<T> extends PureComponent<QueryPanelProps<T>, Que
   render() {
     return <div className={styles.searchForm}>{this.renderForm()}</div>;
   }
+}
+
+export default function WrappedQueryPanel<T>(props: QueryPanelProps<T>) {
+  const { __curd__ } = useContext(DataContext);
+  return <QueryPanel {...props} __curd__={__curd__} />
 }
