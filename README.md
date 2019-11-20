@@ -159,6 +159,6 @@
 
 ![K1oldS.png](https://s2.ax1x.com/2019/10/21/K1oldS.png)
 
-由 [CurdBox](#[CurdBox](/src/components/CurdBox/index.tsx)) 封装 [StandardList](#[StandardList](/src/components/StandardList/index.tsx)) 而成。
+由 [CurdBox](#[CurdBox](/src/components/CurdBox/index.tsx)) 封装 [StandardList](#[StandardList](/src/components/StandardList/index.tsx) 而成。
 
 [Demo](/stories/index.stories.tsx)
