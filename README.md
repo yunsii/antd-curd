@@ -162,12 +162,12 @@
 
 ![K1oKqf.png](https://s2.ax1x.com/2019/10/21/K1oKqf.png)
 
-由 [CurdBox](#[CurdBox](/src/components/CurdBox/index.tsx)) 封装 [StandardTable]([StandardTable](/src/components/StandardTable/index.tsx)) 而成。
+由 [CurdBox](#[CurdBox](/src/components/CurdBox/index.tsx)) 封装 [StandardTable](/src/components/StandardTable/index.tsx) 而成。
 
 ## [Curd.CurdList](/src/components/CurdList/index.tsx)
 
 ![K1oldS.png](https://s2.ax1x.com/2019/10/21/K1oldS.png)
 
-由 [CurdBox](#[CurdBox](/src/components/CurdBox/index.tsx)) 封装 [StandardList](#[StandardList](/src/components/StandardList/index.tsx) 而成。
+由 [CurdBox](#[CurdBox](/src/components/CurdBox/index.tsx)) 封装 [StandardList](/src/components/StandardList/index.tsx) 而成。
 
 [Demo](/stories/index.stories.tsx)
