@@ -11,21 +11,17 @@ export interface CustomStandardListProps<T extends { id: number | string }> exte
 }
 
 function CustomStandardList<T extends { id: number | string }>(props: CustomStandardListProps<T>) {
-  const { __curdBox__, fetchLoading, onSelectRow, rowKey, checkable, selectedRows, renderItem } = props;
+  const { __curdBox__, fetchLoading, ...rest } = props;
   const { data } = useContext(DataContext);
   if (__curdBox__) {
     const { handleDataChange } = __curdBox__;
     return (
       <StandardList
+        {...rest}
         loading={fetchLoading}
         setActions={(record) => __curdBox__.renderActions(record)}
         onChange={handleDataChange}
         data={data}
-        onSelectRow={onSelectRow}
-        rowKey={rowKey}
-        checkable={checkable}
-        selectedRows={selectedRows}
-        renderItem={renderItem}
       />
     );
   }
