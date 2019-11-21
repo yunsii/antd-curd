@@ -19,7 +19,7 @@ export default class CurdListBoxDemo extends React.Component {
 
 	componentDidMount() {
 		this.setState({
-			data: [ ...mockData.list ]
+			data: [...mockData.list]
 		});
 	}
 
@@ -68,11 +68,11 @@ export default class CurdListBoxDemo extends React.Component {
 							]}
 						/>
 						{this.state.loading &&
-						this.state.hasMore && (
-							<div className={styles['demo-loading-container']}>
-								<Spin />
-							</div>
-						)}
+							this.state.hasMore && (
+								<div className={styles['demo-loading-container']}>
+									<Spin />
+								</div>
+							)}
 					</Curd>
 				</InfiniteScroll>
 			</div>
