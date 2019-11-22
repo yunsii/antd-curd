@@ -19,11 +19,17 @@
 * `fetch`  获取数据列表
 * `detail`  获取对象详情
 * `create`  创建对象
+* `update`  更新对象
 * `delete`  删除对象
 
 以下 `reducer` 函数：
 
 * `_saveDetail`  关闭弹窗时，清空对象详情
+
+并注入以下数据字段：
+
+* `data`  { list: any[], pagination: any } 分页器属性参考 Pagination 组件
+* `detail`  [可选]对象详情字段
 
 基于此封装了 [dva-base-models](https://github.com/theprimone/dva-base-models)，配置相关请求函数即可使用。参考 [Demo](https://github.com/theprimone/ant-design-pro-v2-plus/blob/master/src/pages/Enhance/models/curdPage.ts) 。
 
@@ -141,8 +147,8 @@
 
 #### 注意事项
 
-`handle**Click` 事件（除 `handleDeleteClick` 事件外， `handleDeleteClick` 直接中断）默认不会中断后续的弹窗事件，如果需要中断， `return true` 即可。
-
+* `handle**Click` 事件（除 `handleDeleteClick` 事件外， `handleDeleteClick` 直接中断）默认不会中断后续的弹窗事件，如果需要中断， `return true` 即可。
+* 如果对象详情不需要再请求接口，不注入 `detail` 或者 `detailLoading` 即可。
 
 ## [Curd.QueryPanel](/src/components/QueryPanel/index.tsx)
 
