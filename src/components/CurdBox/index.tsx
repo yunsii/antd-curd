@@ -1,10 +1,12 @@
 import React, { PureComponent, Fragment, useContext } from 'react';
+import _pick from 'lodash/pick';
+import _omit from 'lodash/omit';
 import { message } from 'antd';
 import { FormProps } from 'antd/lib/form';
 import { PaginationConfig, SorterResult, TableCurrentDataSource } from 'antd/lib/table';
 import { PopconfirmProps } from 'antd/lib/popconfirm';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
-import { ItemConfig } from 'antd-form-mate/dist/lib/form-mate';
+import { ItemConfig } from 'antd-form-mate/dist/lib/props';
 import _cloneDeep from 'lodash/cloneDeep';
 import { setActions, ActionType } from './actions/index';
 import { injectChildren } from '../../utils';
@@ -21,6 +23,8 @@ import { DetailFormModalProps } from '../DetailFormModal/index';
 import { DetailFormDrawerProps } from '../DetailFormDrawer/index';
 import DataContext from '../../DataContext';
 import { curdLocale } from '../../locale';
+import { CurdTableProps } from '../CurdTable';
+import { CurdListProps } from '../CurdList';
 
 export type CustomDetailFormDrawerProps = Omit<DetailFormDrawerProps, 'setItemsConfig' | 'loading' | 'form' | 'onOk'>
 export type CustomDetailFormModalProps = Omit<DetailFormModalProps, 'setItemsConfig' | 'loading' | 'form'>
@@ -82,6 +86,30 @@ export interface ActionsConfig<T> {
   deleteActionTitle?: string;
 }
 
+const curdBoxProps = [
+  'createTitle',
+  'detailTitle',
+  'updateTitle',
+  'fetchLoading',
+  'deleteLoading',
+  'createLoading',
+  'detailLoading',
+  'updateLoading',
+  'createButtonName',
+  'popupType',
+  'popupProps',
+  'setFormItemsConfig',
+  'afterPopupClose',
+  'interceptors',
+  'actionsConfig',
+  'showOperators',
+  'extraOperators',
+  'dispatch',
+  'autoFetch',
+  'reSearchAfterUpdate',
+  '__curd__',
+]
+
 export interface CurdBoxProps<T> {
   /** popup title of create */
   createTitle?: string;
@@ -90,10 +118,10 @@ export interface CurdBoxProps<T> {
   /** popup title of update */
   updateTitle?: string;
   fetchLoading?: boolean;
+  deleteLoading?: boolean;
   createLoading?: boolean;
   detailLoading?: boolean;
   updateLoading?: boolean;
-  deleteLoading?: boolean;
   /** if value is '' or false, hide the button */
   createButtonName?: string | false | null;
   popupType?: 'modal' | 'drawer' | false | null;
@@ -366,23 +394,11 @@ class CurdBox<T extends { id: number | string }> extends PureComponent<CurdBoxPr
   }
 
   renderContainer = () => {
-    const {
-      actionsConfig,
-      afterPopupClose,
-      dispatch,
-      createTitle,
-      detailTitle,
-      updateTitle,
-      showOperators,
-      extraOperators,
-      createButtonName,
-      fetchLoading,
-      ...rest
-    } = this.props;
-
-    const { children } = rest;
-
-    return injectChildren(children, { __curdBox__: this });
+    const { children, fetchLoading, deleteLoading } = this.props;
+    return injectChildren(children, {
+      __curdBox__: this,
+      loading: fetchLoading || deleteLoading,
+    });
   };
 
   renderPopup = () => {
@@ -466,13 +482,13 @@ class CurdBox<T extends { id: number | string }> extends PureComponent<CurdBoxPr
 
 export default CurdBox;
 
-export function withCurdBox(WrappedComponent: React.ComponentClass | React.FC | null) {
+export function withCurdBox(WrappedComponent: React.ComponentClass<CurdTableProps<any> | CurdListProps<any>> | React.FC<any> | null) {
   return (props: any) => {
     const { __curd__ } = useContext(DataContext);
     if (!WrappedComponent) { return null; }
     return (
-      <CurdBox {...props} __curd__={__curd__} >
-        <WrappedComponent {...props} __curd__={__curd__} />
+      <CurdBox {..._pick(props, curdBoxProps)} __curd__={__curd__} >
+        <WrappedComponent {..._omit(props, curdBoxProps) as any} />
       </CurdBox>
     )
   }
