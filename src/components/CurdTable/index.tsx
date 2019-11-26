@@ -9,11 +9,10 @@ type NoDataStandardTableProps<T> = Omit<StandardTableProps<T>, 'data'>;
 export interface CustomStandardTableProps<T extends { id: number | string }> extends NoDataStandardTableProps<T> {
   __curdBox__?: CurdBox<T>;
   columns: StandardTableColumnProps<T>[];
-  fetchLoading?: boolean;
 }
 
 function CustomStandardTable<T extends { id: number | string }>(props: CustomStandardTableProps<T>) {
-  const { __curdBox__, columns, fetchLoading, ...rest } = props;
+  const { __curdBox__, columns, ...rest } = props;
   const { data } = useContext(DataContext);
   if (__curdBox__) {
     const { handleDataChange } = __curdBox__;
@@ -35,7 +34,6 @@ function CustomStandardTable<T extends { id: number | string }>(props: CustomSta
       <StandardTable
         {...rest}
         data={data}
-        loading={fetchLoading}
         columns={enhanceColumns()}
         onChange={handleDataChange}
       />
@@ -43,10 +41,10 @@ function CustomStandardTable<T extends { id: number | string }>(props: CustomSta
   }
   return null;
 }
-const CurdTable = withCurdBox(CustomStandardTable);
+
+const WrappedCurdTable = withCurdBox(CustomStandardTable);
 
 export interface CurdTableProps<T extends { id: number | string }> extends CustomStandardTableProps<T>, CurdBoxProps<T> { }
-
 export default function <T extends { id: number | string }>(props: CurdTableProps<T>) {
-  return <CurdTable {...props} />;
+  return <WrappedCurdTable {...props} />;
 }
