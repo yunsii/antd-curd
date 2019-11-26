@@ -8,7 +8,7 @@ import { FormComponentProps } from 'antd/lib/form';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 import { debounceWait } from '../../config';
 import { createFormItems } from '../../FormMate';
-import { ItemConfig } from 'antd-form-mate/dist/lib/form-mate';
+import { ItemConfig } from 'antd-form-mate/dist/lib/props';
 import { injectChildren } from '../../utils';
 
 export interface CustomModalProps extends Omit<ModalProps, 'onOk'> {

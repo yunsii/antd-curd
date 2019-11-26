@@ -4,7 +4,7 @@ import { storiesOf } from '@storybook/react';
 import { Button, Card, Switch, Form, Radio, message } from 'antd';
 // import { WrappedFormUtils } from 'antd/lib/form/Form';
 import './antd-form-mate';
-import { ItemConfig } from 'antd-form-mate/dist/lib/form-mate'
+import { ItemConfig } from 'antd-form-mate/dist/lib/props'
 import { Curd } from '../src';
 import StandardTable from '../src/components/StandardTable';
 import StandardList from '../src/components/StandardList';
