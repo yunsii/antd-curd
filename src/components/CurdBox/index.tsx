@@ -101,6 +101,7 @@ const curdBoxProps = [
   'setFormItemsConfig',
   'afterPopupClose',
   'interceptors',
+  'detail',
   'actionsConfig',
   'showOperators',
   'extraOperators',
