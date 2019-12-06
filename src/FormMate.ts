@@ -1,1 +1,1 @@
-export { createFormItems, config, locale } from 'antd-form-mate';
+export { createFormItems, ConfigProvider } from 'antd-form-mate';
