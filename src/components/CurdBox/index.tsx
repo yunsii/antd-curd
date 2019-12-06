@@ -1,13 +1,14 @@
-import React, { PureComponent, Fragment, useContext } from 'react';
+import React, { PureComponent, useContext } from 'react';
 import _pick from 'lodash/pick';
 import _omit from 'lodash/omit';
+import _cloneDeep from 'lodash/cloneDeep';
+import _get from 'lodash/get';
 import { message } from 'antd';
 import { FormProps } from 'antd/lib/form';
 import { PaginationConfig, SorterResult, TableCurrentDataSource } from 'antd/lib/table';
 import { PopconfirmProps } from 'antd/lib/popconfirm';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 import { ItemConfig } from 'antd-form-mate/dist/lib/props';
-import _cloneDeep from 'lodash/cloneDeep';
 import { setActions, ActionType } from './actions/index';
 import { injectChildren } from '../../utils';
 import Operators from './Operators/index';
@@ -16,13 +17,14 @@ import StandardList from '../StandardList/index';
 import DetailFormDrawer from '../DetailFormDrawer/index';
 import DetailFormModal from '../DetailFormModal/index';
 import { CreateName, DetailName, UpdateName } from '../../constants';
-import { formatSorter, searchFieldName } from '../../config';
+import { formatSorter, searchFieldName } from '../../defaultConfig';
+import ConfigContext, { ConfigContextProps } from '../../ConfigContext';
+import defaultLocale from '../../defaultLocale';
 import { callFunctionIfFunction } from '../../utils';
 import Curd from '../../Curd';
 import { DetailFormModalProps } from '../DetailFormModal/index';
 import { DetailFormDrawerProps } from '../DetailFormDrawer/index';
 import DataContext from '../../DataContext';
-import { curdLocale } from '../../locale';
 import { CurdTableProps } from '../CurdTable';
 import { CurdListProps } from '../CurdList';
 
@@ -48,29 +50,6 @@ function getModelName<T>(props: CurdBoxProps<T>) {
     return __curd__.props.modelName;
   }
   throw new Error("CurdBox can't get modelName from __curd__");
-}
-
-function defaultHandleFilterAndSort(
-  filtersArg = {} as Record<keyof any, string[]>,
-  sorter = {} as SorterResult<any>,
-  extra?: TableCurrentDataSource<any>
-) {
-  console.log(filtersArg, sorter);
-  let result: any = {};
-  const filters = Object.keys(filtersArg).reduce((obj, key) => {
-    const newObj = { ...obj };
-    if (filtersArg[key]) {
-      newObj[key] = getValue(filtersArg[key]);
-    }
-    return newObj;
-  }, {});
-  result = {
-    ...filters
-  };
-  if (sorter.field) {
-    result[searchFieldName.sortor] = formatSorter(sorter);
-  }
-  return { ...result };
 }
 
 export interface ActionsConfig<T> {
@@ -154,6 +133,11 @@ export interface CurdBoxProps<T> {
   /** call model's fetch effect when componentDidMount */
   autoFetch?: boolean;
   reSearchAfterUpdate?: boolean;
+  setLocale?: {
+    createOk?: string;
+    updateOk?: string;
+    deleteOk?: string;
+  };
   __curd__?: Curd<T>;
 }
 
@@ -163,7 +147,7 @@ interface CurdState<T> {
   record: T;
 }
 
-class CurdBox<T extends { id: number | string }> extends PureComponent<CurdBoxProps<T>, CurdState<T>> {
+export default class CurdBox<T extends { id: number | string }> extends PureComponent<CurdBoxProps<T>, CurdState<T>> {
   static defaultProps = {
     createTitle: '新建对象',
     detailTitle: '对象详情',
@@ -198,6 +182,15 @@ class CurdBox<T extends { id: number | string }> extends PureComponent<CurdBoxPr
     popupVisible: false,
     record: {} as T,
   };
+
+  locale = {
+    createOk: defaultLocale.curd.createOk,
+    updateOk: defaultLocale.curd.updateOk,
+    deleteOk: defaultLocale.curd.deleteOk,
+  };
+  searchFieldName = searchFieldName;
+  formatSorter = formatSorter;
+
 
   componentDidMount() {
     const { dispatch, autoFetch } = this.props;
@@ -257,7 +250,7 @@ class CurdBox<T extends { id: number | string }> extends PureComponent<CurdBoxPr
       type: `${getModelName(this.props)}/delete`,
       id,
       onOk: () => {
-        message.success(curdLocale.deleteOk);
+        message.success(this.locale.deleteOk);
         this.reSearch('delete');
       },
     });
@@ -308,7 +301,7 @@ class CurdBox<T extends { id: number | string }> extends PureComponent<CurdBoxPr
       type: `${getModelName(this.props)}/create`,
       payload: newFieldsValue,
       onOk: () => {
-        message.success(curdLocale.createOk);
+        message.success(this.locale.createOk);
         this.closePopup();
         this.reSearch('create');
       }
@@ -326,7 +319,7 @@ class CurdBox<T extends { id: number | string }> extends PureComponent<CurdBoxPr
       id: record.id,
       payload: newFieldsValue,
       onOk: () => {
-        message.success(curdLocale.updateOk);
+        message.success(this.locale.updateOk);
         this.closePopup();
         if (reSearchAfterUpdate) {
           this.reSearch('update');
@@ -347,6 +340,29 @@ class CurdBox<T extends { id: number | string }> extends PureComponent<CurdBoxPr
     }
     this.handleCreateOk(fieldsValue);
   };
+
+  defaultHandleFilterAndSort = (
+    filtersArg = {} as Record<keyof any, string[]>,
+    sorter = {} as SorterResult<any>,
+    extra?: TableCurrentDataSource<any>
+  ) => {
+    console.log(filtersArg, sorter);
+    let result: any = {};
+    const filters = Object.keys(filtersArg).reduce((obj, key) => {
+      const newObj = { ...obj };
+      if (filtersArg[key]) {
+        newObj[key] = getValue(filtersArg[key]);
+      }
+      return newObj;
+    }, {});
+    result = {
+      ...filters
+    };
+    if (sorter.field) {
+      result[searchFieldName.sortor] = this.formatSorter(sorter);
+    }
+    return { ...result };
+  }
 
   // https://ant.design/components/table-cn/#components-table-demo-reset-filter
   // 只支持一个 sorter
@@ -369,7 +385,7 @@ class CurdBox<T extends { id: number | string }> extends PureComponent<CurdBoxPr
       [searchFieldName.limit]: pagination.pageSize,
       ...hasCustomFilterAndSorter
         ? handleFilterAndSort(filtersArg, sorter, extra)
-        : defaultHandleFilterAndSort(filtersArg, sorter, extra)
+        : this.defaultHandleFilterAndSort(filtersArg, sorter, extra)
     };
 
     // console.log('changed params', params);
@@ -461,27 +477,45 @@ class CurdBox<T extends { id: number | string }> extends PureComponent<CurdBoxPr
     return result;
   };
 
+  setWantedConfig = ({ setLocale, searchFieldName, formatSorter }: ConfigContextProps) => {
+    this.locale = {
+      ...this.locale,
+      ..._get(setLocale, 'curd', {}),
+    };
+    this.searchFieldName = {
+      ...this.searchFieldName,
+      ...searchFieldName,
+    }
+    if (formatSorter) {
+      this.formatSorter = formatSorter;
+    }
+  }
+
   render() {
     const { showOperators, extraOperators, createButtonName } = this.props;
-
     return (
-      <Fragment>
-        {showOperators ? (
-          <Operators
-            createButtonName={createButtonName}
-            handleCreateClick={() => { this.handleVisible(CreateName, true) }}
-          >
-            {extraOperators}
-          </Operators>
-        ) : null}
-        {this.renderContainer()}
-        {this.renderPopup()}
-      </Fragment>
+      <ConfigContext.Consumer>
+        {(config) => {
+          this.setWantedConfig(config);
+          return (
+            <>
+              {showOperators ? (
+                <Operators
+                  createButtonName={createButtonName}
+                  handleCreateClick={() => { this.handleVisible(CreateName, true) }}
+                >
+                  {extraOperators}
+                </Operators>
+              ) : null}
+              {this.renderContainer()}
+              {this.renderPopup()}
+            </>
+          );
+        }}
+      </ConfigContext.Consumer>
     );
   }
 }
-
-export default CurdBox;
 
 export function withCurdBox(WrappedComponent: React.ComponentClass<CurdTableProps<any> | CurdListProps<any>> | React.FC<any> | null) {
   return (props: any) => {

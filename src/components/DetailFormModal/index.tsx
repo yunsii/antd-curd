@@ -1,12 +1,12 @@
 /* eslint-disable no-use-before-define */
-import React, { Fragment } from 'react';
+import React, { Fragment, useContext } from 'react';
 import { Modal, Form, Row, Col, Spin } from 'antd';
 import _debounce from 'lodash/debounce';
 import { ColProps } from "antd/lib/col";
 import { ModalProps } from 'antd/lib/modal';
 import { FormComponentProps } from 'antd/lib/form';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
-import { debounceWait } from '../../config';
+import ConfigContext from '../../ConfigContext';
 import { createFormItems } from '../../FormMate';
 import { ItemConfig } from 'antd-form-mate/dist/lib/props';
 import { injectChildren } from '../../utils';
@@ -35,6 +35,7 @@ export interface DetailFormModalProps extends PopupProps {
 }
 
 function DetailFormModal(props: DetailFormModalProps) {
+  const { debounceWait } = useContext(ConfigContext);
   const {
     modalConfig,
     cols = 1,

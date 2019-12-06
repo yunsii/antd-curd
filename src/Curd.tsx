@@ -1,11 +1,13 @@
 import React, { PureComponent } from 'react';
 import { Card } from 'antd';
+import _get from 'lodash/get';
 import CurdTable from './components/CurdTable/index';
 import CurdList from './components/CurdList/index';
 import QueryPanel from './components/QueryPanel/index';
 import { injectChildren } from './utils';
+import ConfigContext from './ConfigContext';
 import DataContext from './DataContext';
-import { searchFieldName } from './config';
+import { searchFieldName } from './defaultConfig';
 
 function DefaultWrapper(props: React.PropsWithChildren<any>) {
 	const { children } = props;
@@ -46,6 +48,8 @@ class Curd<T> extends PureComponent<CurdProps<T>, CurdState> {
 		searchParams: {} as any
 	};
 
+	pageFieldName = searchFieldName.page;
+
 	componentDidUpdate() {
 		if (process.env.NODE_ENV === 'development') {
 			const { searchForm, searchParams } = this.state;
@@ -67,13 +71,13 @@ class Curd<T> extends PureComponent<CurdProps<T>, CurdState> {
 	public handleSearch = (type?: 'create' | 'update' | 'delete') => {
 		const { data: { list } } = this.props;
 		const { searchParams } = this.state;
-		const currentPage = searchParams[searchFieldName.page];
+		const currentPage = searchParams[this.pageFieldName];
 		if (type === 'delete' && list.length === 1 && currentPage > 1) {
 			this.setState(
 				{
 					searchParams: {
 						...searchParams,
-						[searchFieldName.page]: searchParams[searchFieldName.page] - 1,
+						[this.pageFieldName]: searchParams[this.pageFieldName] - 1,
 					}
 				},
 				() => this.doSearch(),
@@ -91,9 +95,20 @@ class Curd<T> extends PureComponent<CurdProps<T>, CurdState> {
 	render() {
 		const { modelName, data, wrapper } = this.props;
 		return (
-			<DataContext.Provider value={{ modelName, data, __curd__: this }}>
-				{wrapper ? React.createElement(wrapper, null, this.renderChildren()) : this.renderChildren()}
-			</DataContext.Provider>
+			<ConfigContext.Consumer>
+				{({ searchFieldName }) => {
+					const fieldName = _get(searchFieldName, 'page');
+					if (fieldName) {
+						this.pageFieldName = fieldName;
+					}
+
+					return (
+						<DataContext.Provider value={{ modelName, data, __curd__: this }}>
+							{wrapper ? React.createElement(wrapper, null, this.renderChildren()) : this.renderChildren()}
+						</DataContext.Provider>
+					)
+				}}
+			</ConfigContext.Consumer>
 		);
 	}
 }

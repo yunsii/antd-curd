@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Spin, Button, Drawer, Form } from 'antd';
 import _debounce from 'lodash/debounce';
+import _get from 'lodash/get';
 import { DrawerProps } from 'antd/lib/drawer';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 import { createFormItems } from '../../FormMate';
-import { detailFormDrawerText, debounceWait } from '../../config';
+import ConfigContext from '../../ConfigContext';
+import defaultLocale from '../../defaultLocale';
 import { PopupProps } from '../DetailFormModal';
 
 export interface DetailFormDrawerProps extends PopupProps {
@@ -13,6 +15,8 @@ export interface DetailFormDrawerProps extends PopupProps {
 }
 
 function DetailFormDrawer(props: DetailFormDrawerProps) {
+  const { setLocale, debounceWait } = useContext(ConfigContext);
+  const locale = { ...defaultLocale.drawer, ..._get(setLocale, 'drawer', {}) };
   const {
     drawerConfig = {},
     onOk: handleOk = () => { },
@@ -52,10 +56,10 @@ function DetailFormDrawer(props: DetailFormDrawerProps) {
           }}
         >
           <Button onClick={drawerConfig.onClose as any} style={{ marginRight: 8 }}>
-            {detailFormDrawerText.cancel}
+            {locale.cancel}
           </Button>
           <Button onClick={okHandle} type="primary">
-            {detailFormDrawerText.ok}
+            {locale.ok}
           </Button>
         </div>
       </Spin>

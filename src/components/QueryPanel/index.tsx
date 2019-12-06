@@ -1,5 +1,5 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { PureComponent, useContext } from 'react';
+import _get from 'lodash/get';
 import { Row, Col, Form, Icon, Button } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 import { RowProps } from 'antd/lib/row';
@@ -8,8 +8,9 @@ import { callFunctionIfFunction } from '../../utils';
 import styles from './index.less';
 import { createFormItems } from '../../FormMate';
 import Curd from '../../Curd';
-import { queryPanelText } from '../../config';
-import { searchFieldName } from '../../config';
+import defaultLocale from '../../defaultLocale';
+import ConfigContext, { ConfigContextProps } from '../../ConfigContext';
+import { searchFieldName } from '../../defaultConfig';
 import DataContext from '../../DataContext';
 
 const addAllowClearToItemsConfig = itemsConfig =>
@@ -56,6 +57,15 @@ class QueryPanel<T> extends PureComponent<QueryPanelProps<T>, QueryPanelState> {
     expandForm: false,
   };
 
+  pageFieldName = searchFieldName.page;
+
+  locale = {
+    collapse: defaultLocale.queryPanel.collapse,
+    expand: defaultLocale.queryPanel.expand,
+    search: defaultLocale.queryPanel.search,
+    reset: defaultLocale.queryPanel.reset,
+  }
+
   setSearchFormAndSearch = (fieldsValue) => {
     const { __curd__, updateSearchValue } = this.props;
     if (__curd__) {
@@ -67,7 +77,7 @@ class QueryPanel<T> extends PureComponent<QueryPanelProps<T>, QueryPanelState> {
         searchForm: { ...newSearchValue },
         searchParams: {
           ...searchParams,
-          [searchFieldName.page]: 1,
+          [this.pageFieldName]: 1,
         },
       }, () => {
         __curd__.handleSearch();
@@ -111,6 +121,17 @@ class QueryPanel<T> extends PureComponent<QueryPanelProps<T>, QueryPanelState> {
     });
   };
 
+  setWantedConfig = ({ setLocale, searchFieldName }: ConfigContextProps) => {
+    this.locale = {
+      ...this.locale,
+      ..._get(setLocale, 'queryPanel', {}),
+    };
+    const pageFieldName = _get(searchFieldName, 'page');
+    if (pageFieldName) {
+      this.pageFieldName = pageFieldName;
+    }
+  }
+
   renderForm() {
     const {
       form,
@@ -136,21 +157,21 @@ class QueryPanel<T> extends PureComponent<QueryPanelProps<T>, QueryPanelState> {
 
     const action = expandForm ? (
       <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
-        {queryPanelText.collapse} <Icon type="up" />
+        {this.locale.collapse} <Icon type="up" />
       </a>
     ) : (
         <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
-          {queryPanelText.expand} <Icon type="down" />
+          {this.locale.expand} <Icon type="down" />
         </a>
       );
     const actions = (
       <div style={{ whiteSpace: 'nowrap' }}>
         <div style={{ marginBottom: 24 }}>
           <Button type="primary" htmlType="submit">
-            {queryPanelText.search}
+            {this.locale.search}
           </Button>
           <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
-            {queryPanelText.reset}
+            {this.locale.reset}
           </Button>
           {queryArgsConfig.length > maxCount ? action : null}
         </div>
@@ -160,15 +181,22 @@ class QueryPanel<T> extends PureComponent<QueryPanelProps<T>, QueryPanelState> {
       [...createFormItems(form as any)(formItems, { labelCol: { span: 8 }, wrapperCol: { span: 16 } }), actions];
 
     return (
-      <Form onSubmit={this.handleSubmit} layout="inline">
-        <Row type="flex" gutter={8} {...rowProps}>
-          {items.map(item => (
-            <Col {...colProps} key={item.key}>
-              {item}
-            </Col>
-          ))}
-        </Row>
-      </Form>
+      <ConfigContext.Consumer>
+        {(config) => {
+          this.setWantedConfig(config);
+          return (
+            <Form onSubmit={this.handleSubmit} layout="inline">
+              <Row type="flex" gutter={8} {...rowProps}>
+                {items.map(item => (
+                  <Col {...colProps} key={item.key}>
+                    {item}
+                  </Col>
+                ))}
+              </Row>
+            </Form>
+          );
+        }}
+      </ConfigContext.Consumer>
     );
   }
 
