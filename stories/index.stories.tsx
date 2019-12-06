@@ -3,9 +3,8 @@ import { storiesOf } from '@storybook/react';
 // import { action } from '@storybook/addon-actions';
 import { Button, Card, Switch, Form, Radio, message } from 'antd';
 // import { WrappedFormUtils } from 'antd/lib/form/Form';
-import './antd-form-mate';
 import { ItemConfig } from 'antd-form-mate/dist/lib/props'
-import { Curd } from '../src';
+import { Curd, FormConfigProvider } from '../src';
 import StandardTable from '../src/components/StandardTable';
 import StandardList from '../src/components/StandardList';
 import renderCard from './CustomCard';
@@ -264,7 +263,13 @@ class CurdTableDemo extends React.Component<any, any> {
   render() {
     const { selectedRows, checkable, showOperators, popupType, mockData } = this.state;
     return (
-      <React.Fragment>
+      <FormConfigProvider
+        value={{
+          commenExtra: {
+            picture: '自定义图片默认提示',
+          }
+        }}
+      >
         <Card>
           <Form layout="inline">
             <Form.Item label="多选" >
@@ -385,7 +390,7 @@ class CurdTableDemo extends React.Component<any, any> {
             }}
           />
         </Curd>
-      </React.Fragment>
+      </FormConfigProvider>
     )
   }
 }
