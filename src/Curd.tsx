@@ -21,7 +21,8 @@ function DefaultWrapper(props: React.PropsWithChildren<any>) {
 export interface CurdProps<T> extends React.Props<T> {
 	modelName: string;
 	data: { list: T[]; pagination?: any };
-	dispatch: Function;
+  dispatch: Function;
+  /** antd-curd's wrapper, default is no bordered Card */
 	wrapper?: React.ComponentClass | null;
 }
 
