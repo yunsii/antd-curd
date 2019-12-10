@@ -66,7 +66,7 @@ class QueryPanel<T> extends PureComponent<QueryPanelProps<T>, QueryPanelState> {
     reset: defaultLocale.queryPanel.reset,
   }
 
-  setSearchFormAndSearch = (fieldsValue) => {
+  public setSearchFormAndSearch = (fieldsValue) => {
     const { __curd__, updateSearchValue } = this.props;
     if (__curd__) {
       let newSearchValue = { ...fieldsValue };
