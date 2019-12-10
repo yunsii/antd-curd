@@ -1,4 +1,4 @@
-import React, { PureComponent, useContext } from 'react';
+import React, { PureComponent } from 'react';
 import _get from 'lodash/get';
 import _omit from 'lodash/omit';
 import _filter from 'lodash/filter';
@@ -13,8 +13,8 @@ import { createFormItems } from '../../FormMate';
 import Curd from '../../Curd';
 import defaultLocale from '../../defaultLocale';
 import ConfigContext, { ConfigContextProps } from '../../ConfigContext';
+import DataContext, { SharedData } from '../../DataContext';
 import { searchFieldName } from '../../defaultConfig';
-import DataContext from '../../DataContext';
 
 const addAllowClearToItemsConfig = itemsConfig =>
   itemsConfig.map(item => {
@@ -28,7 +28,7 @@ const addAllowClearToItemsConfig = itemsConfig =>
     };
   });
 
-export interface QueryPanelProps<T> {
+export interface QueryPanelProps {
   queryArgsConfig: ItemConfig[];
   onSearch?: (fieldsValue: any) => void;
   onReset?: () => void;
@@ -37,10 +37,9 @@ export interface QueryPanelProps<T> {
   colProps?: ColProps;
   onValuesChange?: (changedValues: any, allValues: any) => void;
   updateSearchValue?: (fieldsValue: any) => any;
-  wrappedComponentRef?: (self: QueryPanel<T>) => void;
+  wrappedComponentRef?: (self: QueryPanel) => void;
   form?: WrappedFormUtils;
   reSearchAfterReset?: boolean;
-  __curd__?: Curd<T>;
 };
 
 interface QueryPanelState {
@@ -55,12 +54,14 @@ interface QueryPanelState {
     }
   }
 }) as any)
-class QueryPanel<T> extends PureComponent<QueryPanelProps<T>, QueryPanelState> {
+export default class QueryPanel extends PureComponent<QueryPanelProps, QueryPanelState> {
   state = {
     expandForm: false,
   };
 
   pageFieldName = searchFieldName.page;
+
+  __curd__?: Curd<any>;
 
   locale = {
     collapse: defaultLocale.queryPanel.collapse,
@@ -76,40 +77,41 @@ class QueryPanel<T> extends PureComponent<QueryPanelProps<T>, QueryPanelState> {
       queryArgs[item] = undefined;
     })
     if (form) {
+      console.log('new', { ...queryArgs, ...fieldsValue })
       form.setFieldsValue({ ...queryArgs, ...fieldsValue });
-      this.setFieldsValueAndSearch(fieldsValue);
+      this.setSearchFormAndSearch(fieldsValue);
     }
   }
 
   setSearchFormAndSearch = (fieldsValue) => {
-    const { __curd__, updateSearchValue } = this.props;
-    if (__curd__) {
+    const { updateSearchValue } = this.props;
+    if (this.__curd__) {
       let newSearchValue = { ...fieldsValue };
       if (updateSearchValue) { newSearchValue = updateSearchValue(newSearchValue) }
-      const { searchParams } = __curd__.state;
+      const { searchParams } = this.__curd__.state;
 
-      __curd__.setState({
+      this.__curd__.setState({
         searchForm: { ...newSearchValue },
         searchParams: {
           ...searchParams,
           [this.pageFieldName]: 1,
         },
       }, () => {
-        __curd__.handleSearch();
+        this.__curd__ && this.__curd__.handleSearch();
       })
     }
   }
 
   handleFormReset = () => {
-    const { form, onReset, onValuesChange, reSearchAfterReset, __curd__ } = this.props;
+    const { form, onReset, onValuesChange, reSearchAfterReset } = this.props;
     form && form.resetFields();
     if (onValuesChange) {
       onValuesChange({}, {});
     }
-    if (__curd__) {
-      __curd__.setState({ searchForm: {}, searchParams: {} }, () => {
+    if (this.__curd__) {
+      this.__curd__.setState({ searchForm: {}, searchParams: {} }, () => {
         if (reSearchAfterReset) {
-          __curd__.handleSearch();
+          this.__curd__ && this.__curd__.handleSearch();
         }
       });
     }
@@ -145,6 +147,13 @@ class QueryPanel<T> extends PureComponent<QueryPanelProps<T>, QueryPanelState> {
     if (pageFieldName) {
       this.pageFieldName = pageFieldName;
     }
+  }
+
+  setCurd = ({ __curd__ }: SharedData<any>) => {
+    if (!__curd__) {
+      console.warn('Warning: QueryPanel got no __curd__ object.');
+    }
+    this.__curd__ = __curd__;
   }
 
   renderForm() {
@@ -200,15 +209,22 @@ class QueryPanel<T> extends PureComponent<QueryPanelProps<T>, QueryPanelState> {
         {(config) => {
           this.setWantedConfig(config);
           return (
-            <Form onSubmit={this.handleSubmit} layout="inline">
-              <Row type="flex" gutter={8} {...rowProps}>
-                {items.map(item => (
-                  <Col {...colProps} key={item.key}>
-                    {item}
-                  </Col>
-                ))}
-              </Row>
-            </Form>
+            <DataContext.Consumer>
+              {data => {
+                this.setCurd(data);
+                return (
+                  <Form onSubmit={this.handleSubmit} layout="inline">
+                    <Row type="flex" gutter={8} {...rowProps}>
+                      {items.map(item => (
+                        <Col {...colProps} key={item.key}>
+                          {item}
+                        </Col>
+                      ))}
+                    </Row>
+                  </Form>
+                );
+              }}
+            </DataContext.Consumer>
           );
         }}
       </ConfigContext.Consumer>
@@ -218,9 +234,4 @@ class QueryPanel<T> extends PureComponent<QueryPanelProps<T>, QueryPanelState> {
   render() {
     return <div className={styles.searchForm}>{this.renderForm()}</div>;
   }
-}
-
-export default function WrappedQueryPanel<T>(props: QueryPanelProps<T>) {
-  const { __curd__ } = useContext(DataContext);
-  return <QueryPanel {...props} __curd__={__curd__} />
 }
