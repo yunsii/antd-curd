@@ -1,7 +1,10 @@
 import React, { PureComponent, useContext } from 'react';
 import _get from 'lodash/get';
+import _omit from 'lodash/omit';
+import _filter from 'lodash/filter';
 import { Row, Col, Form, Icon, Button } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
+import { ItemConfig } from 'antd-form-mate/dist/lib/props';
 import { RowProps } from 'antd/lib/row';
 import { ColProps } from 'antd/lib/col';
 import { callFunctionIfFunction } from '../../utils';
@@ -26,7 +29,7 @@ const addAllowClearToItemsConfig = itemsConfig =>
   });
 
 export interface QueryPanelProps<T> {
-  queryArgsConfig: any[];
+  queryArgsConfig: ItemConfig[];
   onSearch?: (fieldsValue: any) => void;
   onReset?: () => void;
   maxCount?: number;
@@ -66,7 +69,19 @@ class QueryPanel<T> extends PureComponent<QueryPanelProps<T>, QueryPanelState> {
     reset: defaultLocale.queryPanel.reset,
   }
 
-  public setSearchFormAndSearch = (fieldsValue) => {
+  public setFieldsValueAndSearch = (fieldsValue) => {
+    const { form, queryArgsConfig } = this.props;
+    const queryArgs = {};
+    queryArgsConfig.map(item => item.field).forEach(item => {
+      queryArgs[item] = undefined;
+    })
+    if (form) {
+      form.setFieldsValue({ ...queryArgs, ...fieldsValue });
+      this.setFieldsValueAndSearch(fieldsValue);
+    }
+  }
+
+  setSearchFormAndSearch = (fieldsValue) => {
     const { __curd__, updateSearchValue } = this.props;
     if (__curd__) {
       let newSearchValue = { ...fieldsValue };

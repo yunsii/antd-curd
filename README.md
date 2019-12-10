@@ -65,6 +65,8 @@
 
 基于 antd-form-mate 实现的查询面板组件，具体实现可参考 [QueryPanel/index.js](/src/components/QueryPanel/index.tsx) ，只需传入表单配置和 `onSearch` 方法即可使用。同时提供了重置表单后的 `onReset` 函数。参数定义可参考 [QueryPanel/index.d.ts](/src/components/QueryPanel/index.tsx) 。
 
+另外，如果需要外部直接调起**新的搜索**，可通过 `wrappedComponentRef` 拿到对象实例后调用 `setFieldsValueAndSearch` 并传入查询表单即可调起搜索，可能需要清空查询面板的已输入参数作为回显。
+
 ## [Curd](/src/Curd.tsx)
 
 **为包含在 `Curd` 中的子组件注入 `__curd__` 的实例属性**
@@ -74,7 +76,7 @@
 * `searchForm` 表单数据
 * `searchParams` 分页器，过滤器，排序器参数
   
-还有一个 `handleSearch` 方法可供直接（ ref ）调起当前页面数据查询接口以供刷新数据使用。
+还有一个 `handleSearch` 方法可供直接（ `ref` ）调起当前页面数据查询接口以供**刷新数据**使用。
 
 ### API
 
