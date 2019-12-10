@@ -25,7 +25,7 @@ function handleDelete(record, list: any[]) {
 const { QueryPanel, CurdTable } = Curd;
 const { Group: RadioGroup } = Radio;
 
-const queryArgsConfig = [
+const queryArgsConfig: ItemConfig[] = [
   {
     type: 'string',
     field: 'deviceNumber',
