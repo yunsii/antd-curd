@@ -6,6 +6,7 @@ import { Button, Card, Switch, Form, Radio, message } from 'antd';
 import { ItemConfig } from 'antd-form-mate/dist/lib/props'
 import { Curd, FormConfigProvider } from '../src';
 import StandardTable from '../src/components/StandardTable';
+import QueryPanel from '../src/components/QueryPanel';
 import StandardList from '../src/components/StandardList';
 import renderCard from './CustomCard';
 import CurdListDemo from './CurdListDemo';
@@ -22,7 +23,7 @@ function handleDelete(record, list: any[]) {
   return list.filter(item => item.id !== id);
 }
 
-const { QueryPanel, CurdTable } = Curd;
+const { CurdTable } = Curd;
 const { Group: RadioGroup } = Radio;
 
 const queryArgsConfig: ItemConfig[] = [
@@ -64,10 +65,17 @@ const queryArgsConfig: ItemConfig[] = [
       label: '地址',
     },
   },
+  {
+    type: 'datetime-range',
+    field: 'period',
+    formItemProps: {
+      label: '有效期',
+    },
+  },
 ];
 
 class QueryPanelDemo extends React.Component {
-  queryPanel = {};
+  queryPanel: QueryPanel;
 
   render() {
     return (
@@ -75,11 +83,11 @@ class QueryPanelDemo extends React.Component {
         <Card>
           <Button
             onClick={() => {
-              const { props: queryPanelProps } = this.queryPanel as any;
-              if (queryPanelProps) {
-                queryPanelProps.form.setFieldsValue({
-                  deviceNumber: '123321',
-                })
+              if (this.queryPanel) {
+                // queryPanelProps.form.setFieldsValue({
+                //   deviceNumber: '123321',
+                // })
+                this.queryPanel.setFieldsValueAndSearch({ deviceNumber: '123321' });
               }
             }}
           >
@@ -90,12 +98,13 @@ class QueryPanelDemo extends React.Component {
           <QueryPanel
             queryArgsConfig={queryArgsConfig}
             wrappedComponentRef={(self) => {
-              console.log(self);
               this.queryPanel = self;
             }}
             onValuesChange={(changedValues, allValues) => {
-              const { props: queryPanelProps } = this.queryPanel as any;
-              console.log(queryPanelProps ? queryPanelProps.form.getFieldsValue() : {});
+              console.log(changedValues);
+            }}
+            onSearch={(value) => {
+              console.log(value);
             }}
           />
         </Card>
