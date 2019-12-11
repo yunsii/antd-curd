@@ -25,7 +25,7 @@ export interface SearchFieldName {
   sortor?: string;
 }
 
-export interface ConfigContextProps {
+export interface ConfigContextValue {
   setLocale?: SetLocale;
   /** only set how to format sorter, it's invalid if set container's handleFilterAndSort */
   formatSorter?: typeof formatSorter;
@@ -33,7 +33,7 @@ export interface ConfigContextProps {
   debounceWait?: number;
 }
 
-export const ConfigContext = React.createContext<ConfigContextProps>({
+export const ConfigContext = React.createContext<ConfigContextValue>({
   debounceWait,
 });
 export default ConfigContext;
