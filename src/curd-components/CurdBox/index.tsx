@@ -9,19 +9,19 @@ import { PaginationConfig, SorterResult, TableCurrentDataSource } from 'antd/lib
 import { PopconfirmProps } from 'antd/lib/popconfirm';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 import { ItemConfig } from 'antd-form-mate/dist/lib/props';
+import { CreateName, DetailName, UpdateName } from '../../constants';
 import StandardTable from '../../components/StandardTable/index';
 import StandardList from '../../components/StandardList/index';
 import DetailFormDrawer from '../../components/DetailFormDrawer/index';
 import DetailFormModal from '../../components/DetailFormModal/index';
-import { CreateName, DetailName, UpdateName } from '../../constants';
-import Curd from '../../Curd';
-import Operators from './Operators/index';
 import { DetailFormModalProps } from '../../components/DetailFormModal/index';
 import { DetailFormDrawerProps } from '../../components/DetailFormDrawer/index';
+import Curd from '../../Curd';
+import Operators from './Operators/index';
 import { setActions, ActionType } from './actions/index';
 import { CurdTableProps } from '../CurdTable';
 import { CurdListProps } from '../CurdList';
-import { injectChildren, callFunctionIfFunction } from '../../utils';
+import { injectChildren } from '../../utils';
 import ConfigContext, { SearchFieldName } from '../../ConfigContext';
 import DataContext from '../../DataContext';
 import { formatSorter as formatSorterDefault, searchFieldName as searchFieldNameDefault } from '../../defaultConfig';
@@ -30,7 +30,7 @@ import defaultLocale from '../../defaultLocale';
 export type CustomDetailFormDrawerProps = Omit<DetailFormDrawerProps, 'setItemsConfig' | 'loading' | 'form' | 'onOk'>
 export type CustomDetailFormModalProps = Omit<DetailFormModalProps, 'setItemsConfig' | 'loading' | 'form'>
 
-export type PopupMode = 'create' | 'detail' | 'update'
+export type PopupMode = 'create' | 'detail' | 'update';
 
 export type CurdlLocale = 'createOk' | 'updateOk' | 'deleteOk';
 
@@ -89,6 +89,7 @@ const curdBoxProps = [
   'autoFetch',
   'reSearchAfterUpdate',
   '__curd__',
+  
   'setLocale',
   'formatSorter',
   'searchFieldName',
@@ -396,7 +397,7 @@ export default class CurdBox<T extends { id: number | string }> extends PureComp
   };
 
   handlePopupClose = () => {
-    const { dispatch, afterPopupClose } = this.props;
+    const { dispatch, afterPopupClose = () => { } } = this.props;
     const { mode } = this.state;
     console.log('handlePopupClose', mode)
     if (mode === 'detail' || mode === 'update') {
@@ -405,7 +406,7 @@ export default class CurdBox<T extends { id: number | string }> extends PureComp
         payload: {},
       });
     }
-    callFunctionIfFunction(afterPopupClose)(mode);
+    afterPopupClose(mode);
   }
 
   getLocale = (field: CurdlLocale) => {
@@ -533,7 +534,7 @@ export function withCurdBox(WrappedComponent: React.ComponentClass<CurdTableProp
         ...searchFieldName,
       },
     }
-    
+
     return (
       <CurdBox
         {..._pick(mergeProps, curdBoxProps)}

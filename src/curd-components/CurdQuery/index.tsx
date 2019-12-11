@@ -3,11 +3,10 @@ import _get from 'lodash/get';
 import _omit from 'lodash/omit';
 import _filter from 'lodash/filter';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
-import { callFunctionIfFunction } from '../../utils';
+import QueryPanel, { QueryPanelProps } from '../../components/QueryPanel';
 import Curd from '../../Curd';
 import ConfigContext from '../../ConfigContext';
 import DataContext from '../../DataContext';
-import QueryPanel, { QueryPanelProps } from '../../components/QueryPanel';
 import { searchFieldName } from '../../defaultConfig';
 
 export interface CurdQueryPanelProps extends Omit<QueryPanelProps, 'form' | 'onSearch'> {
@@ -53,7 +52,7 @@ export class CurdQueryPanel extends PureComponent<CurdQueryPanelProps, CurdQuery
   }
 
   handleFormReset = () => {
-    const { onReset, onValuesChange, reSearchAfterReset, __curd__ } = this.props;
+    const { onReset = () => { }, onValuesChange, reSearchAfterReset, __curd__ } = this.props;
     this.form && this.form.resetFields();
     if (onValuesChange) {
       onValuesChange({}, {});
@@ -71,7 +70,7 @@ export class CurdQueryPanel extends PureComponent<CurdQueryPanelProps, CurdQuery
         }
       );
     }
-    callFunctionIfFunction(onReset)();
+    onReset();
   };
 
   toggleForm = () => {

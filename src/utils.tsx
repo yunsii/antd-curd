@@ -16,12 +16,6 @@ export function addDivider(actions) {
   );
 }
 
-export const callFunctionIfFunction = (func: any) => (...args: any) => {
-  if (func) {
-    func(...args);
-  }
-};
-
 export function injectChildren(children, properties) {
   return React.Children.map(children, child => {
     if (child) {
@@ -47,8 +41,8 @@ function initQueryParams(props, fields) {
   }
 }
 
-export function withQueryParams<Props = any>(fields: string[]) {
-  return function (WrappedComponent: React.ComponentClass | React.FC<Props>): React.ComponentClass {
+export function withQueryParams(fields: string[]) {
+  return function (WrappedComponent: React.ComponentClass | React.FC): React.ComponentClass {
     class WithQueryParams extends React.Component<any> {
       static displayName: string;
 

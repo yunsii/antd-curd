@@ -2,7 +2,6 @@ import React, { PureComponent, Fragment } from 'react';
 import { List, Alert, Checkbox } from 'antd';
 import { ListProps } from 'antd/lib/list';
 import { PaginationConfig } from 'antd/lib/pagination';
-import { callFunctionIfFunction } from '../../utils';
 import styles from './index.less';
 
 type OmittedListProps<T> = Omit<ListProps<T>, 'dataSource' | 'renderItem'>;
@@ -78,11 +77,8 @@ class StandardList<T extends { id: number | string }> extends PureComponent<Stan
 
   handlePageChange = (current: number, pageSize: number) => {
     console.log(current, pageSize);
-    const { onChange } = this.props;
-    callFunctionIfFunction(onChange)({
-      current,
-      pageSize
-    } as Page);
+    const { onChange = () => { } } = this.props;
+    onChange({ current, pageSize } as Page);
   };
 
   handleShowSizeChange = (current: number, pageSize: number) => {
