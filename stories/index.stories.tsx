@@ -6,7 +6,7 @@ import { Button, Card, Switch, Form, Radio, message } from 'antd';
 import { ItemConfig } from 'antd-form-mate/dist/lib/props'
 import { Curd, FormConfigProvider } from '../src';
 import StandardTable from '../src/components/StandardTable';
-import QueryPanel, { CurdQueryPanel } from '../src/components/QueryPanel';
+import { CurdQueryPanel } from '../src/curd-components/CurdQuery';
 import StandardList from '../src/components/StandardList';
 import renderCard from './CustomCard';
 import CurdListDemo from './CurdListDemo';
@@ -24,7 +24,7 @@ function handleDelete(record, list: any[]) {
   return list.filter(item => item.id !== id);
 }
 
-const { CurdTable } = Curd;
+const { Table, Query } = Curd;
 const { Group: RadioGroup } = Radio;
 
 const queryArgsConfig: ItemConfig[] = [
@@ -105,7 +105,7 @@ class QueryPanelDemo extends React.Component {
               }
             }}
           >
-            <QueryPanel
+            <Query
               queryArgsConfig={queryArgsConfig}
               ref={((self) => {
                 this.queryPanel = self;
@@ -327,7 +327,7 @@ class CurdTableDemo extends React.Component<any, any> {
           </Form>
         </Card>
         <Curd ref={(curd: any) => { this.__curd__ = curd }} {...this.props} data={mockData}>
-          <CurdTable
+          <Table
             columns={this.columns()}
             selectedRows={selectedRows}
             onSelectRow={(row) => {
@@ -485,11 +485,11 @@ class CurdDemo extends React.Component<any, any> {
           wrapper={null}
         >
           <Card bodyStyle={{ paddingBottom: 0 }}>
-            <Curd.QueryPanel queryArgsConfig={this.queryArgsConfig} />
+            <Curd.Query queryArgsConfig={this.queryArgsConfig} />
           </Card>
           <div style={{ width: '100%', height: 16, background: '#eee' }}></div>
           <Card>
-            <CurdTable
+            <Table
               columns={this.columns()}
               selectedRows={selectedRows}
               onSelectRow={(row) => {

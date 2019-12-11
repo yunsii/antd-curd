@@ -59,7 +59,7 @@ export default class CurdListBoxDemo extends React.Component {
 					useWindow={false}
 				>
 					<Curd {...this.props} data={{ list: data }}>
-						<Curd.CurdList
+						<Curd.List
 							renderItem={renderCard}
 							pagination={false}
 							popupType="modal"

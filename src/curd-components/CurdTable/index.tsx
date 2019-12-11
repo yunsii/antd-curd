@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import StandardTable, { StandardTableProps, StandardTableColumnProps } from '../StandardTable/index';
+import StandardTable, { StandardTableProps, StandardTableColumnProps } from '../../components/StandardTable/index';
 import CurdBox, { withCurdBox, CurdBoxProps } from '../CurdBox';
 import { addDivider } from '../../utils';
 import DataContext from '../../DataContext';

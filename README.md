@@ -63,9 +63,7 @@
 
 ![K1ousP.png](https://s2.ax1x.com/2019/10/21/K1ousP.png)
 
-基于 antd-form-mate 实现的查询面板组件，具体实现可参考 [QueryPanel/index.js](/src/components/QueryPanel/index.tsx) ，只需传入表单配置和 `onSearch` 方法即可使用。同时提供了重置表单后的 `onReset` 函数。参数定义可参考 [QueryPanel/index.d.ts](/src/components/QueryPanel/index.tsx) 。
-
-另外，如果需要外部直接调起**新的搜索**，可通过 `wrappedComponentRef` 拿到对象实例后调用 `setFieldsValueAndSearch` 并传入查询表单即可调起搜索，可能需要清空查询面板的已输入参数作为回显。
+基于 antd-form-mate 实现的查询面板组件，具体实现可参考 [QueryPanel/index.tsx](/src/components/QueryPanel/index.tsx) ，只需传入表单配置和 `onSearch` 方法即可使用。同时提供了重置表单后的 `onReset` 函数。
 
 ## [Curd](/src/Curd.tsx)
 
@@ -87,7 +85,17 @@
 | `dipatch` | dva 注入的 dispatch 函数 | `Function` | - |
 | `wrapper` | 组件被包裹的容器，默认为无边框 `Card` | `React.ComponentClass \| null` | - |
 
-## [CurdBox](/src/components/CurdBox/index.tsx)
+## [Curd.Query](/src/curd-components/CurdQuery/index.tsx)
+
+查询面板组件。
+
+通过 `__curd__` 实例属性为 `Curd` 组件更新 `searchForm` 。
+
+如果需要主动为 `Curd.Query` 组件的表单赋值，通过 `ref` 方法拿到 `Curd.Query` 的实例即可。
+
+另外，如果需要外部直接调起**新的搜索**，可通过 `ref` 拿到对象实例后调用 `setFieldsValueAndSearch` 并传入查询表单即可调起搜索，自动清空未输入的值。
+
+## [CurdBox](/src/curd-components/CurdBox/index.tsx)
 
 **为包含在 `CurdBox` 中的子组件注入 `__curdBox__` 的实例属性**
 
@@ -109,7 +117,7 @@
 | `deleteLoading` | 删除 model loading | `boolean` | - |
 | `createButtonName` | 新建按钮名称，为空时隐藏按钮 | `string \| false` | `'新建'` |
 | `popupType` | 弹窗类型 | `'modal' \| 'drawer'` | - |
-| `popupProps` | 弹窗配置，根据 `popupType` 配置 | [CustomDetailFormDrawerProps](/src/components/CurdBox/index.tsx#L9) \| [CustomDetailFormModalProps](/src/components/CurdBox/index.tsx#L23) | - |
+| `popupProps` | 弹窗配置，根据 `popupType` 配置 | [CustomDetailFormDrawerProps](/src/curd-components/CurdBox/index.tsx#L9) \| [CustomDetailFormModalProps](/src/curd-components/CurdBox/index.tsx#L23) | - |
 | `setFormItemsConfig` | 配置表单数据 | `(detail: {}, mode: 'create' \| 'detail' \| 'update', form) => any[]` | - |
 | `afterPopupClose` | 关闭弹窗后回调函数 | `() => void` | - |
 | `interceptors` | 拦截器 | [interceptors](#interceptors) | - |
@@ -138,7 +146,7 @@
 | 参数 | 说明 | 类型 | 默认值 |
 | --- | --- | --- | --- |
 | `showActionsCount` | 除更多外需要展示的操作个数 | `number` | `3` |
-| `extraActions` | 除 **详情（4）**，**编辑（8）**，**删除（12）** 外，可自行配置额外操作。注意，数字是操作的 `key` ，根据 `key` 不同，会按升序排列 | [ActionType](/src/components/CurdBox/actions/index.tsx) | - |
+| `extraActions` | 除 **详情（4）**，**编辑（8）**，**删除（12）** 外，可自行配置额外操作。注意，数字是操作的 `key` ，根据 `key` 不同，会按升序排列 | [ActionType](/src/curd-components/CurdBox/actions/index.tsx) | - |
 | `confirmKeys` | 需要弹出确认窗口的 `key` 数组 | `(number \| [number, (record?: any) => string])[]` | `[12]` |
 | `confirmProps` | 额外的 Popconfirm 配置 | `PopconfirmProps` | - |
 | `hideActions` | 隐藏操作的 `key` 数组 | `number[] \| ((record?: any) => void \| number[])` | - |
@@ -152,13 +160,6 @@
 * `handle**Click` 事件（除 `handleDeleteClick` 事件外， `handleDeleteClick` 直接中断）默认不会中断后续的弹窗事件，如果需要中断， `return true` 即可。
 * 如果对象详情不需要再请求接口，不注入 `detail` 或者 `detailLoading` 即可。
 
-## [Curd.QueryPanel](/src/components/QueryPanel/index.tsx)
-
-查询面板组件。
-
-通过 `__curd__` 实例属性为 `Curd` 组件更新 `searchForm` 。
-
-如果需要主动为 `QueryPanel` 组件的表单赋值，通过 `wrappedComponentRef` 的方法拿到 `QueryPanel` 的实例即可。
 
 ### API
 
@@ -166,16 +167,16 @@
 | --- | --- | --- | --- |
 | `queryArgsConfig` | 查询参数配置，参考 [index.js](https://github.com/theprimone/ant-design-pro-v2-plus/blob/79d034d339806c2a24c347036cebc219152f6b33/src/pages/Enhance/CurdPage/index.js#L24) | `any[]` | `[]` |
 
-## [Curd.CurdTable](/src/components/CurdTable/index.tsx)
+## [Curd.Table](/src/curd-components/CurdTable/index.tsx)
 
 ![K1oKqf.png](https://s2.ax1x.com/2019/10/21/K1oKqf.png)
 
-由 [CurdBox](#[CurdBox](/src/components/CurdBox/index.tsx)) 封装 [StandardTable](/src/components/StandardTable/index.tsx) 而成。
+由 [CurdBox](/src/curd-components/CurdBox/index.tsx) 封装 [StandardTable](/src/components/StandardTable/index.tsx) 而成。
 
-## [Curd.CurdList](/src/components/CurdList/index.tsx)
+## [Curd.CurdList](/src/curd-components/CurdList/index.tsx)
 
 ![K1oldS.png](https://s2.ax1x.com/2019/10/21/K1oldS.png)
 
-由 [CurdBox](#[CurdBox](/src/components/CurdBox/index.tsx)) 封装 [StandardList](/src/components/StandardList/index.tsx) 而成。
+由 [CurdBox](/src/curd-components/CurdBox/index.tsx) 封装 [StandardList](/src/components/StandardList/index.tsx) 而成。
 
 [Demo](/stories/index.stories.tsx)

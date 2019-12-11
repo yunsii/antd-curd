@@ -1,9 +1,9 @@
 import React, { PureComponent } from 'react';
 import { Card } from 'antd';
 import _get from 'lodash/get';
-import CurdTable from './components/CurdTable/index';
-import CurdList from './components/CurdList/index';
-import QueryPanel from './components/QueryPanel/index';
+import CurdTable from './curd-components/CurdTable/index';
+import CurdList from './curd-components/CurdList/index';
+import CurdQuery from './curd-components/CurdQuery';
 import { injectChildren } from './utils';
 import ConfigContext from './ConfigContext';
 import DataContext from './DataContext';
@@ -40,9 +40,9 @@ class Curd<T> extends PureComponent<CurdProps<T>, CurdState> {
 		dispatch: () => { },
 	};
 
-	static QueryPanel = QueryPanel;
-	static CurdTable = CurdTable;
-	static CurdList = CurdList;
+	static Query = CurdQuery;
+	static Table = CurdTable;
+	static List = CurdList;
 
 	state = {
 		searchForm: {} as any,

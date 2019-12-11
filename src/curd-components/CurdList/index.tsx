@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import StandardList, { StandardListProps } from '../StandardList/index';
+import StandardList, { StandardListProps } from '../../components/StandardList/index';
 import CurdBox, { withCurdBox, CurdBoxProps } from '../CurdBox';
 import DataContext from '../../DataContext';
 
