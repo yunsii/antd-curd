@@ -173,7 +173,7 @@
 
 由 [CurdBox](/src/curd-components/CurdBox/index.tsx) 封装 [StandardTable](/src/components/StandardTable/index.tsx) 而成。
 
-## [Curd.CurdList](/src/curd-components/CurdList/index.tsx)
+## [Curd.List](/src/curd-components/CurdList/index.tsx)
 
 ![K1oldS.png](https://s2.ax1x.com/2019/10/21/K1oldS.png)
 
