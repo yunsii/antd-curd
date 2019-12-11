@@ -6,12 +6,13 @@ import { Button, Card, Switch, Form, Radio, message } from 'antd';
 import { ItemConfig } from 'antd-form-mate/dist/lib/props'
 import { Curd, FormConfigProvider } from '../src';
 import StandardTable from '../src/components/StandardTable';
-import QueryPanel from '../src/components/QueryPanel';
+import QueryPanel, { CurdQueryPanel } from '../src/components/QueryPanel';
 import StandardList from '../src/components/StandardList';
 import renderCard from './CustomCard';
 import CurdListDemo from './CurdListDemo';
 import setFormItemsConfig from './map';
 import { columns, data } from './mock';
+import ConfigContext from '../src/ConfigContext';
 
 function handleDelete(record, list: any[]) {
   const { parent_id, id } = record;
@@ -75,7 +76,7 @@ const queryArgsConfig: ItemConfig[] = [
 ];
 
 class QueryPanelDemo extends React.Component {
-  queryPanel: QueryPanel;
+  queryPanel: CurdQueryPanel;
 
   render() {
     return (
@@ -95,18 +96,25 @@ class QueryPanelDemo extends React.Component {
           </Button>
         </Card>
         <Card bordered={false}>
-          <QueryPanel
-            queryArgsConfig={queryArgsConfig}
-            wrappedComponentRef={(self) => {
-              this.queryPanel = self;
+          <ConfigContext.Provider
+            value={{
+              setLocale: {
+                queryPanel: {
+                  search: 'asdf',
+                }
+              }
             }}
-            onValuesChange={(changedValues, allValues) => {
-              console.log(changedValues);
-            }}
-            onSearch={(value) => {
-              console.log(value);
-            }}
-          />
+          >
+            <QueryPanel
+              queryArgsConfig={queryArgsConfig}
+              ref={((self) => {
+                this.queryPanel = self;
+              }) as any}
+              onValuesChange={(changedValues, allValues) => {
+                console.log(changedValues);
+              }}
+            />
+          </ConfigContext.Provider>
         </Card>
       </React.Fragment>
 
