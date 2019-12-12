@@ -15,8 +15,6 @@ function handleDelete(record, list: any[]) {
   return list.filter(item => item.id !== id);
 }
 
-const { Table } = Curd;
-
 export default class CurdDemo extends React.Component<any, any> {
   state = {
     selectedRows: [],
@@ -94,7 +92,7 @@ export default class CurdDemo extends React.Component<any, any> {
           </Card>
           <div style={{ width: '100%', height: 16, background: '#eee' }}></div>
           <Card>
-            <Table
+            <Curd.Table
               columns={this.columns()}
               selectedRows={selectedRows}
               onSelectRow={(row) => {
