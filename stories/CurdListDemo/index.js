@@ -4,7 +4,7 @@ import InfiniteScroll from 'react-infinite-scroller';
 import { Curd } from '../../src';
 import { data as mockData } from '../mock';
 import styles from './index.less';
-import renderCard from '../CustomCard';
+import renderCard from '../StandardListDemo/CustomCard';
 
 export default class CurdListBoxDemo extends React.Component {
 	constructor(props) {

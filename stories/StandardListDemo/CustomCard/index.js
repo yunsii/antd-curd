@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, Avatar } from 'antd';
-import Ellipsis from '../../src/components/Ellipsis';
+import Ellipsis from '../../../src/components/Ellipsis';
 import styles from './index.less';
 
 export default function({ record, actions, recordSelection, checkable }) {
