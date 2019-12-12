@@ -17,22 +17,22 @@ export default function CustomStandardTable<T extends { id: number | string }>(p
   const { data } = useContext(DataContext);
   const enhanceColumns = () => {
     if (!columns) return [];
-    if (!actionsConfig) return columns;
+    if (!actionsConfig || !renderActions) return columns;
     return [
       ...columns,
-      renderActions ? {
+      {
         title: '操作',
         render: (value, record: T) => {
           return addDivider(renderActions(record));
         }
-      } : null,
-    ].filter(item => item);
+      },
+    ];
   };
   return (
     <StandardTable
       {...rest}
       data={data}
-      columns={enhanceColumns() as any}
+      columns={enhanceColumns()}
       onChange={handleDataChange}
     />
   );
