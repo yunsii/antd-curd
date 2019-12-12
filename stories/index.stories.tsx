@@ -76,7 +76,7 @@ const queryArgsConfig: ItemConfig[] = [
 ];
 
 class QueryPanelDemo extends React.Component {
-  queryPanel: CurdQueryPanel;
+  curdQuery: CurdQueryPanel;
 
   render() {
     return (
@@ -84,11 +84,11 @@ class QueryPanelDemo extends React.Component {
         <Card>
           <Button
             onClick={() => {
-              if (this.queryPanel) {
-                // queryPanelProps.form.setFieldsValue({
+              if (this.curdQuery) {
+                // this.curdQuery.form.setFieldsValue({
                 //   deviceNumber: '123321',
                 // })
-                this.queryPanel.setFieldsValueAndSearch({ deviceNumber: '123321' });
+                this.curdQuery.setFieldsValueAndSearch({ deviceNumber: '123321' });
               }
             }}
           >
@@ -108,7 +108,7 @@ class QueryPanelDemo extends React.Component {
             <Query
               queryArgsConfig={queryArgsConfig}
               ref={((self) => {
-                this.queryPanel = self;
+                this.curdQuery = self;
               }) as any}
               onValuesChange={(changedValues, allValues) => {
                 console.log(changedValues);
