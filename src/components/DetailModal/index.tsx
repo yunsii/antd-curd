@@ -25,8 +25,8 @@ export interface PopupProps extends FormComponentProps {
   getFormInstance?: (form: WrappedFormUtils) => void;
 }
 
-export interface DetailFormModalProps extends PopupProps {
-  modalConfig?: CustomModalProps;
+export interface DetailModalProps extends PopupProps {
+  modalProps?: CustomModalProps;
   mode?: string;
   itemsWrapperStyle?: React.CSSProperties;
   itemsWrapperClassName?: string;
@@ -34,10 +34,10 @@ export interface DetailFormModalProps extends PopupProps {
   children?: JSX.Element;
 }
 
-function DetailFormModal(props: DetailFormModalProps) {
+function DetailModal(props: DetailModalProps) {
   const { debounceWait } = useContext(ConfigContext);
   const {
-    modalConfig,
+    modalProps,
     cols = 1,
     children,
     setItemsConfig,
@@ -49,7 +49,7 @@ function DetailFormModal(props: DetailFormModalProps) {
     form = {} as WrappedFormUtils,
     getFormInstance = () => { },
   } = props;
-  const { onOk: handleOk = () => { }, ...restModalConfig } = modalConfig || {};
+  const { onOk: handleOk = () => { }, ...restModalConfig } = modalProps || {};
   getFormInstance(form);
   const itemsConfig = setItemsConfig(form);
 
@@ -91,4 +91,4 @@ function DetailFormModal(props: DetailFormModalProps) {
   );
 }
 
-export default Form.create<DetailFormModalProps>()(DetailFormModal);
+export default Form.create<DetailModalProps>()(DetailModal);

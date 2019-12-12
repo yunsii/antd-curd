@@ -9,16 +9,16 @@ import ConfigContext from '../../ConfigContext';
 import defaultLocale from '../../defaultLocale';
 import { PopupProps } from '../DetailModal/index';
 
-export interface DetailFormDrawerProps extends PopupProps {
-  drawerConfig?: DrawerProps;
+export interface DetailDrawerProps extends PopupProps {
+  drawerProps?: DrawerProps;
   onOk?: Function;
 }
 
-function DetailFormDrawer(props: DetailFormDrawerProps) {
+function DetailDrawer(props: DetailDrawerProps) {
   const { setLocale, debounceWait } = useContext(ConfigContext);
   const locale = { ...defaultLocale.drawer, ..._get(setLocale, 'drawer', {}) };
   const {
-    drawerConfig = {},
+    drawerProps = {},
     onOk: handleOk = () => { },
     form = {} as WrappedFormUtils,
     setItemsConfig,
@@ -40,7 +40,7 @@ function DetailFormDrawer(props: DetailFormDrawerProps) {
   }, debounceWait);
 
   return (
-    <Drawer destroyOnClose width={560} {...drawerConfig}>
+    <Drawer destroyOnClose width={560} {...drawerProps}>
       <Spin spinning={loading}>
         {createFormItems(form)(itemsConfig, itemsLayout)}
         <div
@@ -55,7 +55,7 @@ function DetailFormDrawer(props: DetailFormDrawerProps) {
             textAlign: 'right',
           }}
         >
-          <Button onClick={drawerConfig.onClose as any} style={{ marginRight: 8 }}>
+          <Button onClick={drawerProps.onClose as any} style={{ marginRight: 8 }}>
             {locale.cancel}
           </Button>
           <Button onClick={okHandle} type="primary">
@@ -67,4 +67,4 @@ function DetailFormDrawer(props: DetailFormDrawerProps) {
   );
 };
 
-export default Form.create<DetailFormDrawerProps>()(DetailFormDrawer);
+export default Form.create<DetailDrawerProps>()(DetailDrawer);
