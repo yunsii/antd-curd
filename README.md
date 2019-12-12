@@ -91,7 +91,7 @@
 
 通过 `__curd__` 实例属性为 `Curd` 组件更新 `searchForm` 。
 
-如果需要主动为 `Curd.Query` 组件的表单赋值，通过 `ref` 方法拿到 `Curd.Query` 的实例即可。
+如果需要主动为 `Curd.Query` 组件的表单赋值，通过 `ref` 方法拿到 `Curd.Query` 的实例，再通过 `ref.form` 拿到表单对象即可。
 
 另外，如果需要外部直接调起**新的搜索**，可通过 `ref` 拿到对象实例后调用 `setFieldsValueAndSearch` 并传入查询表单即可调起搜索，自动清空未输入的值。
 
