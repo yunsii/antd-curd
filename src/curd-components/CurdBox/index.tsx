@@ -540,7 +540,7 @@ export function withCurdBox(WrappedComponent: React.ComponentClass<CurdTableProp
         {..._pick(mergeProps, curdBoxProps)}
         __curd__={__curd__}
       >
-        <WrappedComponent {..._omit(props, curdBoxProps) as any} />
+        <WrappedComponent {..._omit(mergeProps, curdBoxProps) as any} />
       </CurdBox>
     )
   }
