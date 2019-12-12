@@ -12,10 +12,10 @@ import { ItemConfig } from 'antd-form-mate/dist/lib/props';
 import { CreateName, DetailName, UpdateName } from '../../constants';
 import StandardTable from '../../components/StandardTable/index';
 import StandardList from '../../components/StandardList/index';
-import DetailFormDrawer from '../../components/DetailFormDrawer/index';
-import DetailFormModal from '../../components/DetailFormModal/index';
-import { DetailFormModalProps } from '../../components/DetailFormModal/index';
-import { DetailFormDrawerProps } from '../../components/DetailFormDrawer/index';
+import DetailFormDrawer from '../../components/DetailDrawer/index';
+import DetailFormModal from '../../components/DetailModal/index';
+import { DetailFormModalProps } from '../../components/DetailModal/index';
+import { DetailFormDrawerProps } from '../../components/DetailDrawer/index';
 import Curd from '../../Curd';
 import Operators from './Operators/index';
 import { setActions, ActionType } from './actions/index';
@@ -109,6 +109,7 @@ export interface CurdBoxProps<T> {
   updateLoading?: boolean;
   /** if value is '' or false, hide the button */
   createButtonName?: string | false | null;
+  popup?: React.Component | React.FC;
   popupType?: 'modal' | 'drawer' | false | null;
   popupProps?: CustomDetailFormDrawerProps | CustomDetailFormModalProps;
   setFormItemsConfig: (detail: any, mode: PopupMode, form?: FormProps['form']) => ItemConfig[];
@@ -511,7 +512,7 @@ export default class CurdBox<T extends { id: number | string }> extends PureComp
 }
 
 export function withCurdBox(WrappedComponent: React.ComponentClass<CurdTableProps<any> | CurdListProps<any>> | React.FC<any> | null) {
-  return (props: any) => {
+  const WithCurdBox = (props: any) => {
     const {
       setLocale: setLocaleGlobal,
       searchFieldName: searchFieldNameGlobal,
@@ -544,4 +545,6 @@ export function withCurdBox(WrappedComponent: React.ComponentClass<CurdTableProp
       </CurdBox>
     )
   }
+
+  return WithCurdBox;
 }

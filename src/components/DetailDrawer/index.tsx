@@ -7,7 +7,7 @@ import { WrappedFormUtils } from 'antd/lib/form/Form';
 import { createFormItems } from '../../FormMate';
 import ConfigContext from '../../ConfigContext';
 import defaultLocale from '../../defaultLocale';
-import { PopupProps } from '../DetailFormModal';
+import { PopupProps } from '../DetailModal/index';
 
 export interface DetailFormDrawerProps extends PopupProps {
   drawerConfig?: DrawerProps;
