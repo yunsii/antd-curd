@@ -10,28 +10,23 @@ import { PopconfirmProps } from 'antd/lib/popconfirm';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 import { ItemConfig } from 'antd-form-mate/dist/lib/props';
 import { CreateName, DetailName, UpdateName } from '../../constants';
-import StandardTable from '../../components/StandardTable/index';
-import StandardList from '../../components/StandardList/index';
 import DetailFormDrawer from '../../components/DetailDrawer/index';
 import DetailFormModal from '../../components/DetailModal/index';
-import { DetailFormModalProps } from '../../components/DetailModal/index';
-import { DetailFormDrawerProps } from '../../components/DetailDrawer/index';
+import { DetailModalProps } from '../../components/DetailModal/index';
+import { DetailDrawerProps } from '../../components/DetailDrawer/index';
 import Curd from '../../Curd';
 import Operators from './Operators/index';
 import { setActions, ActionType } from './actions/index';
-import { CurdTableProps } from '../CurdTable';
-import { CurdListProps } from '../CurdList';
 import { injectChildren } from '../../utils';
 import ConfigContext, { SearchFieldName } from '../../ConfigContext';
 import DataContext from '../../DataContext';
 import { formatSorter as formatSorterDefault, searchFieldName as searchFieldNameDefault } from '../../defaultConfig';
 import defaultLocale from '../../defaultLocale';
 
-export type CustomDetailFormDrawerProps = Omit<DetailFormDrawerProps, 'setItemsConfig' | 'loading' | 'form' | 'onOk'>
-export type CustomDetailFormModalProps = Omit<DetailFormModalProps, 'setItemsConfig' | 'loading' | 'form'>
+export type CustomDetailFormDrawerProps = Omit<DetailDrawerProps, 'setItemsConfig' | 'loading' | 'form' | 'onOk'>
+export type CustomDetailFormModalProps = Omit<DetailModalProps, 'setItemsConfig' | 'loading' | 'form'>
 
 export type PopupMode = 'create' | 'detail' | 'update';
-
 export type CurdlLocale = 'createOk' | 'updateOk' | 'deleteOk';
 
 const getValue = (obj) => Object.keys(obj).map((key) => obj[key]).join(',');
@@ -43,14 +38,6 @@ async function updateFieldsValueByInterceptors<T>(fieldsValue, interceptors: Cur
     newFieldsValue = await updateFieldsValue(fieldsValue, mode);
   }
   return newFieldsValue;
-}
-
-function getModelName<T>(props: CurdBoxProps<T>) {
-  const { __curd__ } = props;
-  if (__curd__) {
-    return __curd__.props.modelName;
-  }
-  throw new Error("CurdBox can't get modelName from __curd__");
 }
 
 export interface ActionsConfig<T> {
@@ -89,13 +76,14 @@ const curdBoxProps = [
   'autoFetch',
   'reSearchAfterUpdate',
   '__curd__',
-  
+
   'setLocale',
   'formatSorter',
   'searchFieldName',
 ]
 
 export interface CurdBoxProps<T> {
+  modelName?: string;
   /** popup title of create */
   createTitle?: string;
   /** popup title of detail */
@@ -109,8 +97,7 @@ export interface CurdBoxProps<T> {
   updateLoading?: boolean;
   /** if value is '' or false, hide the button */
   createButtonName?: string | false | null;
-  popup?: React.Component | React.FC;
-  popupType?: 'modal' | 'drawer' | false | null;
+  popup?: JSX.Element | 'modal' | 'drawer' | false | null;
   popupProps?: CustomDetailFormDrawerProps | CustomDetailFormModalProps;
   setFormItemsConfig: (detail: any, mode: PopupMode, form?: FormProps['form']) => ItemConfig[];
   afterPopupClose?: (mode: PopupMode) => void;
@@ -183,9 +170,6 @@ export default class CurdBox<T extends { id: number | string }> extends PureComp
     __curd__: null
   };
 
-  static StandardTable = StandardTable;
-  static StandardList = StandardList;
-
   state = {
     mode: 'create' as PopupMode,
     popupVisible: false,
@@ -193,10 +177,10 @@ export default class CurdBox<T extends { id: number | string }> extends PureComp
   };
 
   componentDidMount() {
-    const { dispatch, autoFetch } = this.props;
+    const { dispatch, autoFetch, modelName } = this.props;
     if (autoFetch) {
       dispatch({
-        type: `${getModelName(this.props)}/fetch`,
+        type: `${modelName}/fetch`,
       });
     }
   }
@@ -206,9 +190,9 @@ export default class CurdBox<T extends { id: number | string }> extends PureComp
   };
 
   fetchDetail = (record: T) => {
-    const { dispatch } = this.props;
+    const { dispatch, modelName } = this.props;
     dispatch({
-      type: `${getModelName(this.props)}/detail`,
+      type: `${modelName}/detail`,
       id: record.id
     });
   };
@@ -245,9 +229,9 @@ export default class CurdBox<T extends { id: number | string }> extends PureComp
   };
 
   deleteModel = (id: T['id']) => {
-    const { dispatch } = this.props;
+    const { dispatch, modelName } = this.props;
     dispatch({
-      type: `${getModelName(this.props)}/delete`,
+      type: `${modelName}/delete`,
       id,
       onOk: () => {
         message.success(this.getLocale('deleteOk'));
@@ -294,11 +278,11 @@ export default class CurdBox<T extends { id: number | string }> extends PureComp
 
   handleCreateOk = async (fieldsValue) => {
     console.log('handleCreateOk', fieldsValue);
-    const { interceptors, dispatch } = this.props;
+    const { interceptors, dispatch, modelName } = this.props;
     const newFieldsValue = await updateFieldsValueByInterceptors(fieldsValue, interceptors, CreateName);
     if (!newFieldsValue) return;
     dispatch({
-      type: `${getModelName(this.props)}/create`,
+      type: `${modelName}/create`,
       payload: newFieldsValue,
       onOk: () => {
         message.success(this.getLocale('createOk'));
@@ -310,12 +294,12 @@ export default class CurdBox<T extends { id: number | string }> extends PureComp
 
   handleUpdateOk = async (fieldsValue) => {
     console.log('handleUpdateOk', fieldsValue);
-    const { dispatch, interceptors, reSearchAfterUpdate } = this.props;
+    const { dispatch, interceptors, reSearchAfterUpdate, modelName } = this.props;
     const { record } = this.state;
     const newFieldsValue = await updateFieldsValueByInterceptors(fieldsValue, interceptors, UpdateName);
     if (!newFieldsValue) return;
     dispatch({
-      type: `${getModelName(this.props)}/update`,
+      type: `${modelName}/update`,
       id: record.id,
       payload: newFieldsValue,
       onOk: () => {
@@ -398,12 +382,12 @@ export default class CurdBox<T extends { id: number | string }> extends PureComp
   };
 
   handlePopupClose = () => {
-    const { dispatch, afterPopupClose = () => { } } = this.props;
+    const { dispatch, modelName, afterPopupClose = () => { } } = this.props;
     const { mode } = this.state;
     console.log('handlePopupClose', mode)
     if (mode === 'detail' || mode === 'update') {
       dispatch({
-        type: `${getModelName(this.props)}/_saveDetail`,
+        type: `${modelName}/_saveDetail`,
         payload: {},
       });
     }
@@ -426,44 +410,45 @@ export default class CurdBox<T extends { id: number | string }> extends PureComp
   }
 
   renderContainer = () => {
-    const { children, fetchLoading, deleteLoading } = this.props;
+    const { actionsConfig, children, fetchLoading, deleteLoading } = this.props;
     return injectChildren(children, {
-      __curdBox__: this,
+      actionsConfig,
+      renderActions: this.renderActions,
+      handleDataChange: this.handleDataChange,
       loading: fetchLoading || deleteLoading,
     });
   };
 
   renderPopup = () => {
-    let result: React.ReactNode;
+    let result: React.ReactNode = null;
     const {
       detail,
       createLoading,
       detailLoading,
       updateLoading,
       setFormItemsConfig,
-      popupType,
+      popup,
       popupProps,
     } = this.props;
-    const { drawerConfig, modalConfig, ...restPopupProps } = popupProps as any;
+    const { drawerProps, modalProps, ...restPopupProps } = popupProps as any;
     const loading = createLoading || detailLoading || updateLoading;
     const { mode, popupVisible, record } = this.state;
     const isDetailMode = [DetailName, UpdateName].includes(mode);
     const displayDetail = this.willFetchDetail() && isDetailMode ? detail : record;
 
-    const composePopupProps = {
-      ...modalConfig,
-      ...drawerConfig,
+    const commenPopupProps = {
       title: this.getPopupTitle(),
       visible: popupVisible,
       onCancel: this.closePopup,
       onClose: this.closePopup
     };
 
-    if (popupType === 'drawer') {
+    if (popup === 'drawer') {
       result = (
         <DetailFormDrawer
           drawerConfig={{
-            ...composePopupProps,
+            ...drawerProps,
+            ...commenPopupProps,
             afterVisibleChange: (visible) => {
               if (!visible) { this.handlePopupClose() }
             },
@@ -474,11 +459,12 @@ export default class CurdBox<T extends { id: number | string }> extends PureComp
           setItemsConfig={(form: WrappedFormUtils) => setFormItemsConfig(displayDetail, mode, form)}
         />
       );
-    } else if (popupType === 'modal') {
+    } else if (popup === 'modal') {
       result = (
         <DetailFormModal
           modalConfig={{
-            ...composePopupProps,
+            ...modalProps,
+            ...commenPopupProps,
             onOk: this.handleOk,
             afterClose: this.handlePopupClose,
           }}
@@ -488,6 +474,8 @@ export default class CurdBox<T extends { id: number | string }> extends PureComp
           mode={mode}
         />
       );
+    } else if (popup) {
+      result = React.cloneElement(popup, { ...commenPopupProps });
     }
     return result;
   };
@@ -511,17 +499,23 @@ export default class CurdBox<T extends { id: number | string }> extends PureComp
   }
 }
 
-export function withCurdBox(WrappedComponent: React.ComponentClass<CurdTableProps<any> | CurdListProps<any>> | React.FC<any> | null) {
-  const WithCurdBox = (props: any) => {
+export interface InjectContainerProps<T extends { id: number | string }> {
+  actionsConfig: CurdBoxProps<T>['actionsConfig'];
+  renderActions: CurdBox<T>['renderActions'];
+  handleDataChange: CurdBox<T>['handleDataChange'];
+}
+
+export function withCurdBox<T>(WrappedComponent: React.ComponentClass<T> | React.FC<T>) {
+  const WithCurdBox = (props: T & CurdBoxProps<any>) => {
+    if (!WrappedComponent) { return null; }
+
     const {
       setLocale: setLocaleGlobal,
       searchFieldName: searchFieldNameGlobal,
       formatSorter: formatSorterGlobal,
     } = useContext(ConfigContext);
-    const { __curd__ } = useContext(DataContext);
+    const { __curd__, modelName } = useContext(DataContext);
     const { setLocale, searchFieldName, formatSorter, ...rest } = props;
-
-    if (!WrappedComponent) { return null; }
 
     const mergeProps = {
       ...rest,
@@ -540,6 +534,7 @@ export function withCurdBox(WrappedComponent: React.ComponentClass<CurdTableProp
       <CurdBox
         {..._pick(mergeProps, curdBoxProps)}
         __curd__={__curd__}
+        modelName={modelName}
       >
         <WrappedComponent {..._omit(mergeProps, curdBoxProps) as any} />
       </CurdBox>
