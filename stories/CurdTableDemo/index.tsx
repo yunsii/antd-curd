@@ -14,7 +14,6 @@ function handleDelete(record, list: any[]) {
   return list.filter(item => item.id !== id);
 }
 
-const { Table } = Curd;
 const { Group: RadioGroup } = Radio;
 
 export default class CurdTableDemo extends React.Component<any, any> {
@@ -167,7 +166,7 @@ export default class CurdTableDemo extends React.Component<any, any> {
           </Form>
         </Card>
         <Curd ref={(curd: any) => { this.__curd__ = curd }} {...this.props} data={mockData}>
-          <Table
+          <Curd.Table
             columns={this.columns()}
             selectedRows={selectedRows}
             onSelectRow={(row) => {
@@ -175,7 +174,7 @@ export default class CurdTableDemo extends React.Component<any, any> {
               this.setState({ selectedRows: row });
             }}
             checkable={checkable}
-            popupType={popupType as any}
+            popup={popupType as any}
             popupProps={{
               getFormInstance: (form) => {
                 console.log(form);

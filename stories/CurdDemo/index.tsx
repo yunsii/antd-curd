@@ -100,7 +100,7 @@ export default class CurdDemo extends React.Component<any, any> {
                 this.setState({ selectedRows: row });
               }}
               checkable={false}
-              popupType='modal'
+              popup='modal'
               popupProps={{
                 getFormInstance: (form) => {
                   console.log(form);
