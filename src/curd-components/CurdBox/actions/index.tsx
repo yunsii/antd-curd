@@ -53,7 +53,7 @@ export function sortAndFilterActionsAsc<T>(record: T, actions: ActionType<T>[], 
 }
 
 export function initialActions<T extends { id: number | string }>(record: T, actionsMethod: ActionsMethod<T>, actionsConfig: ActionsConfig<T>) {
-  const { fetchDetailOrNot, handleVisible, deleteModel, interceptors = {} } = actionsMethod;
+  const { fetchDetailOrNot, handlePopupOpen, deleteModel, interceptors = {} } = actionsMethod;
   const {
     detailActionTitle = '详情',
     updateActionTitle = '编辑',
@@ -72,7 +72,7 @@ export function initialActions<T extends { id: number | string }>(record: T, act
           const isBreak = handleDetailClick(record);
           if (isBreak) return;
         }
-        handleVisible(DetailName, true, record);
+        handlePopupOpen(DetailName, record);
         fetchDetailOrNot(record);
       }
     },
@@ -84,7 +84,7 @@ export function initialActions<T extends { id: number | string }>(record: T, act
           const isBreak = handleUpdateClick(record);
           if (isBreak) return;
         }
-        handleVisible(UpdateName, true, record);
+        handlePopupOpen(UpdateName, record);
         fetchDetailOrNot(record);
       }
     },
@@ -239,7 +239,7 @@ export function renderActions<T>(record: T) {
 
 export interface ActionsMethod<T extends { id: number | string }> {
   fetchDetailOrNot: (record: T) => void;
-  handleVisible: (action: string, visible: boolean, record?: T) => void;
+  handlePopupOpen: (action: string, record?: T) => void;
   deleteModel: (id: T['id']) => void;
   interceptors: CurdBoxProps<T>['interceptors'];
 }
