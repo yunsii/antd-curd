@@ -11,10 +11,6 @@ import { createFormItems } from '../../FormMate';
 import { ItemConfig } from 'antd-form-mate/dist/lib/props';
 import { injectChildren } from '../../utils';
 
-export interface CustomModalProps extends Omit<ModalProps, 'onOk'> {
-  onOk: (fieldsValue: any) => void;
-}
-
 export interface PopupProps extends FormComponentProps {
   loading?: boolean;
   setItemsConfig: (form: WrappedFormUtils) => ItemConfig[];
@@ -23,13 +19,25 @@ export interface PopupProps extends FormComponentProps {
     wrapperCol?: ColProps;
   };
   getFormInstance?: (form: WrappedFormUtils) => void;
+  mode?: string;
+  onOk?: (fieldsValue: any) => void;
+  onClose?: () => void;
+  visible?: boolean;
+  afterClose?: () => void;
+  title?: string;
 }
+
+export type CustomModalProps = Omit<ModalProps,
+  | 'title'
+  | 'visible'
+  | 'onOk'
+  | 'onCancel'
+  | 'afterClose'
+>
 
 export interface DetailModalProps extends PopupProps {
   modalProps?: CustomModalProps;
-  mode?: string;
-  itemsWrapperStyle?: React.CSSProperties;
-  itemsWrapperClassName?: string;
+  itemsWrapperProps?: React.HTMLAttributes<any>;
   cols?: 1 | 2 | 3 | 4 | 6 | 8 | 12 | 24;
   children?: JSX.Element;
 }
@@ -37,19 +45,23 @@ export interface DetailModalProps extends PopupProps {
 function DetailModal(props: DetailModalProps) {
   const { debounceWait } = useContext(ConfigContext);
   const {
+    loading = false,
+    setItemsConfig,
+    itemsLayout,
+    getFormInstance = () => { },
+    mode,
+    onOk: handleOk = () => { },
+    onClose,
+    visible,
+    afterClose,
+    title,
+
     modalProps,
     cols = 1,
-    children,
-    setItemsConfig,
-    mode = '',
-    itemsLayout,
-    itemsWrapperStyle = {} as any,
-    itemsWrapperClassName,
-    loading = false,
+    itemsWrapperProps = {} as any,
     form = {} as WrappedFormUtils,
-    getFormInstance = () => { },
+    children,
   } = props;
-  const { onOk: handleOk = () => { }, ...restModalConfig } = modalProps || {};
   getFormInstance(form);
   const itemsConfig = setItemsConfig(form);
 
@@ -78,9 +90,17 @@ function DetailModal(props: DetailModalProps) {
     );
 
   return (
-    <Modal destroyOnClose {...restModalConfig} onOk={onOk}>
+    <Modal
+      destroyOnClose
+      {...modalProps}
+      onOk={onOk}
+      onCancel={onClose}
+      visible={visible}
+      afterClose={afterClose}
+      title={title}
+    >
       <Fragment>
-        <div className={itemsWrapperClassName} style={itemsWrapperStyle}>
+        <div {...itemsWrapperProps}>
           <Spin spinning={loading}>
             {colsItems}
           </Spin>

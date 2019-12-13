@@ -9,22 +9,34 @@ import ConfigContext from '../../ConfigContext';
 import defaultLocale from '../../defaultLocale';
 import { PopupProps } from '../DetailModal/index';
 
+export type CustomModalProps = Omit<DrawerProps,
+  | 'title'
+  | 'visible'
+  | 'onOk'
+  | 'onClose'
+  | 'afterClose'
+>
+
 export interface DetailDrawerProps extends PopupProps {
-  drawerProps?: DrawerProps;
-  onOk?: Function;
+  drawerProps?: CustomModalProps;
 }
 
 function DetailDrawer(props: DetailDrawerProps) {
   const { setLocale, debounceWait } = useContext(ConfigContext);
   const locale = { ...defaultLocale.drawer, ..._get(setLocale, 'drawer', {}) };
   const {
-    drawerProps = {},
-    onOk: handleOk = () => { },
-    form = {} as WrappedFormUtils,
+    loading = false,
     setItemsConfig,
     itemsLayout,
-    loading = false,
     getFormInstance = () => { },
+    onOk: handleOk = () => { },
+    onClose,
+    visible,
+    afterClose = () => { },
+    title,
+
+    drawerProps = {},
+    form = {} as WrappedFormUtils,
   } = props;
   getFormInstance(form);
 
@@ -40,7 +52,18 @@ function DetailDrawer(props: DetailDrawerProps) {
   }, debounceWait);
 
   return (
-    <Drawer destroyOnClose width={560} {...drawerProps}>
+    <Drawer
+      destroyOnClose
+      width={560}
+      {...drawerProps}
+      visible={visible}
+      afterVisibleChange={(isVisible) => {
+        if (!isVisible) {
+          afterClose();
+        }
+      }}
+      title={title}
+    >
       <Spin spinning={loading}>
         {createFormItems(form)(itemsConfig, itemsLayout)}
         <div
@@ -55,7 +78,7 @@ function DetailDrawer(props: DetailDrawerProps) {
             textAlign: 'right',
           }}
         >
-          <Button onClick={drawerProps.onClose as any} style={{ marginRight: 8 }}>
+          <Button onClick={onClose} style={{ marginRight: 8 }}>
             {locale.cancel}
           </Button>
           <Button onClick={okHandle} type="primary">
