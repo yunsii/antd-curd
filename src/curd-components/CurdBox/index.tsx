@@ -10,8 +10,8 @@ import { PopconfirmProps } from 'antd/lib/popconfirm';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 import { ItemConfig } from 'antd-form-mate/dist/lib/props';
 import { CreateName, DetailName, UpdateName } from '../../constants';
-import DetailFormDrawer from '../../components/DetailDrawer/index';
-import DetailFormModal from '../../components/DetailModal/index';
+import DetailDrawer from '../../components/DetailDrawer/index';
+import DetailModal from '../../components/DetailModal/index';
 import { DetailModalProps } from '../../components/DetailModal/index';
 import { DetailDrawerProps } from '../../components/DetailDrawer/index';
 import Curd from '../../Curd';
@@ -409,6 +409,18 @@ export default class CurdBox<T extends { id: number | string }> extends PureComp
     return formatSorter || formatSorterDefault;
   }
 
+  renderOperators = () => {
+    const { showOperators, createButtonName, extraOperators } = this.props;
+    return showOperators && (
+      <Operators
+        createButtonName={createButtonName}
+        handleCreateClick={() => { this.handleVisible(CreateName, true) }}
+      >
+        {extraOperators}
+      </Operators>
+    )
+  }
+
   renderContainer = () => {
     const { actionsConfig, children, fetchLoading, deleteLoading } = this.props;
     return injectChildren(children, {
@@ -445,7 +457,7 @@ export default class CurdBox<T extends { id: number | string }> extends PureComp
 
     if (popup === 'drawer') {
       result = (
-        <DetailFormDrawer
+        <DetailDrawer
           drawerConfig={{
             ...drawerProps,
             ...commenPopupProps,
@@ -461,7 +473,7 @@ export default class CurdBox<T extends { id: number | string }> extends PureComp
       );
     } else if (popup === 'modal') {
       result = (
-        <DetailFormModal
+        <DetailModal
           modalConfig={{
             ...modalProps,
             ...commenPopupProps,
@@ -481,17 +493,9 @@ export default class CurdBox<T extends { id: number | string }> extends PureComp
   };
 
   render() {
-    const { showOperators, extraOperators, createButtonName } = this.props;
     return (
       <>
-        {showOperators ? (
-          <Operators
-            createButtonName={createButtonName}
-            handleCreateClick={() => { this.handleVisible(CreateName, true) }}
-          >
-            {extraOperators}
-          </Operators>
-        ) : null}
+        {this.renderOperators()}
         {this.renderContainer()}
         {this.renderPopup()}
       </>
