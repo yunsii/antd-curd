@@ -11,7 +11,7 @@ import { WrappedFormUtils } from 'antd/lib/form/Form';
 import { ItemConfig } from 'antd-form-mate/dist/lib/props';
 import { CreateName, DetailName, UpdateName } from '../../constants';
 import DetailDrawer from '../../components/DetailDrawer/index';
-import DetailModal from '../../components/DetailModal/index';
+import DetailModal, { PopupProps } from '../../components/DetailModal/index';
 import { DetailModalProps } from '../../components/DetailModal/index';
 import { DetailDrawerProps } from '../../components/DetailDrawer/index';
 import Curd from '../../Curd';
@@ -23,8 +23,8 @@ import DataContext from '../../DataContext';
 import { formatSorter as formatSorterDefault, searchFieldName as searchFieldNameDefault } from '../../defaultConfig';
 import defaultLocale from '../../defaultLocale';
 
-export type CustomDetailFormDrawerProps = Omit<DetailDrawerProps, 'setItemsConfig' | 'loading' | 'form' | 'onOk'>
-export type CustomDetailFormModalProps = Omit<DetailModalProps, 'setItemsConfig' | 'loading' | 'form'>
+export type CustomDetailDrawerProps = Omit<DetailDrawerProps, 'setItemsConfig' | 'loading' | 'form' | 'onOk'>
+export type CustomDetailModalProps = Omit<DetailModalProps, 'setItemsConfig' | 'loading' | 'form'>
 
 export type PopupMode = 'create' | 'detail' | 'update';
 export type CurdlLocale = 'createOk' | 'updateOk' | 'deleteOk';
@@ -54,9 +54,6 @@ export interface ActionsConfig<T> {
 }
 
 const curdBoxProps = [
-  'createTitle',
-  'detailTitle',
-  'updateTitle',
   'fetchLoading',
   'deleteLoading',
   'createLoading',
@@ -84,21 +81,20 @@ const curdBoxProps = [
 
 export interface CurdBoxProps<T> {
   modelName?: string;
-  /** popup title of create */
-  createTitle?: string;
-  /** popup title of detail */
-  detailTitle?: string;
-  /** popup title of update */
-  updateTitle?: string;
+  title?: {
+    create?: any;
+    detail?: any;
+    update?: any;
+  },
   fetchLoading?: boolean;
   deleteLoading?: boolean;
   createLoading?: boolean;
   detailLoading?: boolean;
   updateLoading?: boolean;
-  /** if value is '' or false, hide the button */
+  /** if value is falsy, hide the button */
   createButtonName?: string | false | null;
   popup?: JSX.Element | 'modal' | 'drawer' | false | null;
-  popupProps?: CustomDetailFormDrawerProps | CustomDetailFormModalProps;
+  popupProps?: CustomDetailDrawerProps | CustomDetailModalProps;
   setFormItemsConfig: (detail: any, mode: PopupMode, form?: FormProps['form']) => ItemConfig[];
   afterPopupClose?: (mode: PopupMode) => void;
   interceptors?: {
@@ -145,9 +141,6 @@ interface CurdState<T> {
 
 export default class CurdBox<T extends { id: number | string }> extends PureComponent<CurdBoxProps<T>, CurdState<T>> {
   static defaultProps = {
-    createTitle: '新建对象',
-    detailTitle: '对象详情',
-    updateTitle: '编辑对象',
     fetchLoading: false,
     createLoading: false,
     updateLoading: false,
@@ -178,32 +171,22 @@ export default class CurdBox<T extends { id: number | string }> extends PureComp
 
   componentDidMount() {
     const { dispatch, autoFetch, modelName } = this.props;
-    if (autoFetch) {
-      dispatch({
-        type: `${modelName}/fetch`,
-      });
-    }
+    autoFetch && dispatch({ type: `${modelName}/fetch` });
   }
 
-  willFetchDetail = () => {
-    return DetailName in this.props && 'detailLoading' in this.props;
-  };
-
-  fetchDetail = (record: T) => {
-    const { dispatch, modelName } = this.props;
-    dispatch({
-      type: `${modelName}/detail`,
-      id: record.id
-    });
-  };
+  willFetchDetail = () => DetailName in this.props && 'detailLoading' in this.props;
 
   fetchDetailOrNot = (record: T) => {
+    const { dispatch, modelName } = this.props;
     if (this.willFetchDetail()) {
-      this.fetchDetail(record);
+      dispatch({
+        type: `${modelName}/detail`,
+        id: record.id,
+      });
     }
   };
 
-  handleVisible = (action: PopupMode, visible, record?: T) => {
+  handlePopupOpen = (action: PopupMode, record?: T) => {
     const { interceptors = {} } = this.props;
     const { handleCreateClick } = interceptors;
     if (handleCreateClick && action === CreateName) {
@@ -213,13 +196,25 @@ export default class CurdBox<T extends { id: number | string }> extends PureComp
     this.setState({
       mode: action,
       popupVisible: true,
+      record: record || {} as T,
     });
-    if (visible) {
-      this.setState({
-        record: record || {} as T,
+  };
+
+  closePopup = () => { this.setState({ popupVisible: false }) };
+
+  handlePopupAfterClose = () => {
+    const { dispatch, modelName, afterPopupClose = () => { } } = this.props;
+    const { mode } = this.state;
+    console.log('handlePopupAfterClose', mode)
+    if (mode === 'detail' || mode === 'update') {
+      dispatch({
+        type: `${modelName}/_saveDetail`,
+        payload: {},
       });
     }
-  };
+    afterPopupClose(mode);
+  }
+
 
   reSearch = (type?: 'create' | 'update' | 'delete') => {
     const { __curd__ } = this.props;
@@ -244,7 +239,7 @@ export default class CurdBox<T extends { id: number | string }> extends PureComp
     const { interceptors } = this.props;
     return {
       fetchDetailOrNot: this.fetchDetailOrNot,
-      handleVisible: this.handleVisible,
+      handlePopupOpen: this.handlePopupOpen,
       deleteModel: this.deleteModel,
       interceptors
     };
@@ -263,18 +258,15 @@ export default class CurdBox<T extends { id: number | string }> extends PureComp
   };
 
   getPopupTitle = () => {
-    const { createTitle, detailTitle, updateTitle } = this.props;
+    const { title } = this.props;
     const { mode } = this.state;
-    if (mode === DetailName) {
-      return detailTitle;
-    }
-    if (mode === UpdateName) {
-      return updateTitle;
-    }
-    return createTitle;
+    return {
+      create: '新建对象',
+      detail: '对象详情',
+      update: '编辑对象',
+      ...title,
+    }[mode]
   };
-
-  closePopup = () => this.setState({ popupVisible: false });
 
   handleCreateOk = async (fieldsValue) => {
     console.log('handleCreateOk', fieldsValue);
@@ -381,19 +373,6 @@ export default class CurdBox<T extends { id: number | string }> extends PureComp
     }
   };
 
-  handlePopupClose = () => {
-    const { dispatch, modelName, afterPopupClose = () => { } } = this.props;
-    const { mode } = this.state;
-    console.log('handlePopupClose', mode)
-    if (mode === 'detail' || mode === 'update') {
-      dispatch({
-        type: `${modelName}/_saveDetail`,
-        payload: {},
-      });
-    }
-    afterPopupClose(mode);
-  }
-
   getLocale = (field: CurdlLocale) => {
     const { setLocale = {} } = this.props;
     return setLocale[field] || defaultLocale.curd[field];
@@ -414,7 +393,7 @@ export default class CurdBox<T extends { id: number | string }> extends PureComp
     return showOperators && (
       <Operators
         createButtonName={createButtonName}
-        handleCreateClick={() => { this.handleVisible(CreateName, true) }}
+        handleCreateClick={() => { this.handlePopupOpen(CreateName) }}
       >
         {extraOperators}
       </Operators>
@@ -448,42 +427,31 @@ export default class CurdBox<T extends { id: number | string }> extends PureComp
     const isDetailMode = [DetailName, UpdateName].includes(mode);
     const displayDetail = this.willFetchDetail() && isDetailMode ? detail : record;
 
-    const commenPopupProps = {
+    const commenPopupProps: Omit<PopupProps, 'form'> = {
       title: this.getPopupTitle(),
       visible: popupVisible,
-      onCancel: this.closePopup,
-      onClose: this.closePopup
+      onClose: this.closePopup,
+      afterClose: this.handlePopupAfterClose,
+      mode,
+      loading,
+      onOk: this.handleOk,
+      setItemsConfig: (form: WrappedFormUtils) => setFormItemsConfig(displayDetail, mode, form),
     };
 
     if (popup === 'drawer') {
       result = (
         <DetailDrawer
-          drawerConfig={{
-            ...drawerProps,
-            ...commenPopupProps,
-            afterVisibleChange: (visible) => {
-              if (!visible) { this.handlePopupClose() }
-            },
-          }}
+          drawerProps={drawerProps}
+          {...commenPopupProps}
           {...restPopupProps}
-          loading={loading}
-          onOk={this.handleOk}
-          setItemsConfig={(form: WrappedFormUtils) => setFormItemsConfig(displayDetail, mode, form)}
         />
       );
     } else if (popup === 'modal') {
       result = (
         <DetailModal
-          modalConfig={{
-            ...modalProps,
-            ...commenPopupProps,
-            onOk: this.handleOk,
-            afterClose: this.handlePopupClose,
-          }}
+          modalProps={modalProps}
+          {...commenPopupProps}
           {...restPopupProps}
-          loading={loading}
-          setItemsConfig={(form: WrappedFormUtils) => setFormItemsConfig(displayDetail, mode, form)}
-          mode={mode}
         />
       );
     } else if (popup) {
