@@ -500,13 +500,12 @@ export default class CurdBox<T extends { id: number | string }> extends PureComp
 }
 
 export interface InjectContainerProps<T extends { id: number | string }> {
-  actionsConfig: CurdBoxProps<T>['actionsConfig'];
   renderActions: CurdBox<T>['renderActions'];
   handleDataChange: CurdBox<T>['handleDataChange'];
 }
 
-export function withCurdBox<T>(WrappedComponent: React.ComponentClass<T> | React.FC<T>) {
-  const WithCurdBox = (props: T & CurdBoxProps<any>) => {
+export function withCurdBox<P>(WrappedComponent: React.ComponentClass<P> | React.FC<P>) {
+  function WithCurdBox<P, T>(props: Omit<P & CurdBoxProps<T>, keyof InjectContainerProps<T & { id: number | string }>>) {
     if (!WrappedComponent) { return null; }
 
     const {
