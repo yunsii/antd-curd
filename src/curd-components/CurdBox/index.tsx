@@ -9,7 +9,7 @@ import { PaginationConfig, SorterResult, TableCurrentDataSource } from 'antd/lib
 import { PopconfirmProps } from 'antd/lib/popconfirm';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 import { ItemConfig } from 'antd-form-mate/dist/lib/props';
-import { CreateName, DetailName, UpdateName } from '../../constants';
+import { CreateName, DetailName, UpdateName, DeleteName } from '../../constants';
 import DetailDrawer from '../../components/DetailDrawer/index';
 import DetailModal, { PopupProps } from '../../components/DetailModal/index';
 import { DetailModalProps } from '../../components/DetailModal/index';
@@ -186,12 +186,52 @@ export default class CurdBox<T extends { id: number | string }> extends PureComp
     }
   };
 
-  handlePopupOpen = (action: PopupMode, record?: T) => {
+  // handlePopupOpen = (action: PopupMode, record?: T) => {
+  //   const { interceptors = {} } = this.props;
+  //   const { handleCreateClick } = interceptors;
+  //   if (handleCreateClick && action === CreateName) {
+  //     const isBreak = handleCreateClick();
+  //     if (isBreak) return;
+  //   }
+  //   this.setState({
+  //     mode: action,
+  //     popupVisible: true,
+  //     record: record || {} as T,
+  //   });
+  // };
+
+  handleDefaultActionClick = (action: PopupMode | 'delete', record?: T) => {
     const { interceptors = {} } = this.props;
-    const { handleCreateClick } = interceptors;
-    if (handleCreateClick && action === CreateName) {
-      const isBreak = handleCreateClick();
-      if (isBreak) return;
+    const {
+      handleCreateClick,
+      handleDetailClick,
+      handleUpdateClick,
+      handleDeleteClick,
+    } = interceptors;
+    if (action === CreateName) {
+      if (handleCreateClick) {
+        const isBreak = handleCreateClick();
+        if (isBreak) return;
+      }
+    } else if (action === DetailName) {
+      if (handleDetailClick) {
+        const isBreak = handleDetailClick(record!);
+        if (isBreak) return;
+      }
+      this.fetchDetailOrNot(record!);
+    } else if (action === UpdateName) {
+      if (handleUpdateClick) {
+        const isBreak = handleUpdateClick(record!);
+        if (isBreak) return;
+      }
+      this.fetchDetailOrNot(record!);
+    } else if (action === DeleteName) {
+      if (handleDeleteClick) {
+        handleDeleteClick(record!);
+        return;
+      }
+      this.deleteModel(record!.id);
+      return;
     }
     this.setState({
       mode: action,
@@ -215,7 +255,6 @@ export default class CurdBox<T extends { id: number | string }> extends PureComp
     afterPopupClose(mode);
   }
 
-
   reSearch = (type?: 'create' | 'update' | 'delete') => {
     const { __curd__ } = this.props;
     if (__curd__) {
@@ -235,21 +274,11 @@ export default class CurdBox<T extends { id: number | string }> extends PureComp
     });
   };
 
-  setActionsMethod = () => {
-    const { interceptors } = this.props;
-    return {
-      fetchDetailOrNot: this.fetchDetailOrNot,
-      handlePopupOpen: this.handlePopupOpen,
-      deleteModel: this.deleteModel,
-      interceptors
-    };
-  };
-
   renderActions = (record: T) => {
     const { actionsConfig } = this.props;
     if (actionsConfig) {
       const { confirmKeys, ...rest } = actionsConfig;
-      return setActions(record, this.setActionsMethod(), {
+      return setActions(record, this.handleDefaultActionClick, {
         ...rest,
         confirmKeys: confirmKeys || [12]
       });
@@ -393,7 +422,7 @@ export default class CurdBox<T extends { id: number | string }> extends PureComp
     return showOperators && (
       <Operators
         createButtonName={createButtonName}
-        handleCreateClick={() => { this.handlePopupOpen(CreateName) }}
+        handleCreateClick={() => { this.handleDefaultActionClick(CreateName) }}
       >
         {extraOperators}
       </Operators>

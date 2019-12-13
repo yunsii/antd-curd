@@ -3,8 +3,8 @@ import React from 'react';
 import _isArray from 'lodash/isArray';
 import _isFunction from 'lodash/isFunction';
 import { Icon, Dropdown, Menu, Popconfirm, Modal } from 'antd';
-import { DetailName, UpdateName } from '../../../constants';
-import { CurdBoxProps, ActionsConfig } from '../index';
+import { DetailName, UpdateName, DeleteName } from '../../../constants';
+import CurdBox, { CurdBoxProps, ActionsConfig } from '../index';
 import styles from './index.less';
 
 export type ConfirmKey<T> = (number | [number, (record: T) => string]);
@@ -52,8 +52,7 @@ export function sortAndFilterActionsAsc<T>(record: T, actions: ActionType<T>[], 
     });
 }
 
-export function initialActions<T extends { id: number | string }>(record: T, actionsMethod: ActionsMethod<T>, actionsConfig: ActionsConfig<T>) {
-  const { fetchDetailOrNot, handlePopupOpen, deleteModel, interceptors = {} } = actionsMethod;
+export function initialActions<T extends { id: number | string }>(record: T, handleDefaultActionClick: CurdBox<T>['handleDefaultActionClick'], actionsConfig: ActionsConfig<T>) {
   const {
     detailActionTitle = '详情',
     updateActionTitle = '编辑',
@@ -62,42 +61,21 @@ export function initialActions<T extends { id: number | string }>(record: T, act
     extraActions = [],
     hideActions = []
   } = actionsConfig;
-  const { handleDetailClick, handleDeleteClick, handleUpdateClick } = interceptors;
   const actions = [
     {
       key: 4,
       title: detailActionTitle,
-      handleClick: () => {
-        if (handleDetailClick) {
-          const isBreak = handleDetailClick(record);
-          if (isBreak) return;
-        }
-        handlePopupOpen(DetailName, record);
-        fetchDetailOrNot(record);
-      }
+      handleClick: () => { handleDefaultActionClick(DetailName, record) }
     },
     {
       key: 8,
       title: updateActionTitle,
-      handleClick: () => {
-        if (handleUpdateClick) {
-          const isBreak = handleUpdateClick(record);
-          if (isBreak) return;
-        }
-        handlePopupOpen(UpdateName, record);
-        fetchDetailOrNot(record);
-      }
+      handleClick: () => { handleDefaultActionClick(UpdateName, record) }
     },
     {
       key: 12,
       title: deleteActionTitle,
-      handleClick: () => {
-        if (handleDeleteClick) {
-          handleDeleteClick(record);
-          return;
-        }
-        deleteModel(record.id);
-      }
+      handleClick: () => { handleDefaultActionClick(DeleteName, record) }
     },
     ...extraActions
   ];
@@ -237,14 +215,7 @@ export function renderActions<T>(record: T) {
   };
 }
 
-export interface ActionsMethod<T extends { id: number | string }> {
-  fetchDetailOrNot: (record: T) => void;
-  handlePopupOpen: (action: string, record?: T) => void;
-  deleteModel: (id: T['id']) => void;
-  interceptors: CurdBoxProps<T>['interceptors'];
-}
-
-export function setActions<T extends { id: number | string }>(record: T, actionsMethod: ActionsMethod<T>, actionsConfig: ActionsConfig<T>) {
-  const [actions, moreActions] = initialActions(record, actionsMethod, actionsConfig);
+export function setActions<T extends { id: number | string }>(record: T, handleDefaultActionClick: CurdBox<T>['handleDefaultActionClick'], actionsConfig: ActionsConfig<T>) {
+  const [actions, moreActions] = initialActions(record, handleDefaultActionClick, actionsConfig);
   return renderActions(record)(actions, moreActions, actionsConfig);
 }
