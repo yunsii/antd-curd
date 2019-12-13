@@ -1,8 +1,8 @@
 import React, { PureComponent } from 'react';
 import { Card } from 'antd';
 import _get from 'lodash/get';
-import CurdTable from './curd-components/CurdTable/index';
-import CurdList from './curd-components/CurdList/index';
+import CurdTable, { CustomStandardTableProps } from './curd-components/CurdTable/index';
+import CurdList, { CustomStandardListProps } from './curd-components/CurdList/index';
 // import DetailDrawer from './components/DetailDrawer/index';
 // import DetailModal from './components/DetailModal/index';
 import CurdQuery from './curd-components/CurdQuery';
@@ -44,8 +44,8 @@ class Curd<T> extends PureComponent<CurdProps<T>, CurdState> {
 	};
 
 	static Query = CurdQuery;
-	static Table = withCurdBox(CurdTable);
-	static List = withCurdBox(CurdList);
+	static Table = withCurdBox<CustomStandardTableProps<any>>(CurdTable);
+	static List = withCurdBox<CustomStandardListProps<any>>(CurdList);
 
 	state = {
 		searchForm: {} as any,
