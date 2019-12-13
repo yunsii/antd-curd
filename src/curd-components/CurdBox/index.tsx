@@ -55,13 +55,15 @@ export interface ActionsConfig<T> {
 }
 
 const curdBoxProps = [
+  'modelName',
+  'title',
   'fetchLoading',
   'deleteLoading',
   'createLoading',
   'detailLoading',
   'updateLoading',
   'createButtonName',
-  'popupType',
+  'popup',
   'popupProps',
   'setFormItemsConfig',
   'afterPopupClose',
@@ -187,20 +189,6 @@ export default class CurdBox<T extends { id: number | string }> extends PureComp
     }
   };
 
-  // handlePopupOpen = (action: PopupMode, record?: T) => {
-  //   const { interceptors = {} } = this.props;
-  //   const { handleCreateClick } = interceptors;
-  //   if (handleCreateClick && action === CreateName) {
-  //     const isBreak = handleCreateClick();
-  //     if (isBreak) return;
-  //   }
-  //   this.setState({
-  //     mode: action,
-  //     popupVisible: true,
-  //     record: record || {} as T,
-  //   });
-  // };
-
   handleDefaultActionClick = (action: PopupMode | 'delete', record?: T) => {
     const { interceptors = {} } = this.props;
     const actionFunctionName = `handle${_capitalize(action)}Click` as 'handleCreateClick' | 'handleDetailClick' | 'handleUpdateClick' | 'handleDeleteClick';
@@ -214,14 +202,14 @@ export default class CurdBox<T extends { id: number | string }> extends PureComp
         return;
       }
     }
-
-    if (['detail', 'update'].includes(action)) { this.fetchDetailOrNot(record!); }
-
+    
     this.setState({
       mode: action as 'create' | 'detail' | 'update',
       popupVisible: true,
       record: record || {} as T,
     });
+
+    if (['detail', 'update'].includes(action)) { this.fetchDetailOrNot(record!); }
   };
 
   closePopup = () => { this.setState({ popupVisible: false }) };
@@ -489,8 +477,8 @@ export interface InjectContainerProps<T extends { id: number | string }> {
   handleDataChange: CurdBox<T>['handleDataChange'];
 }
 
-export function withCurdBox<P>(WrappedComponent: React.ComponentClass<P> | React.FC<P>) {
-  function WithCurdBox<P, T>(props: Omit<P & CurdBoxProps<T>, keyof InjectContainerProps<T & { id: number | string }>>) {
+export function withCurdBox<T>(WrappedComponent: React.ComponentClass<T> | React.FC<T>) {
+  function WithCurdBox(props: Omit<T & CurdBoxProps<any>, keyof InjectContainerProps<any>>) {
     if (!WrappedComponent) { return null; }
 
     const {
