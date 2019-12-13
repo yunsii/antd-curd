@@ -1,8 +1,9 @@
 import React, { PureComponent, useContext } from 'react';
+import _get from 'lodash/get';
 import _pick from 'lodash/pick';
 import _omit from 'lodash/omit';
+import _capitalize from 'lodash/capitalize';
 import _cloneDeep from 'lodash/cloneDeep';
-import _get from 'lodash/get';
 import { message } from 'antd';
 import { FormProps } from 'antd/lib/form';
 import { PaginationConfig, SorterResult, TableCurrentDataSource } from 'antd/lib/table';
@@ -202,39 +203,22 @@ export default class CurdBox<T extends { id: number | string }> extends PureComp
 
   handleDefaultActionClick = (action: PopupMode | 'delete', record?: T) => {
     const { interceptors = {} } = this.props;
-    const {
-      handleCreateClick,
-      handleDetailClick,
-      handleUpdateClick,
-      handleDeleteClick,
-    } = interceptors;
-    if (action === CreateName) {
-      if (handleCreateClick) {
-        const isBreak = handleCreateClick();
-        if (isBreak) return;
-      }
-    } else if (action === DetailName) {
-      if (handleDetailClick) {
-        const isBreak = handleDetailClick(record!);
-        if (isBreak) return;
-      }
-      this.fetchDetailOrNot(record!);
-    } else if (action === UpdateName) {
-      if (handleUpdateClick) {
-        const isBreak = handleUpdateClick(record!);
-        if (isBreak) return;
-      }
-      this.fetchDetailOrNot(record!);
-    } else if (action === DeleteName) {
-      if (handleDeleteClick) {
-        handleDeleteClick(record!);
+    const actionFunctionName = `handle${_capitalize(action)}Click` as 'handleCreateClick' | 'handleDetailClick' | 'handleUpdateClick' | 'handleDeleteClick';
+    const { [actionFunctionName]: handleActionClick } = interceptors;
+
+    if (handleActionClick) {
+      // 调用自定义点击事件回调的返回值为真时，打断。
+      if (handleActionClick(record!)) { return; }
+      if (action === DeleteName) {
+        this.deleteModel(record!.id);
         return;
       }
-      this.deleteModel(record!.id);
-      return;
     }
+
+    if (['detail', 'update'].includes(action)) { this.fetchDetailOrNot(record!); }
+
     this.setState({
-      mode: action,
+      mode: action as 'create' | 'detail' | 'update',
       popupVisible: true,
       record: record || {} as T,
     });
