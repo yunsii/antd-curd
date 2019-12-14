@@ -3,11 +3,34 @@ import _merge from 'lodash/merge';
 import {
   formatSorter as formatSorterDefault,
   searchFieldName as searchFieldNameDefault,
-  SearchFieldNameProps,
   debounceWait as debounceWaitDefault,
 } from '../defaultConfig';
-import defaultLocale, { ACLocaleProps } from '../defaultLocale';
+import defaultLocale from '../defaultLocale';
 import ConfigContext, { ConfigConsumerProps } from './context';
+
+export interface ACLocaleProps {
+  curd?: {
+    createOk?: string;
+    updateOk?: string;
+    deleteOk?: string;
+  },
+  queryPanel?: {
+    collapse?: string;
+    expand?: string;
+    search?: string;
+    reset?: string;
+  },
+  drawer?: {
+    ok?: string;
+    cancel?: string;
+  },
+}
+
+export interface SearchFieldNameProps {
+  page?: string;
+  limit?: string;
+  sortor?: string;
+}
 
 export interface ConfigProviderProps {
   acLocale?: ACLocaleProps;
