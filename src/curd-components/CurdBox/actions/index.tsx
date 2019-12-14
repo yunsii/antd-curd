@@ -3,8 +3,8 @@ import React from 'react';
 import _isArray from 'lodash/isArray';
 import _isFunction from 'lodash/isFunction';
 import { Icon, Dropdown, Menu, Popconfirm, Modal } from 'antd';
-import { DetailName, UpdateName, DeleteName } from '../../../constants';
-import { InternalCurdBox, CurdBoxProps, ActionsConfig } from '../index';
+import { DETAIL_NAME, UPDATE_NAME, DELETE_NAME } from '../../../constants';
+import { InternalCurdBox, ActionsConfig } from '../index';
 import styles from './index.less';
 
 export type ConfirmKey<T> = (number | [number, (record: T) => string]);
@@ -65,17 +65,17 @@ export function initialActions<T extends { id: number | string }>(record: T, han
     {
       key: 4,
       title: detailActionTitle,
-      handleClick: () => { handleDefaultActionClick(DetailName, record) }
+      handleClick: () => { handleDefaultActionClick(DETAIL_NAME, record) }
     },
     {
       key: 8,
       title: updateActionTitle,
-      handleClick: () => { handleDefaultActionClick(UpdateName, record) }
+      handleClick: () => { handleDefaultActionClick(UPDATE_NAME, record) }
     },
     {
       key: 12,
       title: deleteActionTitle,
-      handleClick: () => { handleDefaultActionClick(DeleteName, record) }
+      handleClick: () => { handleDefaultActionClick(DELETE_NAME, record) }
     },
     ...extraActions
   ];
