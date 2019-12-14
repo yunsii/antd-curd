@@ -51,13 +51,13 @@
 | --- | --- | --- | --- |
 | `renderItem` | 用于自定义渲染组件 | `({ record, actions, recordSelection, checkable }) => React.ReactNode` | - |
 
-## [DetailFormDrawer](/src/components/DetailFormDrawer/index.tsx) 详情抽屉
+## [DetailDrawer](/src/components/DetailDrawer/index.tsx) 详情抽屉
 
-基于 [antd-form-mate](https://github.com/theprimone/antd-form-mate) 实现的详情表单抽屉，参数定义可参见 [DetailFormDrawer/index.tsx](/src/components/DetailFormDrawer/index.tsx#L10) 。开启防抖。
+基于 [antd-form-mate](https://github.com/theprimone/antd-form-mate) 实现的详情表单抽屉，参数定义可参见 [DetailFormDrawer/index.tsx](/src/components/DetailDrawer/index.tsx#L10) 。开启防抖。
 
-## [DetailFormModal](/src/components/DetailFormModal/index.tsx) 详情模态框
+## [DetailModal](/src/components/DetailModal/index.tsx) 详情模态框
 
-基于 [antd-form-mate](https://github.com/theprimone/antd-form-mate) 实现的详情模态框，参数定义可参见 [DetailFormModal/index.tsx](/src/components/DetailFormModal/index.tsx#L28) 。开启防抖。
+基于 [antd-form-mate](https://github.com/theprimone/antd-form-mate) 实现的详情模态框，参数定义可参见 [DetailFormModal/index.tsx](/src/components/DetailModal/index.tsx#L28) 。开启防抖。
 
 ## [QueryPanel](/src/components/QueryPanel/index.tsx) 查询面板
 
@@ -74,7 +74,7 @@
 * `searchForm` 表单数据
 * `searchParams` 分页器，过滤器，排序器参数
   
-还有一个 `handleSearch` 方法可供直接（ `ref` ）调起当前页面数据查询接口以供**刷新数据**使用。
+还有一个 `handleSearch` 方法可供直接（ `innerRef` ）调起当前页面数据查询接口以供**刷新数据**使用。
 
 ### API
 
@@ -94,6 +94,12 @@
 如果需要主动为 `Curd.Query` 组件的表单赋值，通过 `ref` 方法拿到 `Curd.Query` 的实例，再通过 `ref.form` 拿到表单对象即可。
 
 另外，如果需要外部直接调起**新的搜索**，可通过 `ref` 拿到对象实例后调用 `setFieldsValueAndSearch` 并传入查询表单即可调起搜索，自动清空未输入的值。
+
+### API
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `queryArgsConfig` | 查询参数配置，参考 [index.js](https://github.com/theprimone/ant-design-pro-v2-plus/blob/79d034d339806c2a24c347036cebc219152f6b33/src/pages/Enhance/CurdPage/index.js#L24) | `any[]` | `[]` |
 
 ## [CurdBox](/src/curd-components/CurdBox/index.tsx)
 
@@ -116,8 +122,8 @@
 | `updateLoading` | 更新 model loading | `boolean` | - |
 | `deleteLoading` | 删除 model loading | `boolean` | - |
 | `createButtonName` | 新建按钮名称，为空时隐藏按钮 | `string \| false` | `'新建'` |
-| `popupType` | 弹窗类型 | `'modal' \| 'drawer'` | - |
-| `popupProps` | 弹窗配置，根据 `popupType` 配置 | [CustomDetailFormDrawerProps](/src/curd-components/CurdBox/index.tsx#L9) \| [CustomDetailFormModalProps](/src/curd-components/CurdBox/index.tsx#L23) | - |
+| `popup` | 弹窗类型 | `'modal' \| 'drawer'` | - |
+| `popupProps` | 弹窗配置，根据 `popup` 配置 | [CustomDetailFormDrawerProps](/src/curd-components/CurdBox/index.tsx#L9) \| [CustomDetailFormModalProps](/src/curd-components/CurdBox/index.tsx#L23) | - |
 | `setFormItemsConfig` | 配置表单数据 | `(detail: {}, mode: 'create' \| 'detail' \| 'update', form) => any[]` | - |
 | `afterPopupClose` | 关闭弹窗后回调函数 | `() => void` | - |
 | `interceptors` | 拦截器 | [interceptors](#interceptors) | - |
@@ -159,13 +165,6 @@
 
 * `handle**Click` 事件（除 `handleDeleteClick` 事件外， `handleDeleteClick` 直接中断）默认不会中断后续的弹窗事件，如果需要中断， `return true` 即可。
 * 如果对象详情不需要再请求接口，不注入 `detail` 或者 `detailLoading` 即可。
-
-
-### API
-
-| 参数 | 说明 | 类型 | 默认值 |
-| --- | --- | --- | --- |
-| `queryArgsConfig` | 查询参数配置，参考 [index.js](https://github.com/theprimone/ant-design-pro-v2-plus/blob/79d034d339806c2a24c347036cebc219152f6b33/src/pages/Enhance/CurdPage/index.js#L24) | `any[]` | `[]` |
 
 ## [Curd.Table](/src/curd-components/CurdTable/index.tsx)
 
