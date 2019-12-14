@@ -55,7 +55,9 @@ export interface ActionsConfig<T> {
 
 const internalCurdBoxProps = [
   'modelName',
-  'title',
+  'createTitle',
+  'detailTitle',
+  'updateTitle',
   'fetchLoading',
   'deleteLoading',
   'createLoading',
@@ -83,11 +85,9 @@ const internalCurdBoxProps = [
 
 export interface CurdBoxProps<T> {
   modelName?: string;
-  title?: {
-    create?: any;
-    detail?: any;
-    update?: any;
-  },
+  createTitle?: string;
+  detailTitle?: string;
+  updateTitle?: string;
   fetchLoading?: boolean;
   deleteLoading?: boolean;
   createLoading?: boolean;
@@ -256,14 +256,23 @@ export class InternalCurdBox<T extends { id: number | string }> extends PureComp
   };
 
   getPopupTitle = () => {
-    const { title } = this.props;
+    const {
+      createTitle,
+      detailTitle,
+      updateTitle,
+    } = this.props;
     const { mode } = this.state;
+    const defaultTitle = {
+      createTitle: '新建对象',
+      detailTitle: '对象详情',
+      updateTitle: '编辑对象',
+    };
     return {
-      create: '新建对象',
-      detail: '对象详情',
-      update: '编辑对象',
-      ...title,
-    }[mode]
+      ...defaultTitle,
+      createTitle,
+      detailTitle,
+      updateTitle,
+    }[`${mode}Title`]
   };
 
   handleCreateOk = async (fieldsValue) => {
