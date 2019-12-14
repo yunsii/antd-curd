@@ -5,9 +5,8 @@ import _get from 'lodash/get';
 import { DrawerProps } from 'antd/lib/drawer';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 import { createFormItems } from '../../FormMate';
-import ConfigContext from '../../ConfigContext';
-import defaultLocale from '../../defaultLocale';
 import { PopupProps } from '../DetailModal/index';
+import ConfigContext from '../../config-provider';
 
 export type CustomModalProps = Omit<DrawerProps,
   | 'title'
@@ -22,8 +21,7 @@ export interface DetailDrawerProps extends PopupProps {
 }
 
 function DetailDrawer(props: DetailDrawerProps) {
-  const { setLocale, debounceWait } = useContext(ConfigContext);
-  const locale = { ...defaultLocale.drawer, ..._get(setLocale, 'drawer', {}) };
+  const { acLocale, debounceWait } = useContext(ConfigContext);
   const {
     loading = false,
     setItemsConfig,
@@ -63,6 +61,7 @@ function DetailDrawer(props: DetailDrawerProps) {
         }
       }}
       title={title}
+      onClose={onClose}
     >
       <Spin spinning={loading}>
         {createFormItems(form)(itemsConfig, itemsLayout)}
@@ -79,10 +78,10 @@ function DetailDrawer(props: DetailDrawerProps) {
           }}
         >
           <Button onClick={onClose} style={{ marginRight: 8 }}>
-            {locale.cancel}
+            {acLocale.drawer.cancel}
           </Button>
           <Button onClick={okHandle} type="primary">
-            {locale.ok}
+            {acLocale.drawer.ok}
           </Button>
         </div>
       </Spin>
