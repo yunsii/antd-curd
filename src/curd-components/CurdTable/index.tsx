@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import StandardTable, { StandardTableProps, StandardTableColumnProps } from '../../components/StandardTable/index';
-import CurdBox from '../CurdBox';
+import { InternalCurdBox } from '../CurdBox';
 import { addDivider } from '../../utils';
 import DataContext from '../../DataContext';
 
@@ -8,8 +8,8 @@ type NoDataStandardTableProps<T> = Omit<StandardTableProps<T>, 'data'>;
 
 export interface CustomStandardTableProps<T extends { id: number | string }> extends NoDataStandardTableProps<T> {
   columns: StandardTableColumnProps<T>[];
-  renderActions?: CurdBox<T>['renderActions'];
-  handleDataChange?: CurdBox<T>['handleDataChange'];
+  renderActions?: InternalCurdBox<T>['renderActions'];
+  handleDataChange?: InternalCurdBox<T>['handleDataChange'];
 }
 export default function CustomStandardTable<T extends { id: number | string }>(props: CustomStandardTableProps<T>) {
   const { columns, renderActions, handleDataChange, ...rest } = props;
