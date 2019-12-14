@@ -15,14 +15,13 @@ import DetailDrawer from '../../components/DetailDrawer/index';
 import DetailModal, { PopupProps } from '../../components/DetailModal/index';
 import { DetailModalProps } from '../../components/DetailModal/index';
 import { DetailDrawerProps } from '../../components/DetailDrawer/index';
-import Curd from '../../Curd';
+import { InternalCurd } from '../../Curd';
 import Operators from './Operators/index';
 import { setActions, ActionType } from './actions/index';
 import { injectChildren } from '../../utils';
-import ConfigContext, { SearchFieldName } from '../../ConfigContext';
+import ConfigContext from '../../config-provider';
+import { ConfigConsumerProps } from '../../config-provider/context';
 import DataContext from '../../DataContext';
-import { formatSorter as formatSorterDefault, searchFieldName as searchFieldNameDefault } from '../../defaultConfig';
-import defaultLocale from '../../defaultLocale';
 
 export type CustomDetailDrawerProps = Omit<DetailDrawerProps, 'setItemsConfig' | 'loading' | 'form' | 'onOk'>
 export type CustomDetailModalProps = Omit<DetailModalProps, 'setItemsConfig' | 'loading' | 'form'>
@@ -54,7 +53,7 @@ export interface ActionsConfig<T> {
   deleteActionTitle?: string;
 }
 
-const curdBoxProps = [
+const internalCurdBoxProps = [
   'modelName',
   'title',
   'fetchLoading',
@@ -77,7 +76,7 @@ const curdBoxProps = [
   'reSearchAfterUpdate',
   '__curd__',
 
-  'setLocale',
+  'acLocale',
   'formatSorter',
   'searchFieldName',
 ]
@@ -125,24 +124,22 @@ export interface CurdBoxProps<T> {
   /** call model's fetch effect when componentDidMount */
   autoFetch?: boolean;
   reSearchAfterUpdate?: boolean;
-  __curd__?: Curd<T>;
-
-  setLocale?: {
-    createOk?: string;
-    updateOk?: string;
-    deleteOk?: string;
-  };
-  formatSorter?: typeof formatSorterDefault;
-  searchFieldName?: SearchFieldName;
+  __curd__?: InternalCurd<T>;
 }
 
-interface CurdState<T> {
+export interface InternalCurdBoxProps<T> extends CurdBoxProps<T> {
+  acLocale: ConfigConsumerProps['acLocale']['curd'];
+  formatSorter: ConfigConsumerProps['formatSorter'];
+  searchFieldName: ConfigConsumerProps['searchFieldName'];
+}
+
+interface InternalCurdState<T> {
   mode: PopupMode;
   popupVisible: boolean;
   record: T;
 }
 
-export default class CurdBox<T extends { id: number | string }> extends PureComponent<CurdBoxProps<T>, CurdState<T>> {
+export class InternalCurdBox<T extends { id: number | string }> extends PureComponent<InternalCurdBoxProps<T>, InternalCurdState<T>> {
   static defaultProps = {
     fetchLoading: false,
     createLoading: false,
@@ -202,7 +199,7 @@ export default class CurdBox<T extends { id: number | string }> extends PureComp
         return;
       }
     }
-    
+
     this.setState({
       mode: action as 'create' | 'detail' | 'update',
       popupVisible: true,
@@ -375,18 +372,18 @@ export default class CurdBox<T extends { id: number | string }> extends PureComp
   };
 
   getLocale = (field: CurdlLocale) => {
-    const { setLocale = {} } = this.props;
-    return setLocale[field] || defaultLocale.curd[field];
+    const { acLocale = {} } = this.props;
+    return acLocale[field];
   }
 
   getSearchFieldName = (field: 'page' | 'limit' | 'sortor') => {
     const { searchFieldName = {} } = this.props;
-    return searchFieldName[field] || searchFieldNameDefault[field];
+    return searchFieldName[field];
   }
 
   getFormatSorter = () => {
     const { formatSorter } = this.props;
-    return formatSorter || formatSorterDefault;
+    return formatSorter;
   }
 
   renderOperators = () => {
@@ -402,9 +399,8 @@ export default class CurdBox<T extends { id: number | string }> extends PureComp
   }
 
   renderContainer = () => {
-    const { actionsConfig, children, fetchLoading, deleteLoading } = this.props;
+    const { children, fetchLoading, deleteLoading } = this.props;
     return injectChildren(children, {
-      actionsConfig,
       renderActions: this.renderActions,
       handleDataChange: this.handleDataChange,
       loading: fetchLoading || deleteLoading,
@@ -473,8 +469,8 @@ export default class CurdBox<T extends { id: number | string }> extends PureComp
 }
 
 export interface InjectContainerProps<T extends { id: number | string }> {
-  renderActions: CurdBox<T>['renderActions'];
-  handleDataChange: CurdBox<T>['handleDataChange'];
+  renderActions: InternalCurdBox<T>['renderActions'];
+  handleDataChange: InternalCurdBox<T>['handleDataChange'];
 }
 
 export function withCurdBox<T>(WrappedComponent: React.ComponentClass<T> | React.FC<T>) {
@@ -482,34 +478,27 @@ export function withCurdBox<T>(WrappedComponent: React.ComponentClass<T> | React
     if (!WrappedComponent) { return null; }
 
     const {
-      setLocale: setLocaleGlobal,
-      searchFieldName: searchFieldNameGlobal,
-      formatSorter: formatSorterGlobal,
+      acLocale: { curd },
+      searchFieldName,
+      formatSorter,
     } = useContext(ConfigContext);
     const { __curd__, modelName } = useContext(DataContext);
-    const { setLocale, searchFieldName, formatSorter, ...rest } = props;
 
     const mergeProps = {
-      ...rest,
-      setLocale: {
-        ..._get(setLocaleGlobal, 'curd', {}),
-        ...setLocale,
-      },
-      formatSorter: formatSorter || formatSorterGlobal,
-      searchFieldName: {
-        ...searchFieldNameGlobal || {},
-        ...searchFieldName,
-      },
+      ...props,
+      __curd__,
+      modelName,
+      acLocale: curd,
+      searchFieldName,
+      formatSorter,
     }
 
     return (
-      <CurdBox
-        {..._pick(mergeProps, curdBoxProps)}
-        __curd__={__curd__}
-        modelName={modelName}
+      <InternalCurdBox
+        {...(_pick(mergeProps, internalCurdBoxProps) as InternalCurdBoxProps<any>)}
       >
-        <WrappedComponent {..._omit(mergeProps, curdBoxProps) as any} />
-      </CurdBox>
+        <WrappedComponent {..._omit(mergeProps, internalCurdBoxProps) as any} />
+      </InternalCurdBox>
     )
   }
 
