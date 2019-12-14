@@ -4,7 +4,7 @@ import _isArray from 'lodash/isArray';
 import _isFunction from 'lodash/isFunction';
 import { Icon, Dropdown, Menu, Popconfirm, Modal } from 'antd';
 import { DetailName, UpdateName, DeleteName } from '../../../constants';
-import CurdBox, { CurdBoxProps, ActionsConfig } from '../index';
+import { InternalCurdBox, CurdBoxProps, ActionsConfig } from '../index';
 import styles from './index.less';
 
 export type ConfirmKey<T> = (number | [number, (record: T) => string]);
@@ -52,7 +52,7 @@ export function sortAndFilterActionsAsc<T>(record: T, actions: ActionType<T>[], 
     });
 }
 
-export function initialActions<T extends { id: number | string }>(record: T, handleDefaultActionClick: CurdBox<T>['handleDefaultActionClick'], actionsConfig: ActionsConfig<T>) {
+export function initialActions<T extends { id: number | string }>(record: T, handleDefaultActionClick: InternalCurdBox<T>['handleDefaultActionClick'], actionsConfig: ActionsConfig<T>) {
   const {
     detailActionTitle = '详情',
     updateActionTitle = '编辑',
@@ -215,7 +215,7 @@ export function renderActions<T>(record: T) {
   };
 }
 
-export function setActions<T extends { id: number | string }>(record: T, handleDefaultActionClick: CurdBox<T>['handleDefaultActionClick'], actionsConfig: ActionsConfig<T>) {
+export function setActions<T extends { id: number | string }>(record: T, handleDefaultActionClick: InternalCurdBox<T>['handleDefaultActionClick'], actionsConfig: ActionsConfig<T>) {
   const [actions, moreActions] = initialActions(record, handleDefaultActionClick, actionsConfig);
   return renderActions(record)(actions, moreActions, actionsConfig);
 }
