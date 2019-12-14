@@ -257,22 +257,16 @@ export class InternalCurdBox<T extends { id: number | string }> extends PureComp
 
   getPopupTitle = () => {
     const {
-      createTitle,
-      detailTitle,
-      updateTitle,
+      createTitle = '新建对象',
+      detailTitle = '对象详情',
+      updateTitle = '编辑对象',
     } = this.props;
     const { mode } = this.state;
-    const defaultTitle = {
-      createTitle: '新建对象',
-      detailTitle: '对象详情',
-      updateTitle: '编辑对象',
-    };
     return {
-      ...defaultTitle,
       createTitle,
       detailTitle,
       updateTitle,
-    }[`${mode}Title`]
+    }[`${mode}Title`];
   };
 
   handleCreateOk = async (fieldsValue) => {
