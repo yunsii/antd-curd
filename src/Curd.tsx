@@ -3,13 +3,10 @@ import { Card } from 'antd';
 import _get from 'lodash/get';
 import CurdTable, { CustomStandardTableProps } from './curd-components/CurdTable/index';
 import CurdList, { CustomStandardListProps } from './curd-components/CurdList/index';
-// import DetailDrawer from './components/DetailDrawer/index';
-// import DetailModal from './components/DetailModal/index';
 import CurdQuery from './curd-components/CurdQuery';
 import { injectChildren } from './utils';
-import ConfigContext from './ConfigContext';
+import ConfigContext, { ConfigConsumerProps } from './config-provider/context';
 import DataContext from './DataContext';
-import { searchFieldName } from './defaultConfig';
 import { withCurdBox } from './curd-components/CurdBox'
 
 function DefaultWrapper(props: React.PropsWithChildren<any>) {
@@ -21,38 +18,37 @@ function DefaultWrapper(props: React.PropsWithChildren<any>) {
 	)
 }
 
-export interface CurdProps<T> extends React.Props<T> {
-	modelName: string;
+export interface CurdProps<T> {
+	modelName?: string;
 	data: { list: T[]; pagination?: any };
-  dispatch: Function;
-  /** antd-curd's wrapper, default is no bordered Card */
+	dispatch?: Function;
+	/** antd-curd's wrapper, default is no bordered Card */
 	wrapper?: React.ComponentClass | null;
+	innerRef?: React.Ref<InternalCurd<T>>;
 }
 
-export interface CurdState {
+interface InternalCurdProps<T> extends CurdProps<T> {
+	pageFieldName: string;
+}
+
+export interface InternalCurdState {
 	/** sharing query panel search form */
 	searchForm: any;
 	/** sharing table's pagination, filter and sorter params */
 	searchParams: any;
 }
 
-class Curd<T> extends PureComponent<CurdProps<T>, CurdState> {
+export class InternalCurd<T> extends PureComponent<InternalCurdProps<T>, InternalCurdState> {
 	static defaultProps = {
 		modelName: '',
 		wrapper: DefaultWrapper,
 		dispatch: () => { },
 	};
 
-	static Query = CurdQuery;
-	static Table = withCurdBox<CustomStandardTableProps<any>>(CurdTable);
-	static List = withCurdBox<CustomStandardListProps<any>>(CurdList);
-
 	state = {
 		searchForm: {} as any,
 		searchParams: {} as any
 	};
-
-	pageFieldName = searchFieldName.page;
 
 	componentDidUpdate() {
 		if (process.env.NODE_ENV === 'development') {
@@ -64,7 +60,7 @@ class Curd<T> extends PureComponent<CurdProps<T>, CurdState> {
 	}
 
 	doSearch = () => {
-		const { modelName, dispatch } = this.props;
+		const { modelName, dispatch = () => { } } = this.props;
 		const { searchForm, searchParams } = this.state;
 		dispatch({
 			type: `${modelName}/fetch`,
@@ -73,15 +69,15 @@ class Curd<T> extends PureComponent<CurdProps<T>, CurdState> {
 	}
 
 	public handleSearch = (type?: 'create' | 'update' | 'delete') => {
-		const { data: { list } } = this.props;
+		const { data: { list }, pageFieldName } = this.props;
 		const { searchParams } = this.state;
-		const currentPage = searchParams[this.pageFieldName];
+		const currentPage = searchParams[pageFieldName];
 		if (type === 'delete' && list.length === 1 && currentPage > 1) {
 			this.setState(
 				{
 					searchParams: {
 						...searchParams,
-						[this.pageFieldName]: searchParams[this.pageFieldName] - 1,
+						[pageFieldName]: searchParams[pageFieldName] - 1,
 					}
 				},
 				() => this.doSearch(),
@@ -99,22 +95,27 @@ class Curd<T> extends PureComponent<CurdProps<T>, CurdState> {
 	render() {
 		const { modelName, data, wrapper } = this.props;
 		return (
-			<ConfigContext.Consumer>
-				{({ searchFieldName }) => {
-					const fieldName = _get(searchFieldName, 'page');
-					if (fieldName) {
-						this.pageFieldName = fieldName;
-					}
-
-					return (
-						<DataContext.Provider value={{ modelName, data, __curd__: this }}>
-							{wrapper ? React.createElement(wrapper, null, this.renderChildren()) : this.renderChildren()}
-						</DataContext.Provider>
-					)
-				}}
-			</ConfigContext.Consumer>
+			<DataContext.Provider value={{ modelName, data, __curd__: this }}>
+				{wrapper ? React.createElement(wrapper, null, this.renderChildren()) : this.renderChildren()}
+			</DataContext.Provider>
 		);
 	}
 }
 
-export default Curd;
+export default class Curd<T> extends React.Component<CurdProps<T>> {
+
+	static Query = CurdQuery;
+
+	static Table = withCurdBox<CustomStandardTableProps<any>>(CurdTable);
+
+	static List = withCurdBox<CustomStandardListProps<any>>(CurdList);
+
+	render() {
+		const { innerRef, ...rest } = this.props;
+		return (
+			<ConfigContext.Consumer>
+				{({ searchFieldName: { page } }: ConfigConsumerProps) => <InternalCurd {...rest} ref={innerRef} pageFieldName={page} />}
+			</ConfigContext.Consumer>
+		)
+	}
+}
