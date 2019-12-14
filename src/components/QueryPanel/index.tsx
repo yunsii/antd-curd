@@ -8,7 +8,7 @@ import { ItemConfig } from 'antd-form-mate/dist/lib/props';
 import { RowProps } from 'antd/lib/row';
 import { ColProps } from 'antd/lib/col';
 import { createFormItems } from '../../FormMate';
-import defaultLocale from '../../defaultLocale';
+import ConfigContext from '../../config-provider';
 import styles from './index.less';
 
 const addAllowClearToItemsConfig = itemsConfig =>
@@ -34,17 +34,20 @@ export interface QueryPanelProps extends FormComponentProps {
   colProps?: ColProps;
   onValuesChange?: (changedValues: any, allValues: any) => void;
   updateSearchValue?: (fieldsValue: any) => any;
-  setLocale?: {
-    [k in QueryPanelLocale]?: any;
-  }
   getFormInstance?: (form: WrappedFormUtils) => void;
 };
 
-interface QueryPanelState {
+export interface InternalQueryPanelProps extends QueryPanelProps {
+  acLocale?: {
+    [k in QueryPanelLocale]?: any;
+  }
+};
+
+interface InternalQueryPanelState {
   expandForm: boolean;
 }
 
-class QueryPanel extends PureComponent<QueryPanelProps, QueryPanelState> {
+class InternalQueryPanel extends PureComponent<InternalQueryPanelProps, InternalQueryPanelState> {
   state = {
     expandForm: false,
   };
@@ -77,8 +80,8 @@ class QueryPanel extends PureComponent<QueryPanelProps, QueryPanelState> {
   };
 
   getLocale = (field: QueryPanelLocale) => {
-    const { setLocale = {} } = this.props;
-    return setLocale[field] || defaultLocale.queryPanel[field];
+    const { acLocale = {} } = this.props;
+    return acLocale[field];
   }
 
   renderForm() {
@@ -147,6 +150,16 @@ class QueryPanel extends PureComponent<QueryPanelProps, QueryPanelState> {
 
   render() {
     return <div className={styles.searchForm}>{this.renderForm()}</div>;
+  }
+}
+
+class QueryPanel extends React.Component<QueryPanelProps> {
+  render() {
+    return (
+      <ConfigContext.Consumer>
+        {({ acLocale: { queryPanel } }) => <InternalQueryPanel {...this.props} acLocale={queryPanel} />}
+      </ConfigContext.Consumer>
+    )
   }
 }
 
