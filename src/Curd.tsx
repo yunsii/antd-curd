@@ -7,7 +7,7 @@ import CurdQuery from './curd-components/CurdQuery';
 import { injectChildren } from './utils';
 import ConfigContext, { ConfigConsumerProps } from './config-provider/context';
 import DataContext from './DataContext';
-import { withCurdBox } from './curd-components/CurdBox'
+import { withCurdBox, SearchableMode } from './curd-components/CurdBox';
 
 function DefaultWrapper(props: React.PropsWithChildren<any>) {
 	const { children } = props;
@@ -68,7 +68,7 @@ export class InternalCurd<T> extends PureComponent<InternalCurdProps<T>, Interna
 		});
 	}
 
-	public handleSearch = (type?: 'create' | 'update' | 'delete') => {
+	public handleSearch = (type?: SearchableMode) => {
 		const { data: { list }, pageFieldName } = this.props;
 		const { searchParams } = this.state;
 		const currentPage = searchParams[pageFieldName];

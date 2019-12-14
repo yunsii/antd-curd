@@ -10,7 +10,7 @@ import { PaginationConfig, SorterResult, TableCurrentDataSource } from 'antd/lib
 import { PopconfirmProps } from 'antd/lib/popconfirm';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 import { ItemConfig } from 'antd-form-mate/dist/lib/props';
-import { CreateName, DetailName, UpdateName, DeleteName } from '../../constants';
+import { CREATE_NAME, DETAIL_NAME, UPDATE_NAME, DELETE_NAME } from '../../constants';
 import DetailDrawer from '../../components/DetailDrawer/index';
 import DetailModal, { PopupProps } from '../../components/DetailModal/index';
 import { DetailModalProps } from '../../components/DetailModal/index';
@@ -26,8 +26,14 @@ import DataContext from '../../DataContext';
 export type CustomDetailDrawerProps = Omit<DetailDrawerProps, 'setItemsConfig' | 'loading' | 'form' | 'onOk'>
 export type CustomDetailModalProps = Omit<DetailModalProps, 'setItemsConfig' | 'loading' | 'form'>
 
-export type PopupMode = 'create' | 'detail' | 'update';
-export type CurdlLocale = 'createOk' | 'updateOk' | 'deleteOk';
+export type PopupMode = typeof CREATE_NAME | typeof DETAIL_NAME | typeof UPDATE_NAME;
+export type ClickMode = PopupMode | typeof DELETE_NAME;
+export type SearchableMode = typeof CREATE_NAME | typeof UPDATE_NAME | typeof DELETE_NAME;
+export type UpdateFieldsValueMode = typeof CREATE_NAME | typeof UPDATE_NAME;
+
+export type CurdlLocale = keyof ConfigConsumerProps['acLocale']['curd'];
+
+export type ClickFnName = 'handleCreateClick' | 'handleDetailClick' | 'handleUpdateClick' | 'handleDeleteClick';
 
 const getValue = (obj) => Object.keys(obj).map((key) => obj[key]).join(',');
 
@@ -101,7 +107,7 @@ export interface CurdBoxProps<T> {
   afterPopupClose?: (mode: PopupMode) => void;
   interceptors?: {
     /** update form values after click ok */
-    updateFieldsValue?: (fieldsValue: T, mode?: 'create' | 'update') => Promise<T> | T;
+    updateFieldsValue?: (fieldsValue: T, mode?: UpdateFieldsValueMode) => Promise<T> | T;
     /** callback on click create button, will break default behavior if return value is true */
     handleCreateClick?: () => boolean | undefined;
     /** callback on click detail button, will break default behavior if return value is true */
@@ -170,7 +176,7 @@ export class InternalCurdBox<T extends { id: number | string }> extends PureComp
     autoFetch && dispatch({ type: `${modelName}/fetch` });
   }
 
-  willFetchDetail = () => DetailName in this.props && 'detailLoading' in this.props;
+  willFetchDetail = () => DETAIL_NAME in this.props && 'detailLoading' in this.props;
 
   fetchDetailOrNot = (record: T) => {
     const { dispatch, modelName } = this.props;
@@ -182,27 +188,27 @@ export class InternalCurdBox<T extends { id: number | string }> extends PureComp
     }
   };
 
-  handleDefaultActionClick = (action: PopupMode | 'delete', record?: T) => {
+  handleDefaultActionClick = (action: ClickMode, record?: T) => {
     const { interceptors = {} } = this.props;
-    const actionFunctionName = `handle${_capitalize(action)}Click` as 'handleCreateClick' | 'handleDetailClick' | 'handleUpdateClick' | 'handleDeleteClick';
+    const actionFunctionName = `handle${_capitalize(action)}Click` as ClickFnName;
     const { [actionFunctionName]: handleActionClick } = interceptors;
 
     if (handleActionClick) {
       // 调用自定义点击事件回调的返回值为真时，打断。
       if (handleActionClick(record!)) { return; }
-      if (action === DeleteName) {
+      if (action === DELETE_NAME) {
         this.deleteModel(record!.id);
         return;
       }
     }
 
     this.setState({
-      mode: action as 'create' | 'detail' | 'update',
+      mode: action as PopupMode,
       popupVisible: true,
       record: record || {} as T,
     });
 
-    if (['detail', 'update'].includes(action)) { this.fetchDetailOrNot(record!); }
+    if ([DETAIL_NAME, UPDATE_NAME].includes(action)) { this.fetchDetailOrNot(record!); }
   };
 
   closePopup = () => { this.setState({ popupVisible: false }) };
@@ -211,7 +217,7 @@ export class InternalCurdBox<T extends { id: number | string }> extends PureComp
     const { dispatch, modelName, afterPopupClose = () => { } } = this.props;
     const { mode } = this.state;
     console.log('handlePopupAfterClose', mode)
-    if (mode === 'detail' || mode === 'update') {
+    if ([DETAIL_NAME, UPDATE_NAME].includes(mode)) {
       dispatch({
         type: `${modelName}/_saveDetail`,
         payload: {},
@@ -220,7 +226,7 @@ export class InternalCurdBox<T extends { id: number | string }> extends PureComp
     afterPopupClose(mode);
   }
 
-  reSearch = (type?: 'create' | 'update' | 'delete') => {
+  reSearch = (type?: SearchableMode) => {
     const { __curd__ } = this.props;
     if (__curd__) {
       __curd__.handleSearch(type);
@@ -256,7 +262,7 @@ export class InternalCurdBox<T extends { id: number | string }> extends PureComp
   handleCreateOk = async (fieldsValue) => {
     console.log('handleCreateOk', fieldsValue);
     const { interceptors, dispatch, modelName } = this.props;
-    const newFieldsValue = await updateFieldsValueByInterceptors(fieldsValue, interceptors, CreateName);
+    const newFieldsValue = await updateFieldsValueByInterceptors(fieldsValue, interceptors, CREATE_NAME);
     if (!newFieldsValue) return;
     dispatch({
       type: `${modelName}/create`,
@@ -264,7 +270,7 @@ export class InternalCurdBox<T extends { id: number | string }> extends PureComp
       onOk: () => {
         message.success(this.getLocale('createOk'));
         this.closePopup();
-        this.reSearch('create');
+        this.reSearch(CREATE_NAME);
       }
     });
   };
@@ -273,7 +279,7 @@ export class InternalCurdBox<T extends { id: number | string }> extends PureComp
     console.log('handleUpdateOk', fieldsValue);
     const { dispatch, interceptors, reSearchAfterUpdate, modelName } = this.props;
     const { record } = this.state;
-    const newFieldsValue = await updateFieldsValueByInterceptors(fieldsValue, interceptors, UpdateName);
+    const newFieldsValue = await updateFieldsValueByInterceptors(fieldsValue, interceptors, UPDATE_NAME);
     if (!newFieldsValue) return;
     dispatch({
       type: `${modelName}/update`,
@@ -303,11 +309,11 @@ export class InternalCurdBox<T extends { id: number | string }> extends PureComp
 
   handleOk = (fieldsValue) => {
     const { mode } = this.state;
-    if (mode === DetailName) {
+    if (mode === DETAIL_NAME) {
       this.closePopup();
       return;
     }
-    if (mode === UpdateName) {
+    if (mode === UPDATE_NAME) {
       this.handleUpdateOk(fieldsValue);
       return;
     }
@@ -375,7 +381,7 @@ export class InternalCurdBox<T extends { id: number | string }> extends PureComp
     return acLocale[field];
   }
 
-  getSearchFieldName = (field: 'page' | 'limit' | 'sortor') => {
+  getSearchFieldName = (field: keyof ConfigConsumerProps['searchFieldName']) => {
     const { searchFieldName = {} } = this.props;
     return searchFieldName[field];
   }
@@ -390,7 +396,7 @@ export class InternalCurdBox<T extends { id: number | string }> extends PureComp
     return showOperators && (
       <Operators
         createButtonName={createButtonName}
-        handleCreateClick={() => { this.handleDefaultActionClick(CreateName) }}
+        handleCreateClick={() => { this.handleDefaultActionClick(CREATE_NAME) }}
       >
         {extraOperators}
       </Operators>
@@ -420,7 +426,7 @@ export class InternalCurdBox<T extends { id: number | string }> extends PureComp
     const { drawerProps, modalProps, ...restPopupProps } = popupProps as any;
     const loading = createLoading || detailLoading || updateLoading;
     const { mode, popupVisible, record } = this.state;
-    const isDetailMode = [DetailName, UpdateName].includes(mode);
+    const isDetailMode = [DETAIL_NAME, UPDATE_NAME].includes(mode);
     const displayDetail = this.willFetchDetail() && isDetailMode ? detail : record;
 
     const commenPopupProps: Omit<PopupProps, 'form'> = {
