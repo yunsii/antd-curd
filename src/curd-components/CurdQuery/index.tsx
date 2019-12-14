@@ -4,15 +4,15 @@ import _omit from 'lodash/omit';
 import _filter from 'lodash/filter';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 import QueryPanel, { QueryPanelProps } from '../../components/QueryPanel';
-import Curd from '../../Curd';
-import ConfigContext from '../../ConfigContext';
+import { InternalCurd } from '../../Curd';
+import ConfigContext from '../../config-provider';
 import DataContext from '../../DataContext';
 import { searchFieldName } from '../../defaultConfig';
 
 export interface CurdQueryPanelProps extends Omit<QueryPanelProps, 'form' | 'onSearch'> {
   reSearchAfterReset?: boolean;
   pageFieldName?: string;
-  __curd__?: Curd<any>;
+  __curd__?: InternalCurd<any>;
   ref?: React.Ref<CurdQueryPanel>;
 };
 
@@ -108,19 +108,15 @@ export class CurdQueryPanel extends PureComponent<CurdQueryPanelProps, CurdQuery
 }
 
 const CurdQueryPanelWithContext: React.FC<CurdQueryPanelProps> = forwardRef((props, ref: any) => {
-  const { setLocale: setLocaleGlobal, searchFieldName } = useContext(ConfigContext);
+  const { searchFieldName: { page } } = useContext(ConfigContext);
   const { __curd__ } = useContext(DataContext);
-  const { setLocale, pageFieldName, ...rest } = props;
-
-  const pageFieldNameGlobal = _get(searchFieldName, 'page');
-  const queryPanelLocaleGlobal = _get(setLocaleGlobal, 'queryPanel', {});
+  const { pageFieldName, ...rest } = props;
   return (
     <CurdQueryPanel
       {...rest}
       ref={ref}
       __curd__={__curd__}
-      setLocale={{ ...queryPanelLocaleGlobal, ...setLocale }}
-      pageFieldName={pageFieldName || pageFieldNameGlobal}
+      pageFieldName={pageFieldName || page}
     />
   )
 })
