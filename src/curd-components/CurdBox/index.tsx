@@ -101,7 +101,7 @@ export interface CurdBoxProps<T> {
   afterPopupClose?: (mode: PopupMode) => void;
   interceptors?: {
     /** update form values after click ok */
-    updateFieldsValue?: (fieldsValue: T, mode?: 'create' | 'update') => T;
+    updateFieldsValue?: (fieldsValue: T, mode?: 'create' | 'update') => Promise<T> | T;
     /** callback on click create button, will break default behavior if return value is true */
     handleCreateClick?: () => boolean | undefined;
     /** callback on click detail button, will break default behavior if return value is true */
@@ -147,12 +147,8 @@ export class InternalCurdBox<T extends { id: number | string }> extends PureComp
     deleteLoading: false,
     createButtonName: '新建',
     dispatch: () => { },
-    queryArgsConfig: [],
-    queryPanelProps: {},
-    containerType: 'table',
-    containerProps: {},
     actionsConfig: {},
-    popupType: 'drawer',
+    popup: 'drawer',
     popupProps: {},
     setFormItemsConfig: () => [],
     interceptors: {},
@@ -231,18 +227,6 @@ export class InternalCurdBox<T extends { id: number | string }> extends PureComp
     }
   };
 
-  deleteModel = (id: T['id']) => {
-    const { dispatch, modelName } = this.props;
-    dispatch({
-      type: `${modelName}/delete`,
-      id,
-      onOk: () => {
-        message.success(this.getLocale('deleteOk'));
-        this.reSearch('delete');
-      },
-    });
-  };
-
   renderActions = (record: T) => {
     const { actionsConfig } = this.props;
     if (actionsConfig) {
@@ -302,6 +286,18 @@ export class InternalCurdBox<T extends { id: number | string }> extends PureComp
           this.reSearch('update');
         }
       }
+    });
+  };
+
+  deleteModel = (id: T['id']) => {
+    const { dispatch, modelName } = this.props;
+    dispatch({
+      type: `${modelName}/delete`,
+      id,
+      onOk: () => {
+        message.success(this.getLocale('deleteOk'));
+        this.reSearch('delete');
+      },
     });
   };
 
