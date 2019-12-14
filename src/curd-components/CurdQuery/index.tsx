@@ -32,11 +32,11 @@ export class CurdQueryPanel extends PureComponent<CurdQueryPanelProps, CurdQuery
     if (this.form) {
       console.log('new', { ...queryArgs, ...fieldsValue })
       this.form.setFieldsValue({ ...queryArgs, ...fieldsValue });
-      this.setSearchFormAndSearch(fieldsValue);
+      this.setQueryFormAndSearch(fieldsValue);
     }
   }
 
-  setSearchFormAndSearch = (fieldsValue) => {
+  setQueryFormAndSearch = (fieldsValue) => {
     const { updateSearchValue, __curd__ } = this.props;
     const searchForm = updateSearchValue ? updateSearchValue(fieldsValue) : fieldsValue;
     const searchParams = { [this.getPageFieldName()]: 1 };
@@ -99,7 +99,7 @@ export class CurdQueryPanel extends PureComponent<CurdQueryPanelProps, CurdQuery
     return (
       <QueryPanel
         {...rest}
-        onSearch={this.setSearchFormAndSearch}
+        onSearch={this.setQueryFormAndSearch}
         onReset={this.handleFormReset}
         getFormInstance={this.getFormInstance}
       />
