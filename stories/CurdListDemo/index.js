@@ -58,11 +58,11 @@ export default class CurdListBoxDemo extends React.Component {
 					hasMore={!this.state.loading && this.state.hasMore}
 					useWindow={false}
 				>
-					<Curd {...this.props} data={{ list: data }}>
+					<Curd data={{ list: data }}>
 						<Curd.List
 							renderItem={renderCard}
 							pagination={false}
-							popupType="modal"
+							popup="modal"
 							setFormItemsConfig={() => [
 								{ type: 'string', field: 'test', formItemProps: { label: 'test' } }
 							]}

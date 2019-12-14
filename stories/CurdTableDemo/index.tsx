@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Button, Card, Switch, Form, Radio, message } from 'antd';
 import { Curd, FormConfigProvider } from '../../src';
+import { InternalCurd } from '../../src/Curd';
 import setFormItemsConfig from '../map';
 import { data } from '../mock';
 
@@ -28,7 +29,7 @@ export default class CurdTableDemo extends React.Component<any, any> {
     sortedInfo: null as any,
   };
 
-  __curd__: Curd<any>;
+  __curd__: InternalCurd<any>;
 
   columns = () => {
     let { sortedInfo, filteredInfo } = this.state;
@@ -37,10 +38,14 @@ export default class CurdTableDemo extends React.Component<any, any> {
 
     return [
       {
+        key: 'name',
         title: '姓名',
         dataIndex: 'name',
         filters: [{ text: '孙珍妮', value: 'szn' }, { text: '陈美君', value: 'cmj' }],
         filterMultiple: false,
+        // onFilter: (value, record) => {
+        //   return record.id.includes(value);
+        // },
         filteredValue: filteredInfo.name || null,
       },
       {
@@ -48,18 +53,24 @@ export default class CurdTableDemo extends React.Component<any, any> {
         dataIndex: 'nickname',
       },
       {
+        key: 'birthday',
         title: '生日',
         dataIndex: 'birthday',
         sorter: (a, b) => a.birthday - b.birthday,
         sortOrder: sortedInfo.columnKey === 'birthday' && sortedInfo.order,
         filters: [{ text: '05.05', value: '05.05' }, { text: '01.15', value: '01.15' }],
+        // onFilter: (value, record) => {
+        //   return record.birthday.includes(value);
+        // },
         filteredValue: filteredInfo.birthday || null,
       },
       {
+        key: 'speciality',
         title: '特长',
         dataIndex: 'speciality',
       },
       {
+        key: 'habit',
         title: '爱好',
         dataIndex: 'habit',
         sorter: (a, b) => a.habit.length - b.habit.length,
@@ -105,6 +116,7 @@ export default class CurdTableDemo extends React.Component<any, any> {
       sortedInfo: null,
     });
     if (this.__curd__) {
+      console.log(this.__curd__.state);
       const { searchParams } = this.__curd__.state;
       const { page, limit } = searchParams;
       this.__curd__.setState({
@@ -165,7 +177,14 @@ export default class CurdTableDemo extends React.Component<any, any> {
             </Form.Item>
           </Form>
         </Card>
-        <Curd ref={(curd: any) => { this.__curd__ = curd }} {...this.props} data={mockData}>
+        <Curd
+          innerRef={(curd: any) => {
+            console.log(curd);
+            this.__curd__ = curd;
+          }}
+          {...this.props}
+          data={mockData}
+        >
           <Curd.Table
             columns={this.columns()}
             selectedRows={selectedRows}

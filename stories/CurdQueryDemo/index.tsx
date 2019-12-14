@@ -76,11 +76,9 @@ export default class QueryPanelDemo extends React.Component {
         </Card>
         <Card bordered={false}>
           <ConfigProvider
-            value={{
-              setLocale: {
-                queryPanel: {
-                  search: 'asdf',
-                }
+            acLocale={{
+              queryPanel: {
+                search: 'asdf',
               }
             }}
           >
