@@ -1,4 +1,4 @@
-export { ConfigProvider } from './ConfigContext';
+export { ConfigProvider } from './config-provider';
 export { default as Curd } from './Curd';
 
 export { createFormItems, ConfigProvider as FormConfigProvider } from './FormMate';
