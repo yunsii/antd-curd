@@ -19,7 +19,7 @@ import { InternalCurd } from '../../Curd';
 import Operators from './Operators/index';
 import { setActions, ActionType } from './actions/index';
 import { injectChildren } from '../../utils';
-import ConfigContext from '../../config-provider';
+import ConfigContext from '../../config-provider/context';
 import { ConfigConsumerProps } from '../../config-provider/context';
 import DataContext from '../../DataContext';
 

@@ -73,7 +73,3 @@ export class ConfigProvider extends React.Component<ConfigProviderProps> {
     return this.renderProvider();
   }
 }
-
-ConfigContext.displayName = 'antd-curd\'s ConfigContext';
-
-export default ConfigContext;

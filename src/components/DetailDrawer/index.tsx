@@ -6,7 +6,7 @@ import { DrawerProps } from 'antd/lib/drawer';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 import { createFormItems } from '../../FormMate';
 import { PopupProps } from '../DetailModal/index';
-import ConfigContext from '../../config-provider';
+import ConfigContext from '../../config-provider/context';
 
 export type CustomModalProps = Omit<DrawerProps,
   | 'title'

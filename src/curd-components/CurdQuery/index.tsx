@@ -5,7 +5,7 @@ import _filter from 'lodash/filter';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 import QueryPanel, { QueryPanelProps } from '../../components/QueryPanel';
 import { InternalCurd } from '../../Curd';
-import ConfigContext from '../../config-provider';
+import ConfigContext from '../../config-provider/context';
 import DataContext from '../../DataContext';
 import { searchFieldName } from '../../defaultConfig';
 

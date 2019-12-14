@@ -8,7 +8,7 @@ import { ItemConfig } from 'antd-form-mate/dist/lib/props';
 import { RowProps } from 'antd/lib/row';
 import { ColProps } from 'antd/lib/col';
 import { createFormItems } from '../../FormMate';
-import ConfigContext from '../../config-provider';
+import ConfigContext from '../../config-provider/context';
 import styles from './index.less';
 
 const addAllowClearToItemsConfig = itemsConfig =>
