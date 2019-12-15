@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Button, Card, Radio, message } from 'antd';
-import { ItemConfig } from 'antd-form-mate/dist/lib/props'
+import { createFormItems } from 'antd-form-mate';
+import { ItemConfig } from 'antd-form-mate/dist/lib/props';
 import { Curd } from '../../src';
 import setFormItemsConfig from '../map';
 import { data } from '../mock';
@@ -86,6 +87,7 @@ export default class CurdDemo extends React.Component<any, any> {
           {...this.props}
           data={mockData}
           wrapper={null}
+          createFormItemsFn={createFormItems}
         >
           <Card bodyStyle={{ paddingBottom: 0 }}>
             <Curd.Query queryArgsConfig={this.queryArgsConfig} />

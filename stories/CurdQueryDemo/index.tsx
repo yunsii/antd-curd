@@ -1,10 +1,9 @@
 import * as React from 'react';
 import { Button, Card } from 'antd';
+import { createFormItems } from 'antd-form-mate';
 import { ItemConfig } from 'antd-form-mate/dist/lib/props'
 import { Curd, ConfigProvider } from '../../src';
 import { CurdQueryPanel } from '../../src/curd-components/CurdQuery';
-
-const { Query } = Curd;
 
 const queryArgsConfig: ItemConfig[] = [
   {
@@ -82,15 +81,20 @@ export default class QueryPanelDemo extends React.Component {
               }
             }}
           >
-            <Query
-              queryArgsConfig={queryArgsConfig}
-              ref={((self) => {
-                this.curdQuery = self;
-              }) as any}
-              onValuesChange={(changedValues, allValues) => {
-                console.log(changedValues);
-              }}
-            />
+            <Curd
+              data={[] as any}
+              createFormItemsFn={createFormItems}
+            >
+              <Curd.Query
+                queryArgsConfig={queryArgsConfig}
+                ref={((self) => {
+                  this.curdQuery = self;
+                }) as any}
+                onValuesChange={(changedValues, allValues) => {
+                  console.log(changedValues);
+                }}
+              />
+            </Curd>
           </ConfigProvider>
         </Card>
       </React.Fragment>

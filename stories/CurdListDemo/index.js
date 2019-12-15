@@ -1,6 +1,7 @@
 import React from 'react';
 import { Spin, message } from 'antd';
 import InfiniteScroll from 'react-infinite-scroller';
+import { createFormItems } from 'antd-form-mate';
 import { Curd } from '../../src';
 import { data as mockData } from '../mock';
 import styles from './index.less';
@@ -58,7 +59,10 @@ export default class CurdListBoxDemo extends React.Component {
 					hasMore={!this.state.loading && this.state.hasMore}
 					useWindow={false}
 				>
-					<Curd data={{ list: data }}>
+					<Curd
+						data={{ list: data }}
+						createFormItemsFn={createFormItems}
+					>
 						<Curd.List
 							renderItem={renderCard}
 							pagination={false}
