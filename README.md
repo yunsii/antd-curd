@@ -12,6 +12,8 @@
 
 </div>
 
+由于没有打包发布的经验，所以在 2.0.0 之前的版本除了一些未知的 bug 外，可能会存在一些兼容性问题。此次重构到 2.0.0 后，移除了依赖 `antd-form-mate` 。后续发包当慎重起见。
+
 ## 结合 dva 的使用说明
 
 组件内部调用以下 `effect` 函数:
@@ -32,6 +34,10 @@
 * `detail`  [可选]对象详情字段
 
 基于此封装了 [dva-base-models](https://github.com/theprimone/dva-base-models)，配置相关请求函数即可使用。参考 [Demo](https://github.com/theprimone/ant-design-pro-v2-plus/blob/master/src/pages/Enhance/models/curdPage.ts) 。
+
+## 关于表单
+
+通过 `Curd` 组件配置 `createFormItemsFn` ，组件内部关于创建表单的地方都会调用该方法，可直接从 [antd-form-mate](https://github.com/theprimone/antd-form-mate) 导出 `createFormItems` 传入即可。
 
 ## [StandardTable](/src/components/StandardTable/index.tsx)
 
@@ -84,6 +90,7 @@
 | `data` | 对象分页数据 | `{ list: T[]; pagination?: any }` | - |
 | `dipatch` | dva 注入的 dispatch 函数 | `Function` | - |
 | `wrapper` | 组件被包裹的容器，默认为无边框 `Card` | `React.ComponentClass \| null` | - |
+| `createFormItemsFn` | 创建表单项的函数 | `(form: WrappedFormUtils) => (itemsConfig: ItemConfig[], formLayout?: Layout) => JSX.Element[]` | `() => () => ([])` |
 
 ## [Curd.Query](/src/curd-components/CurdQuery/index.tsx)
 
