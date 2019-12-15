@@ -37,7 +37,7 @@
 
 ## 关于表单
 
-通过 `Curd` 组件配置 `createFormItemsFn` ，组件内部关于创建表单的地方都会调用该方法，可直接从 [antd-form-mate](https://github.com/theprimone/antd-form-mate) 导出 `createFormItems` 传入即可。
+通过 `ConfigProvider` 组件配置 `createFormItemsFn` ，组件内部关于创建表单的地方都会调用该方法，可直接从 [antd-form-mate](https://github.com/theprimone/antd-form-mate) 导出 `createFormItems` 传入即可。
 
 ## [StandardTable](/src/components/StandardTable/index.tsx)
 
