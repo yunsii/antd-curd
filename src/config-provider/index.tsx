@@ -47,37 +47,39 @@ export interface ConfigProviderProps {
   children?: React.ReactNode;
 }
 
-export class ConfigProvider extends React.Component<ConfigProviderProps> {
-  renderProvider = () => {
-    const {
-      acLocale,
-      formatSorter,
-      searchFieldName,
-      debounceWait,
-      createFormItemsFn = () => () => ([]),
+function initState(props: ConfigProviderProps) {
+  const {
+    acLocale,
+    formatSorter,
+    searchFieldName,
+    debounceWait,
+    createFormItemsFn = () => () => ([]),
+  } = props;
 
-      children,
-    } = this.props;
-
-    const config: ConfigConsumerProps = {
-      acLocale: _merge(defaultLocale, acLocale),
-      formatSorter: formatSorter || formatSorterDefault,
-      searchFieldName: {
-        ...searchFieldNameDefault,
-        ...searchFieldName,
-      },
-      debounceWait: debounceWait || debounceWaitDefault,
-      createFormItemsFn: createFormItemsFn,
-    }
-
-    return (
-      <ConfigContext.Provider value={config}>
-        {children}
-      </ConfigContext.Provider>
-    )
+  const config: ConfigConsumerProps = {
+    acLocale: _merge(defaultLocale, acLocale),
+    formatSorter: formatSorter || formatSorterDefault,
+    searchFieldName: {
+      ...searchFieldNameDefault,
+      ...searchFieldName,
+    },
+    debounceWait: debounceWait || debounceWaitDefault,
+    createFormItemsFn,
   }
 
+  return config;
+}
+
+export class ConfigProvider extends React.PureComponent<ConfigProviderProps> {
+
+  state = initState(this.props);
+
   render() {
-    return this.renderProvider();
+    const { children } = this.props;
+    return (
+      <ConfigContext.Provider value={this.state}>
+        {children}
+      </ConfigContext.Provider>
+    );
   }
 }
