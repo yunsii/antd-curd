@@ -58,7 +58,14 @@ export default class QueryPanelDemo extends React.Component {
 
   render() {
     return (
-      <React.Fragment>
+      <ConfigProvider
+        acLocale={{
+          queryPanel: {
+            search: 'search',
+          }
+        }}
+        createFormItemsFn={createFormItems}
+      >
         <Card>
           <Button
             onClick={() => {
@@ -74,30 +81,17 @@ export default class QueryPanelDemo extends React.Component {
           </Button>
         </Card>
         <Card bordered={false}>
-          <ConfigProvider
-            acLocale={{
-              queryPanel: {
-                search: 'asdf',
-              }
+          <Curd.Query
+            queryArgsConfig={queryArgsConfig}
+            ref={((self) => {
+              this.curdQuery = self;
+            }) as any}
+            onValuesChange={(changedValues, allValues) => {
+              console.log(changedValues);
             }}
-          >
-            <Curd
-              data={[] as any}
-              createFormItemsFn={createFormItems}
-            >
-              <Curd.Query
-                queryArgsConfig={queryArgsConfig}
-                ref={((self) => {
-                  this.curdQuery = self;
-                }) as any}
-                onValuesChange={(changedValues, allValues) => {
-                  console.log(changedValues);
-                }}
-              />
-            </Curd>
-          </ConfigProvider>
+          />
         </Card>
-      </React.Fragment>
+      </ConfigProvider>
     )
   }
 }

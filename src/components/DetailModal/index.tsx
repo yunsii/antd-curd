@@ -7,7 +7,6 @@ import { ModalProps } from 'antd/lib/modal';
 import { FormComponentProps } from 'antd/lib/form';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 import ConfigContext from '../../config-provider/context';
-import DataContext from '../../DataContext';
 import { ItemConfig } from 'antd-form-mate/dist/lib/props';
 import { injectChildren } from '../../utils';
 
@@ -43,8 +42,7 @@ export interface DetailModalProps extends PopupProps {
 }
 
 function DetailModal(props: DetailModalProps) {
-  const { debounceWait } = useContext(ConfigContext);
-  const { createFormItemsFn } = useContext(DataContext);
+  const { debounceWait, createFormItemsFn } = useContext(ConfigContext);
   const {
     loading = false,
     setItemsConfig,

@@ -1,4 +1,6 @@
 import React from 'react';
+import { WrappedFormUtils } from "antd/lib/form/Form";
+import { ItemConfig, Layout } from 'antd-form-mate/dist/lib/props';
 import {
   formatSorter,
   searchFieldName,
@@ -12,6 +14,10 @@ export interface ConfigConsumerProps {
   formatSorter: typeof formatSorter;
   searchFieldName: typeof searchFieldName;
   debounceWait: number;
+  createFormItemsFn: (form: WrappedFormUtils) => (
+    itemsConfig: ItemConfig[],
+    formLayout?: Layout,
+  ) => JSX.Element[];
 }
 
 export const ConfigContext = React.createContext<ConfigConsumerProps>({
@@ -19,6 +25,7 @@ export const ConfigContext = React.createContext<ConfigConsumerProps>({
   formatSorter: formatSorter,
   searchFieldName: searchFieldName,
   debounceWait: debounceWait,
+  createFormItemsFn: () => () => ([]),
 });
 
 ConfigContext.displayName = 'antd-curd\'s ConfigContext';

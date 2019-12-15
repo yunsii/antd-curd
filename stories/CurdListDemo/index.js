@@ -2,7 +2,7 @@ import React from 'react';
 import { Spin, message } from 'antd';
 import InfiniteScroll from 'react-infinite-scroller';
 import { createFormItems } from 'antd-form-mate';
-import { Curd } from '../../src';
+import { Curd, ConfigProvider } from '../../src';
 import { data as mockData } from '../mock';
 import styles from './index.less';
 import renderCard from '../StandardListDemo/CustomCard';
@@ -51,35 +51,39 @@ export default class CurdListBoxDemo extends React.Component {
 		const { data } = this.state;
 		console.log(data);
 		return (
-			<div className={styles['demo-infinite-container']}>
-				<InfiniteScroll
-					initialLoad={false}
-					pageStart={0}
-					loadMore={this.handleInfiniteOnLoad}
-					hasMore={!this.state.loading && this.state.hasMore}
-					useWindow={false}
-				>
-					<Curd
-						data={{ list: data }}
-						createFormItemsFn={createFormItems}
+			<ConfigProvider
+				createFormItemsFn={createFormItems}
+			>
+				<div className={styles['demo-infinite-container']}>
+					<InfiniteScroll
+						initialLoad={false}
+						pageStart={0}
+						loadMore={this.handleInfiniteOnLoad}
+						hasMore={!this.state.loading && this.state.hasMore}
+						useWindow={false}
 					>
-						<Curd.List
-							renderItem={renderCard}
-							pagination={false}
-							popup="modal"
-							setFormItemsConfig={() => [
-								{ type: 'string', field: 'test', formItemProps: { label: 'test' } }
-							]}
-						/>
-						{this.state.loading &&
-							this.state.hasMore && (
-								<div className={styles['demo-loading-container']}>
-									<Spin />
-								</div>
-							)}
-					</Curd>
-				</InfiniteScroll>
-			</div>
+						<Curd
+							data={{ list: data }}
+							createFormItemsFn={createFormItems}
+						>
+							<Curd.List
+								renderItem={renderCard}
+								pagination={false}
+								popup="modal"
+								setFormItemsConfig={() => [
+									{ type: 'string', field: 'test', formItemProps: { label: 'test' } }
+								]}
+							/>
+							{this.state.loading &&
+								this.state.hasMore && (
+									<div className={styles['demo-loading-container']}>
+										<Spin />
+									</div>
+								)}
+						</Curd>
+					</InfiniteScroll>
+				</div>
+			</ConfigProvider>
 		);
 	}
 }

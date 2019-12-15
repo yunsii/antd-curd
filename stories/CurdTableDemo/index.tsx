@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button, Card, Switch, Form, Radio, message } from 'antd';
 import { createFormItems } from 'antd-form-mate';
-import { Curd } from '../../src';
+import { Curd, ConfigProvider } from '../../src';
 import { InternalCurd } from '../../src/Curd';
 import setFormItemsConfig from '../map';
 import { data } from '../mock';
@@ -132,7 +132,9 @@ export default class CurdTableDemo extends React.Component<any, any> {
   render() {
     const { selectedRows, checkable, showOperators, popupType, mockData } = this.state;
     return (
-      <>
+      <ConfigProvider
+        createFormItemsFn={createFormItems}
+      >
         <Card>
           <Form layout="inline">
             <Form.Item label="多选" >
@@ -179,7 +181,6 @@ export default class CurdTableDemo extends React.Component<any, any> {
           }}
           {...this.props}
           data={mockData}
-          createFormItemsFn={createFormItems}
         >
           <Curd.Table
             columns={this.columns()}
@@ -261,7 +262,7 @@ export default class CurdTableDemo extends React.Component<any, any> {
             }}
           />
         </Curd>
-      </>
+      </ConfigProvider>
     )
   }
 }

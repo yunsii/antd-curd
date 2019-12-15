@@ -7,8 +7,7 @@ import { WrappedFormUtils, FormComponentProps } from 'antd/lib/form/Form';
 import { ItemConfig } from 'antd-form-mate/dist/lib/props';
 import { RowProps } from 'antd/lib/row';
 import { ColProps } from 'antd/lib/col';
-import ConfigContext from '../../config-provider/context';
-import DataContext, { DataContextValue } from '../../DataContext';
+import ConfigContext, { ConfigConsumerProps } from '../../config-provider/context';
 import styles from './index.less';
 
 const addAllowClearToItemsConfig = itemsConfig =>
@@ -41,7 +40,7 @@ export interface InternalQueryPanelProps extends QueryPanelProps {
   acLocale?: {
     [k in QueryPanelLocale]?: any;
   },
-  createFormItemsFn: DataContextValue<any>['createFormItemsFn'],
+  createFormItemsFn: ConfigConsumerProps['createFormItemsFn'],
 };
 
 interface InternalQueryPanelState {
@@ -159,16 +158,12 @@ class QueryPanel extends React.Component<QueryPanelProps> {
   render() {
     return (
       <ConfigContext.Consumer>
-        {({ acLocale: { queryPanel } }) => (
-          <DataContext.Consumer>
-            {({ createFormItemsFn }) => (
-              <InternalQueryPanel
-                {...this.props}
-                acLocale={queryPanel}
-                createFormItemsFn={createFormItemsFn}
-              />
-            )}
-          </DataContext.Consumer>
+        {({ acLocale: { queryPanel }, createFormItemsFn }) => (
+          <InternalQueryPanel
+            {...this.props}
+            acLocale={queryPanel}
+            createFormItemsFn={createFormItemsFn}
+          />
         )}
       </ConfigContext.Consumer>
     )

@@ -1,5 +1,7 @@
 import React from 'react';
 import _merge from 'lodash/merge';
+import { WrappedFormUtils } from "antd/lib/form/Form";
+import { ItemConfig, Layout } from 'antd-form-mate/dist/lib/props';
 import {
   formatSorter as formatSorterDefault,
   searchFieldName as searchFieldNameDefault,
@@ -38,6 +40,10 @@ export interface ConfigProviderProps {
   formatSorter?: typeof formatSorterDefault;
   searchFieldName?: SearchFieldNameProps;
   debounceWait?: number;
+  createFormItemsFn?: (form: WrappedFormUtils) => (
+    itemsConfig: ItemConfig[],
+    formLayout?: Layout,
+  ) => JSX.Element[];
   children?: React.ReactNode;
 }
 
@@ -48,6 +54,7 @@ export class ConfigProvider extends React.Component<ConfigProviderProps> {
       formatSorter,
       searchFieldName,
       debounceWait,
+      createFormItemsFn = () => () => ([]),
 
       children,
     } = this.props;
@@ -60,6 +67,7 @@ export class ConfigProvider extends React.Component<ConfigProviderProps> {
         ...searchFieldName,
       },
       debounceWait: debounceWait || debounceWaitDefault,
+      createFormItemsFn: createFormItemsFn,
     }
 
     return (
