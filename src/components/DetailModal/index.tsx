@@ -7,7 +7,7 @@ import { ModalProps } from 'antd/lib/modal';
 import { FormComponentProps } from 'antd/lib/form';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 import ConfigContext from '../../config-provider/context';
-import { createFormItems } from '../../FormMate';
+import DataContext from '../../DataContext';
 import { ItemConfig } from 'antd-form-mate/dist/lib/props';
 import { injectChildren } from '../../utils';
 
@@ -44,6 +44,7 @@ export interface DetailModalProps extends PopupProps {
 
 function DetailModal(props: DetailModalProps) {
   const { debounceWait } = useContext(ConfigContext);
+  const { createFormItemsFn } = useContext(DataContext);
   const {
     loading = false,
     setItemsConfig,
@@ -76,10 +77,10 @@ function DetailModal(props: DetailModalProps) {
   }, debounceWait);
 
   const colsItems = cols === 1 ? (
-    createFormItems(form)(itemsConfig, itemsLayout)
+    createFormItemsFn(form)(itemsConfig, itemsLayout)
   ) : (
       <Row type="flex">
-        {createFormItems(form)(itemsConfig, itemsLayout).map(item => {
+        {createFormItemsFn(form)(itemsConfig, itemsLayout).map(item => {
           return (
             <Col span={24 / cols} key={item.key as any}>
               {item}

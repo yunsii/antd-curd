@@ -4,7 +4,7 @@ import _debounce from 'lodash/debounce';
 import _get from 'lodash/get';
 import { DrawerProps } from 'antd/lib/drawer';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
-import { createFormItems } from '../../FormMate';
+import DataContext from '../../DataContext';
 import { PopupProps } from '../DetailModal/index';
 import ConfigContext from '../../config-provider/context';
 
@@ -22,6 +22,7 @@ export interface DetailDrawerProps extends PopupProps {
 
 function DetailDrawer(props: DetailDrawerProps) {
   const { acLocale, debounceWait } = useContext(ConfigContext);
+  const { createFormItemsFn } = useContext(DataContext);
   const {
     loading = false,
     setItemsConfig,
@@ -64,7 +65,7 @@ function DetailDrawer(props: DetailDrawerProps) {
       onClose={onClose}
     >
       <Spin spinning={loading}>
-        {createFormItems(form)(itemsConfig, itemsLayout)}
+        {createFormItemsFn(form)(itemsConfig, itemsLayout)}
         <div
           style={{
             // position: 'absolute',

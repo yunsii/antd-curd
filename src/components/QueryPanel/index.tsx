@@ -7,8 +7,8 @@ import { WrappedFormUtils, FormComponentProps } from 'antd/lib/form/Form';
 import { ItemConfig } from 'antd-form-mate/dist/lib/props';
 import { RowProps } from 'antd/lib/row';
 import { ColProps } from 'antd/lib/col';
-import { createFormItems } from '../../FormMate';
 import ConfigContext from '../../config-provider/context';
+import DataContext, { DataContextValue } from '../../DataContext';
 import styles from './index.less';
 
 const addAllowClearToItemsConfig = itemsConfig =>
@@ -40,7 +40,8 @@ export interface QueryPanelProps extends FormComponentProps {
 export interface InternalQueryPanelProps extends QueryPanelProps {
   acLocale?: {
     [k in QueryPanelLocale]?: any;
-  }
+  },
+  createFormItemsFn: DataContextValue<any>['createFormItemsFn'],
 };
 
 interface InternalQueryPanelState {
@@ -92,6 +93,7 @@ class InternalQueryPanel extends PureComponent<InternalQueryPanelProps, Internal
       rowProps = {},
       colProps: customColProps,
       getFormInstance = () => { },
+      createFormItemsFn,
     } = this.props;
     const { expandForm } = this.state;
     getFormInstance(form);
@@ -133,7 +135,7 @@ class InternalQueryPanel extends PureComponent<InternalQueryPanelProps, Internal
     );
 
     const items =
-      [...createFormItems(form as any)(formItems, { labelCol: { span: 8 }, wrapperCol: { span: 16 } }), actions];
+      [...createFormItemsFn(form as any)(formItems, { labelCol: { span: 8 }, wrapperCol: { span: 16 } }), actions];
 
     return (
       <Form onSubmit={this.handleSubmit} layout="inline">
@@ -157,7 +159,17 @@ class QueryPanel extends React.Component<QueryPanelProps> {
   render() {
     return (
       <ConfigContext.Consumer>
-        {({ acLocale: { queryPanel } }) => <InternalQueryPanel {...this.props} acLocale={queryPanel} />}
+        {({ acLocale: { queryPanel } }) => (
+          <DataContext.Consumer>
+            {({ createFormItemsFn }) => (
+              <InternalQueryPanel
+                {...this.props}
+                acLocale={queryPanel}
+                createFormItemsFn={createFormItemsFn}
+              />
+            )}
+          </DataContext.Consumer>
+        )}
       </ConfigContext.Consumer>
     )
   }

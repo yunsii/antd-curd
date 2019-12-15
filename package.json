@@ -5,7 +5,6 @@
   "main": "./dist/index.js",
   "dependencies": {
     "antd": "^3.23.6",
-    "antd-form-mate": "^2.0.3",
     "lodash": "^4.17.15",
     "react": "^16.8.6",
     "react-dom": "^16.8.6"
@@ -50,6 +49,7 @@
     "@types/storybook__react": "^4.0.2",
     "@typescript-eslint/eslint-plugin": "^2.5.0",
     "@typescript-eslint/parser": "^2.5.0",
+    "antd-form-mate": "^3.0.0",
     "awesome-typescript-loader": "^5.2.1",
     "babel-eslint": "^10.0.3",
     "babel-loader": "^8.0.6",

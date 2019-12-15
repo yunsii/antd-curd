@@ -1,6 +1,8 @@
 import React, { PureComponent } from 'react';
 import { Card } from 'antd';
 import _get from 'lodash/get';
+import { WrappedFormUtils } from "antd/lib/form/Form";
+import { ItemConfig, Layout } from 'antd-form-mate/dist/lib/props';
 import CurdTable, { CustomStandardTableProps } from './curd-components/CurdTable/index';
 import CurdList, { CustomStandardListProps } from './curd-components/CurdList/index';
 import CurdQuery from './curd-components/CurdQuery';
@@ -19,6 +21,10 @@ function DefaultWrapper(props: React.PropsWithChildren<any>) {
 }
 
 export interface CurdProps<T> {
+	createFormItemsFn?: (form: WrappedFormUtils) => (
+		itemsConfig: ItemConfig[],
+		formLayout?: Layout,
+	) => JSX.Element[];
 	modelName?: string;
 	data: { list: T[]; pagination?: any };
 	dispatch?: Function;
@@ -93,9 +99,22 @@ export class InternalCurd<T> extends PureComponent<InternalCurdProps<T>, Interna
 	};
 
 	render() {
-		const { modelName, data, wrapper } = this.props;
+		const {
+			modelName,
+			data,
+			wrapper,
+			createFormItemsFn = () => () => ([]),
+		} = this.props;
+		
 		return (
-			<DataContext.Provider value={{ modelName, data, __curd__: this }}>
+			<DataContext.Provider
+				value={{
+					modelName,
+					data,
+					__curd__: this,
+					createFormItemsFn,
+				}}
+			>
 				{wrapper ? React.createElement(wrapper, null, this.renderChildren()) : this.renderChildren()}
 			</DataContext.Provider>
 		);
