@@ -12,11 +12,10 @@
   "scripts": {
     "start": "npm run storybook",
     "build": "echo y | del dist /f && webpack",
-    "prepublish": "npm run lint && npm run build",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepublishOnly": "npm run lint && npm run build",
     "lint": "tslint --project tsconfig.json",
     "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook",
+    "build-storybook": "build-storybook -s public",
     "release": "release-it"
   },
   "eslintConfig": {
@@ -74,6 +73,7 @@
     "ts-import-plugin": "^1.6.1",
     "ts-jest": "^24.0.2",
     "ts-loader": "^6.0.4",
+    "tslint": "^5.20.1",
     "typescript": "^3.5.3",
     "webpack": "^4.39.1",
     "webpack-cli": "^3.3.6",
