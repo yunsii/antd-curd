@@ -10,3 +10,4 @@ tslint.json
 tsconfig.json
 *.log
 /src/
+/storybook-static/

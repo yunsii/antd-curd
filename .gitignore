@@ -89,3 +89,4 @@ typings/
 
 # custom
 dist/
+storybook-static/
