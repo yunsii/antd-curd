@@ -349,7 +349,7 @@ export class InternalCurdBox<T extends { id: number | string }> extends PureComp
     pagination: PaginationConfig,
     filtersArg = {} as Record<keyof any, string[]>,
     sorter = {} as SorterResult<any>,
-    extra?: TableCurrentDataSource<any>
+    extra: TableCurrentDataSource<any>
   ) => {
     // console.log('pagination', pagination);
     // console.log('filtersArg', filtersArg);
