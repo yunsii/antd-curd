@@ -170,7 +170,7 @@
 
 #### 注意事项
 
-* `handle**Click` 事件（除 `handleDeleteClick` 事件外， `handleDeleteClick` 直接中断）默认不会中断后续的弹窗事件，如果需要中断， `return true` 即可。
+* `handle**Click` 事件（除 `handleDeleteClick` 事件外， `handleDeleteClick` 直接中断）默认不会中断后续流程，如果需要中断， `return true` 即可。
 * 如果对象详情不需要再请求接口，不注入 `detail` 或者 `detailLoading` 即可。
 
 ## [Curd.Table](/src/curd-components/CurdTable/index.tsx)
