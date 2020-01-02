@@ -200,7 +200,7 @@ export class InternalCurdBox<T extends { id: number | string }> extends PureComp
        */
       if (handleActionClick(record!) || action === DELETE_NAME) { return; }
     }
-    
+
     if (action === DELETE_NAME) {
       this.deleteModel(record!.id);
       return;
@@ -347,38 +347,47 @@ export class InternalCurdBox<T extends { id: number | string }> extends PureComp
     return { ...result };
   }
 
-  // https://ant.design/components/table-cn/#components-table-demo-reset-filter
-  // 只支持一个 sorter
-  handleDataChange = (
+  /**
+   * 当列表调用时，仅回调第一个参数。
+   * 
+   * 只支持一个 sorter
+   * ref: https://ant.design/components/table-cn/#components-table-demo-reset-filter
+   */
+  handleDataChange: (
     pagination: PaginationConfig,
-    filtersArg = {} as Record<keyof any, string[]>,
-    sorter = {} as SorterResult<any>,
+    filtersArg: Record<keyof any, string[]>,
+    sorter: SorterResult<any>,
+    extra: TableCurrentDataSource<any>
+  ) => void = (
+    pagination,
+    filtersArg,
+    sorter,
     extra: TableCurrentDataSource<any>
   ) => {
-    // console.log('pagination', pagination);
-    // console.log('filtersArg', filtersArg);
-    // console.log('sorter', sorter);
-    const { interceptors = {}, __curd__ } = this.props;
-    const { handleFilterAndSort = () => { } } = interceptors;
+      // console.log('pagination', pagination);
+      // console.log('filtersArg', filtersArg);
+      // console.log('sorter', sorter);
+      const { interceptors = {}, __curd__ } = this.props;
+      const { handleFilterAndSort = () => { } } = interceptors;
 
-    const hasCustomFilterAndSorter: boolean = handleFilterAndSort && handleFilterAndSort(filtersArg, sorter, extra);
+      const hasCustomFilterAndSorter: boolean = handleFilterAndSort && handleFilterAndSort(filtersArg, sorter, extra);
 
-    const params = {
-      [this.getSearchFieldName('page')]: pagination.current,
-      [this.getSearchFieldName('limit')]: pagination.pageSize,
-      ...hasCustomFilterAndSorter
-        ? handleFilterAndSort(filtersArg, sorter, extra)
-        : this.defaultHandleFilterAndSort(filtersArg, sorter, extra)
+      const params = {
+        [this.getSearchFieldName('page')]: pagination.current,
+        [this.getSearchFieldName('limit')]: pagination.pageSize,
+        ...hasCustomFilterAndSorter
+          ? handleFilterAndSort(filtersArg, sorter, extra)
+          : this.defaultHandleFilterAndSort(filtersArg, sorter, extra)
+      };
+      // console.log('changed params', params);
+
+      // sync curd's searchParams
+      if (__curd__) {
+        __curd__.setState({ searchParams: params }, () => {
+          __curd__.handleSearch();
+        });
+      }
     };
-
-    // console.log('changed params', params);
-    // sync curd's searchParams
-    if (__curd__) {
-      __curd__.setState({ searchParams: params }, () => {
-        __curd__.handleSearch();
-      });
-    }
-  };
 
   getLocale = (field: CurdlLocale) => {
     const { acLocale = {} } = this.props;
