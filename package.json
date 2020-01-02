@@ -11,7 +11,7 @@
   },
   "scripts": {
     "start": "npm run storybook",
-    "build": "echo y | del dist /f && webpack",
+    "build": "echo y | rmdir /S dist && webpack",
     "prepublishOnly": "npm run lint && npm run build",
     "lint": "tslint --project tsconfig.json",
     "storybook": "start-storybook -p 6006",
