@@ -16,7 +16,7 @@ export default function CustomStandardList<T extends { id: number | string }>(pr
     <StandardList
       {...rest}
       setActions={renderActions ? (record) => renderActions(record) : undefined}
-      onChange={handleDataChange}
+      onChange={handleDataChange as any}
       data={data}
     />
   );
