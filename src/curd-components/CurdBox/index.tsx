@@ -194,12 +194,16 @@ export class InternalCurdBox<T extends { id: number | string }> extends PureComp
     const { [actionFunctionName]: handleActionClick } = interceptors;
 
     if (handleActionClick) {
-      // 调用自定义点击事件回调的返回值为真时，打断。
-      if (handleActionClick(record!)) { return; }
-      if (action === DELETE_NAME) {
-        this.deleteModel(record!.id);
-        return;
-      }
+      /**
+       * 1. 调用自定义点击事件的返回值为真时，打断
+       * 2. 当有 handleDeleteClick 时，不论返回值，直接打断
+       */
+      if (handleActionClick(record!) || action === DELETE_NAME) { return; }
+    }
+    
+    if (action === DELETE_NAME) {
+      this.deleteModel(record!.id);
+      return;
     }
 
     this.setState({
