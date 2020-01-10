@@ -2,9 +2,6 @@ import React, { Component } from 'react';
 import classNames from 'classnames';
 import styles from './index.less';
 
-/* eslint react/no-did-mount-set-state: 0 */
-/* eslint no-param-reassign: 0 */
-
 const isSupportLineClamp = (document.body.style as any).webkitLineClamp !== undefined;
 
 export const getStrFullLength = (str = '') =>
