@@ -43,7 +43,6 @@ function DetailDrawer(props: DetailDrawerProps) {
     console.log('DetailFormDrawer _debounce onOk');
     form.validateFieldsAndScroll((err?: any, fieldsValue?: any) => {
       if (err) return;
-      // form.resetFields();
       handleOk(fieldsValue);
     });
   }, debounceWait);

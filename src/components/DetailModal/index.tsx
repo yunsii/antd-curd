@@ -64,12 +64,10 @@ function DetailModal(props: DetailModalProps) {
   getFormInstance(form);
   const itemsConfig = setItemsConfig(form);
 
-
   const onOk = _debounce(() => {
     console.log('DetailFormModal _debounce onOk');
     form.validateFieldsAndScroll((err?: any, fieldsValue?: any) => {
       if (err) return;
-      // form.resetFields();
       handleOk(fieldsValue);
     });
   }, debounceWait);
