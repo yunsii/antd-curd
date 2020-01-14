@@ -12,7 +12,7 @@
 
 </div>
 
-[在线预览 ->](https://theprimone.github.io/antd-curd)
+**[在线预览 ->](https://theprimone.github.io/antd-curd)**
 
 由于没有打包发布的经验，所以在 2.0.0 之前的版本除了一些未知的 bug 外，可能会存在一些兼容性问题。此次重构到 2.0.0 后，移除了依赖 `antd-form-mate` 。后续发包当慎重起见。
 
