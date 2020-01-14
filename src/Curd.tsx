@@ -7,6 +7,7 @@ import CurdQuery from './curd-components/CurdQuery';
 import { injectChildren } from './utils';
 import ConfigContext, { ConfigConsumerProps } from './config-provider/context';
 import DataContext from './DataContext';
+import { DELETE_NAME } from './constants';
 import { withCurdBox, SearchableMode } from './curd-components/CurdBox';
 
 function DefaultWrapper(props: React.PropsWithChildren<any>) {
@@ -72,7 +73,7 @@ export class InternalCurd<T> extends PureComponent<InternalCurdProps<T>, Interna
 		const { data: { list }, pageFieldName } = this.props;
 		const { searchParams } = this.state;
 		const currentPage = searchParams[pageFieldName];
-		if (type === 'delete' && list.length === 1 && currentPage > 1) {
+		if (type === DELETE_NAME && list.length === 1 && currentPage > 1) {
 			this.setState(
 				{
 					searchParams: {
