@@ -35,7 +35,7 @@
 * `data`  形如 `{ list: any[], pagination: any }`， 分页器属性参考 `Pagination` 组件
 * `detail`  [可选]对象详情字段
 
-基于此封装了 [dva-base-models](https://github.com/theprimone/dva-base-models)，配置相关请求函数即可使用。参考 [Demo](https://github.com/theprimone/ant-design-pro-v2-plus/blob/master/src/pages/Enhance/models/curdPage.ts) 。
+基于此封装了 [dva-base-models](https://github.com/theprimone/dva-base-models)，配置相关请求函数即可使用。参考 [Demo](https://github.com/zpr1g/ant-design-pro-plus/blob/v2/src/pages/Enhance/models/curdPage.ts) 。
 
 ## 关于表单
 
